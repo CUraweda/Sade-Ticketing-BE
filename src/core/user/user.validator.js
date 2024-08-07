@@ -1,5 +1,6 @@
 import Joi from "joi";
 import constant from "../../config/constant.js";
+import { relationExist } from "../../base/validator.base.js";
 
 export const UserValidator = {
   create: Joi.object({
@@ -35,6 +36,12 @@ export const UserValidator = {
     status: Joi.boolean().optional(),
     email_verified: Joi.boolean().optional(),
   }),
+  assignRole: Joi.array().items(
+    Joi.object({
+      role_id: Joi.string().external(relationExist("role")).required(),
+      is_active: Joi.boolean().required(),
+    })
+  ),
 };
 
 export default UserValidator;

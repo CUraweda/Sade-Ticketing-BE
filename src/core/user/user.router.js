@@ -27,6 +27,12 @@ r.put(
   controller.update
 );
 
+r.put(
+  "/assign-roles/:id",
+  validatorMiddleware({ body: validator.assignRole }),
+  controller.assignRole
+);
+
 r.delete("/delete/:id", controller.delete);
 
 const userRouter = r;
