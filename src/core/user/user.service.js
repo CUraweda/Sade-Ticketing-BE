@@ -1,6 +1,9 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import bcrypt from "bcrypt";
+import { BadRequest } from "../../lib/response/catch.js";
+import jwt from "jsonwebtoken";
+import constant from "../../config/constant.js";
 
 class UserService extends BaseService {
   constructor() {
@@ -66,6 +69,9 @@ class UserService extends BaseService {
   };
 
   assignRole = async (id, payload) => {
+    if (payload.filter((dat) => dat.is_active).length > 1)
+      throw new BadRequest("There must be only one active role");
+
     await this.db.userRole.deleteMany({
       where: {
         user_id: id,
@@ -81,6 +87,59 @@ class UserService extends BaseService {
     });
 
     return data;
+  };
+
+  switchRole = async (id, user_id) => {
+    await this.db.userRole.updateMany({
+      where: {
+        user_id,
+      },
+      data: {
+        is_active: false,
+      },
+    });
+
+    const data = await this.db.userRole.update({
+      where: {
+        id,
+        user_id,
+      },
+      select: {
+        role: true,
+      },
+      data: {
+        is_active: true,
+      },
+    });
+
+    const [at, rt] = await Promise.all([
+      jwt.sign(
+        {
+          uid: user_id,
+          role: data.role.code,
+          iss: process.env.JWT_ISSUER,
+        },
+        process.env.JWT_ACCESS_SECRET,
+        {
+          expiresIn: constant.JWT_ACCESS_EXP,
+        }
+      ),
+      jwt.sign(
+        { uid: user_id, iss: process.env.JWT_ISSUER },
+        process.env.JWT_REFRESH_SECRET,
+        {
+          expiresIn: constant.JWT_REFRESH_EXP,
+        }
+      ),
+    ]);
+
+    return {
+      user_role: data,
+      token: {
+        at,
+        rt,
+      },
+    };
   };
 
   delete = async (id) => {

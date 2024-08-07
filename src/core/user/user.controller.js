@@ -37,6 +37,11 @@ class UserController extends BaseController {
     return this.ok(res, data, "Roles assigned successfully");
   });
 
+  switchRole = this.wrapper(async (req, res) => {
+    const data = await this.#service.switchRole(req.params.id, req.user.id);
+    return this.ok(res, data, "Roles switched successfully");
+  });
+
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     this.noContent(res, "User deleted successfully");

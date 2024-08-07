@@ -18,6 +18,8 @@ class AuthService extends BaseService {
         ...this.include(userFields),
         UserRole: {
           select: {
+            id: true,
+            is_active: true,
             role: true,
           },
         },
@@ -30,20 +32,27 @@ class AuthService extends BaseService {
     const pwValid = await bcrypt.compare(payload.password, user.password);
     if (!pwValid) throw new BadRequest("Wrong password");
 
+    const activeRole = user.UserRole.filter((ur) => ur.is_active);
+
     const [at, rt] = await Promise.all([
       jwt.sign(
         {
           uid: user.id,
-          role: user.UserRole.length > 0 ? user.UserRole[0].role.code : null,
+          role: activeRole.length > 0 ? activeRole[0].role.code : null,
+          iss: process.env.JWT_ISSUER,
         },
         process.env.JWT_ACCESS_SECRET,
         {
           expiresIn: constant.JWT_ACCESS_EXP,
         }
       ),
-      jwt.sign({ uid: user.id }, process.env.JWT_REFRESH_SECRET, {
-        expiresIn: constant.JWT_REFRESH_EXP,
-      }),
+      jwt.sign(
+        { uid: user.id, iss: process.env.JWT_ISSUER },
+        process.env.JWT_REFRESH_SECRET,
+        {
+          expiresIn: constant.JWT_REFRESH_EXP,
+        }
+      ),
     ]);
 
     return {
