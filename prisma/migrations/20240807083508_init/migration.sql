@@ -3,7 +3,7 @@ CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
     `full_name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NULL,
+    `password` VARCHAR(191) NOT NULL,
     `status` BOOLEAN NOT NULL DEFAULT false,
     `email_verified` BOOLEAN NOT NULL DEFAULT false,
     `avatar` VARCHAR(191) NULL,
@@ -32,6 +32,8 @@ CREATE TABLE `Role` (
     `code` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `is_active` BOOLEAN NULL DEFAULT true,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `Role_code_key`(`code`),
     PRIMARY KEY (`id`)
