@@ -12,29 +12,29 @@ class RoleController extends BaseController {
 
   findAll = this.wrapper(async (req, res) => {
     const data = await this.#service.findAll(req.query);
-    return this.ok(res, data, "Roles retrieved successfully");
+    return this.ok(res, data, "Banyak Role berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
-    if (!data) throw new NotFound("Role not found");
+    if (!data) throw new NotFound("Role tidak ditemukan");
 
-    return this.ok(res, data, "Role retrieved succesfully");
+    return this.ok(res, data, "Role berhasil didapatkan");
   });
 
   create = this.wrapper(async (req, res) => {
     const data = await this.#service.create(req.body);
-    return this.created(res, data, "Role created successfully");
+    return this.created(res, data, "Role berhasil dibuat");
   });
 
   update = this.wrapper(async (req, res) => {
     const data = await this.#service.update(req.params.id, req.body);
-    return this.ok(res, data, "Role updated successfully");
+    return this.ok(res, data, "Role berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
-    this.noContent(res, "Role deleted successfully");
+    this.noContent(res, "Role berhasil dihapus");
   });
 }
 

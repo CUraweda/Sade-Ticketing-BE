@@ -70,7 +70,7 @@ class UserService extends BaseService {
 
   assignRole = async (id, payload) => {
     if (payload.filter((dat) => dat.is_active).length > 1)
-      throw new BadRequest("There must be only one active role");
+      throw new BadRequest("Role aktif harus ada satu saja");
 
     await this.db.userRole.deleteMany({
       where: {
