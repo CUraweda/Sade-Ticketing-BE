@@ -38,8 +38,8 @@ export const relationExist = (table) => {
     if (value == undefined) return value;
 
     try {
-      const found = await prism[table].findUnique({ where: { id: value } });
-      if (!found) {
+      const found = await prism[table].count({ where: { id: value } });
+      if (found == 0) {
         const fieldName = helpers.state.path.join(".");
         return helpers.message(
           `The ${fieldName} with ID ${value} does not exist`

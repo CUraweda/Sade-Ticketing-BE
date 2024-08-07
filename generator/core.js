@@ -81,6 +81,7 @@ export default ${nameL}Router;
   {
     name: nameL + ".controller.js",
     content: `import BaseController from "../../base/controller.base.js";
+import { NotFound } from "../../lib/response/catch.js";
 import ${name}Service from "./${nameL}.service.js";
 
 class ${name}Controller extends BaseController {
@@ -98,6 +99,8 @@ class ${name}Controller extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
+    if (!data) throw NotFound("${name} not found");
+
     return this.ok(res, data, "${name} retrieved succesfully");
   });
 
@@ -124,7 +127,6 @@ export default ${name}Controller;
     name: nameL + ".service.js",
     content: `import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { NotFound } from "../../lib/response/catch.js";
 
 class ${name}Service extends BaseService {
   constructor() {
@@ -144,7 +146,6 @@ class ${name}Service extends BaseService {
 
   findById = async (id) => {
     const data = await this.db.${modelName}.findUnique({ where: { id } });
-    if (!data) throw new NotFound("${name} not found");
     return data;
   };
 

@@ -1,6 +1,5 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { NotFound } from "../../lib/response/catch.js";
 import bcrypt from "bcrypt";
 
 class UserService extends BaseService {
@@ -45,7 +44,6 @@ class UserService extends BaseService {
         "updated_at",
       ]),
     });
-    if (!data) throw new NotFound("User not found");
     return data;
   };
 

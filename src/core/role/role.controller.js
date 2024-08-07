@@ -1,4 +1,5 @@
 import BaseController from "../../base/controller.base.js";
+import { NotFound } from "../../lib/response/catch.js";
 import RoleService from "./role.service.js";
 
 class RoleController extends BaseController {
@@ -16,6 +17,8 @@ class RoleController extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound("Role not found");
+
     return this.ok(res, data, "Role retrieved succesfully");
   });
 

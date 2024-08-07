@@ -1,4 +1,5 @@
 import BaseController from "../../base/controller.base.js";
+import { NotFound } from "../../lib/response/catch.js";
 import UserService from "./user.service.js";
 
 class UserController extends BaseController {
@@ -16,6 +17,8 @@ class UserController extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
+    if (!data) throw NotFound("User not found");
+
     return this.ok(res, data, "User retrieved succesfully");
   });
 
