@@ -10,7 +10,7 @@
     "mg:create": "npx prisma migrate dev --name",
     "mg:push": "npx prisma migrate dev",
     "db:seed": "node prisma/seeder/index.js",
-    "gen:core": "node generator/core.js --"
+    "gen:core": "node generator/core.js"
   },
   "keywords": [],
   "author": "",

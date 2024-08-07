@@ -1,4 +1,5 @@
 import Joi from "joi";
+import constant from "../../config/constant.js";
 
 export const UserValidator = {
   create: Joi.object({
@@ -16,7 +17,7 @@ export const UserValidator = {
       //     "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
       //   )
       // )
-      .max(10)
+      .max(constant.MAX_LEN_PW)
       .required(),
     status: Joi.boolean().default(true),
     email_verified: Joi.boolean().default(true),
@@ -30,7 +31,7 @@ export const UserValidator = {
         "string.pattern.base": "Name must contain only letters",
       }),
     email: Joi.string().email().optional(),
-    password: Joi.string().max(10).optional(),
+    password: Joi.string().max(constant.MAX_LEN_PW).optional(),
     status: Joi.boolean().optional(),
     email_verified: Joi.boolean().optional(),
   }),
