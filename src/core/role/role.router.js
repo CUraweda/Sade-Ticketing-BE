@@ -8,12 +8,12 @@ const r = Router(),
   controller = new RoleController();
 
 r.get(
-  "/",
+  "/show-all",
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
 
-r.get("/:id", controller.findById);
+r.get("/show-one/:id", controller.findById);
 
 r.post(
   "/create",
@@ -27,7 +27,7 @@ r.put(
   controller.update
 );
 
-r.delete("/:id", controller.delete);
+r.delete("/delete/:id", controller.delete);
 
 const roleRouter = r;
 export default roleRouter;

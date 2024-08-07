@@ -1,5 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { NotFound } from "../../lib/response/catch.js";
 
 class RoleService extends BaseService {
   constructor() {
@@ -11,7 +12,7 @@ class RoleService extends BaseService {
     const data = await this.db.role.findMany({ ...q });
 
     if (query.paginate) {
-      const countData = await this.db.role.count({ ...q });
+      const countData = await this.db.role.count({ where: q.where });
       return this.paginate(data, countData, q);
     }
     return data;
@@ -19,6 +20,7 @@ class RoleService extends BaseService {
 
   findById = async (id) => {
     const data = await this.db.role.findUnique({ where: { id } });
+    if (!data) throw new NotFound("Role not found");
     return data;
   };
 
