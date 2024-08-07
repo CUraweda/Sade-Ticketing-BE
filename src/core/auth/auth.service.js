@@ -17,9 +17,6 @@ class AuthService extends BaseService {
       select: {
         ...this.include(userFields),
         UserRole: {
-          where: {
-            is_active: true,
-          },
           select: {
             role: true,
           },

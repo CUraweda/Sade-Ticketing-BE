@@ -66,22 +66,21 @@ class UserService extends BaseService {
   };
 
   assignRole = async (id, payload) => {
-    const [del, create] = await Promise.all([
-      this.db.userRole.deleteMany({
-        where: {
-          user_id: id,
-        },
-      }),
-      this.db.userRole.createMany({
-        data: payload.map((dat) => ({
-          user_id: id,
-          role_id: dat.role_id,
-          is_active: dat.is_active,
-        })),
-      }),
-    ]);
+    await this.db.userRole.deleteMany({
+      where: {
+        user_id: id,
+      },
+    });
 
-    return create;
+    const data = await this.db.userRole.createMany({
+      data: payload.map((dat) => ({
+        user_id: id,
+        role_id: dat.role_id,
+        is_active: dat.is_active,
+      })),
+    });
+
+    return data;
   };
 
   delete = async (id) => {
