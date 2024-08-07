@@ -22,7 +22,7 @@ r.post(
 );
 
 r.put(
-  "/update",
+  "/update/:id",
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
