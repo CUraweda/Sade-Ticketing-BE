@@ -1,0 +1,21 @@
+node_modules
+
+# dependencies
+/node_modules
+
+#logs
+/logs
+
+#resources
+/public
+/tmp
+/images
+/files
+
+# testing
+/coverage
+
+
+# misc
+.DS_Store
+.env

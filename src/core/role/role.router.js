@@ -1,0 +1,33 @@
+import { Router } from "express";
+import validatorMiddleware from "../../middlewares/validator.middleware.js";
+import RoleController from "./role.controller.js";
+import RoleValidator from "./role.validator.js";
+import { baseValidator } from "../../base/validator.base.js";
+const r = Router(),
+  validator = RoleValidator,
+  controller = new RoleController();
+
+r.get(
+  "/",
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.findAll
+);
+
+r.get("/:id", controller.findById);
+
+r.post(
+  "/create",
+  validatorMiddleware({ body: validator.create }),
+  controller.create
+);
+
+r.put(
+  "/update",
+  validatorMiddleware({ body: validator.update }),
+  controller.update
+);
+
+r.delete("/:id", controller.delete);
+
+const roleRouter = r;
+export default roleRouter;

@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String     @id @default(uuid())
+  full_name       String
+  email           String     @unique
+  password        String?
+  status          Boolean    @default(false)
+  email_verified  Boolean    @default(false)
+  avatar          String?
+  reset_token     String?
+  reset_token_exp DateTime?
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @default(now()) @updatedAt
+  UserRole        UserRole[]
+}
+
+model UserRole {
+  id        String  @id @default(uuid())
+  role_id   String
+  user_id   String
+  is_active Boolean @default(true)
+  role      Role    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id         String     @id @default(uuid())
+  code       String     @unique
+  name       String
+  is_active  Boolean?   @default(true)
+  user_role  UserRole[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now()) @updatedAt
+}

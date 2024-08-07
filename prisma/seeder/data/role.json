@@ -1,0 +1,14 @@
+[
+  {
+    "code": "SDM",
+    "name": "Superadmin"
+  },
+  {
+    "code": "ADM",
+    "name": "Admin"
+  },
+  {
+    "code": "USR",
+    "name": "User"
+  }
+]

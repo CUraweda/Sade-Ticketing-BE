@@ -1,0 +1,31 @@
+[
+  {
+    "full_name": "Superadmin",
+    "email": "superadmin@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
+  },
+
+  {
+    "full_name": "Admin",
+    "email": "admin@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
+  },
+  {
+    "full_name": "User Satu",
+    "email": "user1@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
+  },
+  {
+    "full_name": "User Dua",
+    "email": "user2@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
+  }
+]
