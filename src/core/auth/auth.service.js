@@ -16,23 +16,28 @@ class AuthService extends BaseService {
       where: { email: payload.email },
       select: {
         ...this.include(userFields),
-        UserRole: {
+        user_roles: {
           select: {
             id: true,
             is_active: true,
-            role: true,
+            role: {
+              select: {
+                code: true,
+                name: true,
+              },
+            },
           },
         },
       },
     });
-    if (!user) throw new NotFound("User not found");
+    if (!user) throw new NotFound("Akun tidak ditemukan");
 
-    if (!user.status) throw new Forbidden("Account is currently inactive");
+    if (!user.status) throw new Forbidden("Akun saat ini sedang non-aktif");
 
     const pwValid = await bcrypt.compare(payload.password, user.password);
-    if (!pwValid) throw new BadRequest("Wrong password");
+    if (!pwValid) throw new BadRequest("Password tidak cocok");
 
-    const activeRole = user.UserRole.filter((ur) => ur.is_active);
+    const activeRole = user.user_roles.filter((ur) => ur.is_active);
 
     const [at, rt] = await Promise.all([
       jwt.sign(
