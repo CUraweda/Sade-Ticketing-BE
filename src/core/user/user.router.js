@@ -16,7 +16,9 @@ r.get(
 
 r.get("/show-one/:id", controller.findById);
 
-r.get("/show-one/:id", authMiddleware(), controller.me);
+r.get("/me", authMiddleware(), controller.me);
+
+r.get("/roles/:id", controller.findUserRoles);
 
 r.post(
   "/create",

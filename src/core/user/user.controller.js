@@ -39,6 +39,11 @@ class UserController extends BaseController {
     return this.ok(res, data, "User berhasil diperbarui");
   });
 
+  findUserRoles = this.wrapper(async (req, res) => {
+    const data = await this.#service.findUserRoles(req.params.id);
+    return this.ok(res, data, "Banyak Role User berhasil didapatkan ");
+  });
+
   assignRole = this.wrapper(async (req, res) => {
     const data = await this.#service.assignRole(req.params.id, req.body);
     return this.ok(res, data, "Berhasil menetapkan role User");

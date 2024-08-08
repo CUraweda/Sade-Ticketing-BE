@@ -72,6 +72,20 @@ class UserService extends BaseService {
     return data;
   };
 
+  findUserRoles = async (id) => {
+    const data = await this.db.userRole.findMany({
+      where: {
+        user_id: id
+      },
+      select: this.include([
+        "id",
+        "is_active",
+        "role"
+      ])
+    })
+    return data
+  }
+
   assignRole = async (id, payload) => {
     if (payload.filter((dat) => dat.is_active).length > 1)
       throw new BadRequest("Role aktif harus ada satu saja");
