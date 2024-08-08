@@ -45,6 +45,10 @@ class UserService extends BaseService {
         "avatar",
         "created_at",
         "updated_at",
+        "user_roles.id",
+        "user_roles.is_active",
+        "user_roles.role.code",
+        "user_roles.role.name",
       ]),
     });
     return data;

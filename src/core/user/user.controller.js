@@ -17,14 +17,14 @@ class UserController extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
-    if (!data) throw NotFound("User tidak ditemukan");
+    if (!data) throw new NotFound("User tidak ditemukan");
 
     return this.ok(res, data, "User berhasil didapatkan");
   });
 
   me = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.user.id);
-    if (!data) throw NotFound("Data user tidak ditemukan");
+    if (!data) throw new NotFound("Data user tidak ditemukan");
 
     return this.ok(res, data, "User berhasil didapatkan");
   });

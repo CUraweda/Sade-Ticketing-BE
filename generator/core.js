@@ -99,7 +99,7 @@ class ${name}Controller extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
-    if (!data) throw NotFound("${name} tidak ditemukan");
+    if (!data) throw new NotFound("${name} tidak ditemukan");
 
     return this.ok(res, data, "${name} berhasil didapatkan");
   });
