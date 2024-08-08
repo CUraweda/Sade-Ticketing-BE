@@ -1,10 +1,10 @@
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import BaseService from "../../base/service.base.js";
 import constant from "../../config/constant.js";
 import { prism } from "../../config/db.js";
 import { userFields } from "../../data/model-fields.js";
 import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 class AuthService extends BaseService {
   constructor() {
@@ -62,6 +62,14 @@ class AuthService extends BaseService {
         rt,
       },
     };
+  };
+  verifyToken = async (token, type) => {
+    try {
+      const payload = jwt.verify(token, type === "ACCESS" ? process.env.JWT_ACCESS_SECRET : process.env.JWT_REFRESH_SECRET);
+      return payload;
+    } catch (error) {
+      throw new Unauthorized("Invalid or expired token");
+    }
   };
 }
 
