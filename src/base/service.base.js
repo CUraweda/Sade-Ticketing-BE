@@ -31,12 +31,17 @@ class BaseService {
     // search
     let likes = {};
     if (query && query.search) {
+      const ors = [];
       query.search.split("+").forEach((q) => {
         const [col, val] = q.split(":");
-        likes[col] = {
-          startsWith: val,
-        };
+        ors.push({
+          [col]: {
+            startsWith: val,
+          },
+        });
       });
+
+      likes["OR"] = ors;
     }
 
     // in
