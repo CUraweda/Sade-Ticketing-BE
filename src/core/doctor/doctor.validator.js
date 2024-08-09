@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { relationExist } from "../../base/validator.base";
+import { relationExist } from "../../base/validator.base.js";
 
 export const doctorCategory = ["TERAPIS", "PSIKOLOG", "ASESOR"];
 
