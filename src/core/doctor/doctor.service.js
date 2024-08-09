@@ -8,7 +8,32 @@ class DoctorService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.doctorProfile.findMany({ ...q });
+    const data = await this.db.doctorProfile.findMany({
+      ...q,
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        category: true,
+        location: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        specialisms: {
+          select: {
+            id: true,
+            specialism: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.doctorProfile.count({ where: q.where });
@@ -28,7 +53,10 @@ class DoctorService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.doctorProfile.update({ where: { id }, data: payload });
+    const data = await this.db.doctorProfile.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +66,4 @@ class DoctorService extends BaseService {
   };
 }
 
-export default DoctorService;  
+export default DoctorService;
