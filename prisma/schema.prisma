@@ -19,7 +19,7 @@ model User {
   reset_token_exp DateTime?
   created_at      DateTime   @default(now())
   updated_at      DateTime   @default(now()) @updatedAt
-  user_roles        UserRole[]
+  user_roles      UserRole[]
 }
 
 model UserRole {
@@ -36,7 +36,38 @@ model Role {
   code       String     @unique
   name       String
   is_active  Boolean?   @default(true)
-  user_roles  UserRole[]
+  user_roles UserRole[]
   created_at DateTime   @default(now())
   updated_at DateTime   @default(now()) @updatedAt
+}
+
+// data reference table
+model Location {
+  id               String             @id @default(uuid())
+  title            String
+  address          String?
+  note             String?
+  longitude        String?
+  latitude         String?
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @default(now()) @updatedAt
+  LocationWorkTime LocationWorkTime[]
+}
+
+model LocationWorkTime {
+  id          String    @id @default(uuid())
+  location_id String
+  location    Location  @relation(fields: [location_id], references: [id], onDelete: Cascade)
+  day         String
+  open        DateTime?
+  close       DateTime?
+}
+
+model BankAccount {
+  id       String  @id @default(uuid())
+  title    String
+  name     String
+  number   String
+  provider String
+  note     String?
 }
