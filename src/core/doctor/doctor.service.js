@@ -1,5 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { doctorProfileFields } from "../../data/model-fields.js";
 
 class DoctorService extends BaseService {
   constructor() {
@@ -43,7 +44,14 @@ class DoctorService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.doctorProfile.findUnique({ where: { id } });
+    const data = await this.db.doctorProfile.findUnique({
+      where: { id },
+      select: this.include([
+        ...doctorProfileFields,
+        "location.id",
+        "location.title",
+      ]),
+    });
     return data;
   };
 
@@ -62,6 +70,31 @@ class DoctorService extends BaseService {
 
   delete = async (id) => {
     const data = await this.db.doctorProfile.delete({ where: { id } });
+    return data;
+  };
+
+  findDoctorSpecialisms = async (id) => {
+    const data = await this.db.doctorSpecialism.findMany({
+      where: { doctor_id: id },
+      select: this.include(["id", "specialism"]),
+    });
+    return data;
+  };
+
+  assignSpecialisms = async (id, payload) => {
+    await this.db.doctorSpecialism.deleteMany({
+      where: {
+        doctor_id: id,
+      },
+    });
+
+    const data = await this.db.doctorSpecialism.createMany({
+      data: payload.map((dat) => ({
+        doctor_id: id,
+        specialism_id: dat,
+      })),
+    });
+
     return data;
   };
 }

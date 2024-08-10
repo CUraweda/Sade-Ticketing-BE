@@ -44,6 +44,9 @@ export const DoctorValidator = {
       .optional(),
     is_active: Joi.bool().default(true),
   }),
+  assignSpecialisms: Joi.array().items(
+    Joi.number().external(relationExist("specialism")).required()
+  ),
 };
 
 export default DoctorValidator;
