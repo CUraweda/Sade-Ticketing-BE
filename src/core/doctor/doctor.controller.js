@@ -46,9 +46,19 @@ class DoctorController extends BaseController {
     );
   });
 
+  findServices = this.wrapper(async (req, res) => {
+    const data = await this.#service.findDoctorServices(req.params.id);
+    return this.ok(res, data, "Banyak layanan Doctor berhasil didapatkan ");
+  });
+
   assignSpecialism = this.wrapper(async (req, res) => {
     const data = await this.#service.assignSpecialisms(req.params.id, req.body);
     return this.ok(res, data, "Berhasil menetapkan spesialisasi Doctor");
+  });
+
+  assignServices = this.wrapper(async (req, res) => {
+    const data = await this.#service.assignServices(req.params.id, req.body);
+    return this.ok(res, data, "Berhasil menetapkan layanan-layanan Doctor");
   });
 }
 
