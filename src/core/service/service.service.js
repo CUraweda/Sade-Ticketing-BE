@@ -11,7 +11,12 @@ class ServiceService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.service.findMany({
       ...q,
-      select: this.include([...serviceFields, "category.id", "category.name"]),
+      select: this.include([
+        ...serviceFields,
+        "category.id",
+        "category.name",
+        "_count.doctors",
+      ]),
     });
 
     if (query.paginate) {
