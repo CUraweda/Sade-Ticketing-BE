@@ -11,3 +11,22 @@ export const userFields = [
   "created_at",
   "updated_at",
 ];
+
+export const doctorProfileFields = [
+  "id",
+  "user_id",
+  "location_id",
+  "category",
+  "title",
+  "first_name",
+  "last_name",
+  "email",
+  "phone_number",
+  "pob",
+  "dob",
+  "address",
+  "sex",
+  "is_active",
+  "created_at",
+  "updated_at",
+];
