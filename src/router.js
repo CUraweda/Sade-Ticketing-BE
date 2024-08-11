@@ -6,6 +6,8 @@ import doctorRouter from "./core/doctor/doctor.router.js";
 import specialismRouter from "./core/specialism/specialism.router.js";
 import locationRouter from "./core/location/location.router.js";
 import doctorsessionRouter from "./core/doctorsession/doctorsession.router.js";
+import serviceRouter from "./core/service/service.router.js";
+import servicecategoryRouter from "./core/servicecategory/servicecategory.router.js";
 
 const r = Router();
 
@@ -16,6 +18,8 @@ r.use("/doctor", doctorRouter);
 r.use("/doctor-session", doctorsessionRouter);
 r.use("/specialism", specialismRouter);
 r.use("/location", locationRouter);
+r.use("/service", serviceRouter);
+r.use("/service-category", servicecategoryRouter);
 
 const appRouter = r;
 export default appRouter;
