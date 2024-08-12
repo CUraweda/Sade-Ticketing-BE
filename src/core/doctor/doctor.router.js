@@ -17,6 +17,8 @@ r.get("/show-one/:id", controller.findById);
 
 r.get("/specialisms/:id", controller.findSpecialisms);
 
+r.get("/services/:id", controller.findServices);
+
 r.post(
   "/create",
   validatorMiddleware({ body: validator.create }),
@@ -33,6 +35,12 @@ r.put(
   "/assign-specialisms/:id",
   validatorMiddleware({ body: validator.assignSpecialisms }),
   controller.assignSpecialism
+);
+
+r.put(
+  "/assign-services/:id",
+  validatorMiddleware({ body: validator.assignServices }),
+  controller.assignServices
 );
 
 r.delete("/delete/:id", controller.delete);

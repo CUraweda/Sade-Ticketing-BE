@@ -30,3 +30,30 @@ export const doctorProfileFields = [
   "created_at",
   "updated_at",
 ];
+
+export const serviceFields = [
+  "id",
+  "category_id",
+  "title",
+  "description",
+  "price",
+  "price_unit",
+  "duration",
+  "is_additional",
+  "is_active",
+  "created_at",
+  "updated_at",
+];
+
+export const doctorSessionFields = [
+  "id",
+  "doctor_id",
+  "service_id",
+  "date",
+  "time_start",
+  "time_end",
+  "note",
+  "is_locked",
+  "created_at",
+  "updated_at",
+];

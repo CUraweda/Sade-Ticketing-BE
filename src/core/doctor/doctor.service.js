@@ -81,6 +81,19 @@ class DoctorService extends BaseService {
     return data;
   };
 
+  findDoctorServices = async (id) => {
+    const data = await this.db.doctorService.findMany({
+      where: { doctor_id: id },
+      select: this.include([
+        "id",
+        "service.id",
+        "service.title",
+        "service.category.name",
+      ]),
+    });
+    return data;
+  };
+
   assignSpecialisms = async (id, payload) => {
     await this.db.doctorSpecialism.deleteMany({
       where: {
@@ -92,6 +105,23 @@ class DoctorService extends BaseService {
       data: payload.map((dat) => ({
         doctor_id: id,
         specialism_id: dat,
+      })),
+    });
+
+    return data;
+  };
+
+  assignServices = async (id, payload) => {
+    await this.db.doctorService.deleteMany({
+      where: {
+        doctor_id: id,
+      },
+    });
+
+    const data = await this.db.doctorService.createMany({
+      data: payload.map((dat) => ({
+        doctor_id: id,
+        service_id: dat,
       })),
     });
 

@@ -1,5 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { doctorSessionFields } from "../../data/model-fields.js";
 
 class doctorsessionService extends BaseService {
   constructor() {
@@ -8,7 +9,14 @@ class doctorsessionService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.doctorSession.findMany({ ...q });
+    const data = await this.db.doctorSession.findMany({
+      ...q,
+      select: this.include([
+        ...doctorSessionFields,
+        "service.id",
+        "service.title",
+      ]),
+    });
 
     if (query.paginate) {
       const countData = await this.db.doctorSession.count({ where: q.where });
@@ -18,7 +26,14 @@ class doctorsessionService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.doctorSession.findUnique({ where: { id } });
+    const data = await this.db.doctorSession.findUnique({
+      where: { id },
+      select: this.include([
+        ...doctorSessionFields,
+        "service.id",
+        "service.title",
+      ]),
+    });
     return data;
   };
 
@@ -28,7 +43,10 @@ class doctorsessionService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.doctorSession.update({ where: { id }, data: payload });
+    const data = await this.db.doctorSession.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +56,4 @@ class doctorsessionService extends BaseService {
   };
 }
 
-export default doctorsessionService;  
+export default doctorsessionService;

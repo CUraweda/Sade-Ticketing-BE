@@ -105,6 +105,7 @@ model DoctorProfile {
   user        User?              @relation(fields: [user_id], references: [id], onDelete: SetNull)
   specialisms DoctorSpecialism[]
   sessions    DoctorSession[]
+  services    DoctorService[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -121,14 +122,51 @@ model DoctorSpecialism {
 model DoctorSession {
   id         String   @id @default(uuid())
   doctor_id  String?
+  service_id String?
   date       DateTime
   time_start String
   time_end   String
   note       String?
   is_locked  Boolean  @default(false)
 
-  doctor DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  doctor  DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  service Service?       @relation(fields: [service_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServiceCategory {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  services    Service[]
+}
+
+model Service {
+  id            String  @id @default(uuid())
+  category_id   Int?
+  title         String
+  description   String?
+  price         Float
+  price_unit    String
+  duration      Int?
+  is_active     Boolean @default(true)
+  is_additional Boolean @default(false)
+
+  category ServiceCategory? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  doctors  DoctorService[]
+  sessions DoctorSession[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model DoctorService {
+  id         Int    @id @default(autoincrement())
+  service_id String
+  doctor_id  String
+
+  doctor  DoctorProfile @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  service Service       @relation(fields: [service_id], references: [id], onDelete: Cascade)
 }
