@@ -11,11 +11,12 @@ const r = Router(),
 
 r.get(
   "/show-all",
+  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
 
-r.get("/show-one/:id", controller.findById);
+r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",

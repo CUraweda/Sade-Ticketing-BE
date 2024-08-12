@@ -11,12 +11,18 @@ class clientController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    const data = await this.#service.findAll(
+      req.query,
+      req.user?.role_code == "USR" ? req.user.id : undefined
+    );
     return this.ok(res, data, "Banyak client berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {
-    const data = await this.#service.findById(req.params.id);
+    const data = await this.#service.findById(
+      req.params.id,
+      req.user.role_code == "USR" ? req.user.id : undefined
+    );
     if (!data) throw new NotFound("client tidak ditemukan");
 
     return this.ok(res, data, "client berhasil didapatkan");

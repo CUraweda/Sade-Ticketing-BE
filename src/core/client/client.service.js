@@ -6,19 +6,22 @@ class clientService extends BaseService {
     super(prism);
   }
 
-  findAll = async (query) => {
+  findAll = async (query, user_id) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.clientProfile.findMany({ ...q });
+    const where = { ...q.where, user_id };
+    const data = await this.db.clientProfile.findMany({ ...q, where });
 
     if (query.paginate) {
-      const countData = await this.db.clientProfile.count({ where: q.where });
+      const countData = await this.db.clientProfile.count({ where });
       return this.paginate(data, countData, q);
     }
     return data;
   };
 
-  findById = async (id) => {
-    const data = await this.db.clientProfile.findUnique({ where: { id } });
+  findById = async (id, user_id) => {
+    const data = await this.db.clientProfile.findUnique({
+      where: { id, user_id },
+    });
     return data;
   };
 
@@ -28,7 +31,10 @@ class clientService extends BaseService {
   };
 
   update = async (id, user_id, payload) => {
-    const data = await this.db.clientProfile.update({ where: { id, user_id }, data: payload });
+    const data = await this.db.clientProfile.update({
+      where: { id, user_id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +44,4 @@ class clientService extends BaseService {
   };
 }
 
-export default clientService;  
+export default clientService;
