@@ -122,13 +122,15 @@ model DoctorSpecialism {
 model DoctorSession {
   id         String   @id @default(uuid())
   doctor_id  String?
+  service_id String?
   date       DateTime
   time_start String
   time_end   String
   note       String?
   is_locked  Boolean  @default(false)
 
-  doctor DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  doctor  DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  service Service?       @relation(fields: [service_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -154,6 +156,7 @@ model Service {
 
   category ServiceCategory? @relation(fields: [category_id], references: [id], onDelete: SetNull)
   doctors  DoctorService[]
+  sessions DoctorSession[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

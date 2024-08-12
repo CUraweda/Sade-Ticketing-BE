@@ -44,3 +44,16 @@ export const serviceFields = [
   "created_at",
   "updated_at",
 ];
+
+export const doctorSessionFields = [
+  "id",
+  "doctor_id",
+  "service_id",
+  "date",
+  "time_start",
+  "time_end",
+  "note",
+  "is_locked",
+  "created_at",
+  "updated_at",
+];
