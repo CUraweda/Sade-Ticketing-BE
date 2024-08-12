@@ -21,10 +21,11 @@ model User {
   updated_at      DateTime        @default(now()) @updatedAt
   user_roles      UserRole[]
   doctors         DoctorProfile[]
+  profiles        ClientProfile[]
 }
 
 model UserRole {
-  id        String  @id @default(uuid())
+  id        Int     @id @default(autoincrement())
   role_id   String
   user_id   String
   is_active Boolean @default(true)
@@ -45,7 +46,7 @@ model Role {
 // data reference table
 model Location {
   id        Int     @id @default(autoincrement())
-  title     String
+  title     String  @unique
   address   String?
   note      String?
   longitude String?
@@ -70,7 +71,7 @@ model LocationWorkTime {
 
 model BankAccount {
   id       Int     @id @default(autoincrement())
-  title    String
+  title    String  @unique
   name     String
   number   String
   provider String
@@ -169,4 +170,29 @@ model DoctorService {
 
   doctor  DoctorProfile @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
   service Service       @relation(fields: [service_id], references: [id], onDelete: Cascade)
+}
+
+// client
+model ClientProfile {
+  id           String   @id @default(uuid())
+  user_id      String?
+  relation     String
+  category     String
+  first_name   String
+  last_name    String?
+  email        String?
+  phone_number String?
+  pob          String
+  dob          DateTime
+  address      String?
+  sex          String
+  blood_type   String?
+  ethnic       String?
+  nationality  String?
+  is_active    Boolean  @default(true)
+
+  user User? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }
