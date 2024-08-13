@@ -26,6 +26,9 @@ export const ServiceValidator = {
     is_active: Joi.bool().optional(),
     is_additional: Joi.bool().optional(),
   }),
+  setQuestionnaires: Joi.array().items(
+    Joi.string().external(relationExist("questionnaire")).required()
+  ),
 };
 
 export default ServiceValidator;

@@ -9,6 +9,8 @@ import doctorsessionRouter from "./core/doctorsession/doctorsession.router.js";
 import serviceRouter from "./core/service/service.router.js";
 import servicecategoryRouter from "./core/servicecategory/servicecategory.router.js";
 import clientRouter from "./core/client/client.router.js";
+import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
+import questionRouter from "./core/question/question.router.js";
 
 const r = Router();
 
@@ -22,6 +24,8 @@ r.use("/location", locationRouter);
 r.use("/service", serviceRouter);
 r.use("/service-category", servicecategoryRouter);
 r.use("/client", clientRouter);
+r.use("/questionnaire", questionnaireRouter);
+r.use("/question", questionRouter);
 
 const appRouter = r;
 export default appRouter;
