@@ -57,3 +57,21 @@ export const doctorSessionFields = [
   "created_at",
   "updated_at",
 ];
+
+export const questionFields = [
+  "id",
+  "questionnaire_id",
+  "code",
+  "section",
+  "label",
+  "name",
+  "hint",
+  "help",
+  "typ",
+  "min",
+  "max",
+  "file_typ",
+  "file_max_byte",
+  "other",
+  "required",
+];
