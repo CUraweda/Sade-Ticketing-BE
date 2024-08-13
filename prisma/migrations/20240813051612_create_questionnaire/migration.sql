@@ -40,6 +40,8 @@ CREATE TABLE `Question` (
     `section` VARCHAR(191) NULL,
     `label` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
+    `hint` VARCHAR(191) NULL,
+    `help` VARCHAR(191) NULL,
     `typ` VARCHAR(191) NOT NULL,
     `min` INTEGER NULL,
     `max` INTEGER NULL,

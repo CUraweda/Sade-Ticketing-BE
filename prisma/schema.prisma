@@ -247,6 +247,8 @@ model Question {
   section          String?
   label            String
   name             String
+  hint             String?
+  help             String?
   typ              String
   min              Int?
   max              Int?
