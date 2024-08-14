@@ -1,5 +1,9 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import {
+  questionAnswerFields,
+  questionFields,
+} from "../../data/model-fields.js";
 
 class QuestionnaireService extends BaseService {
   constructor() {
@@ -18,7 +22,16 @@ class QuestionnaireService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.questionnaire.findUnique({ where: { id } });
+    const data = await this.db.questionnaire.findUnique({
+      where: { id },
+      select: this.include([
+        "id",
+        "title",
+        "description",
+        ...questionFields.map((f) => "questions." + f),
+        "questions.options",
+      ]),
+    });
     return data;
   };
 
@@ -28,7 +41,10 @@ class QuestionnaireService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.questionnaire.update({ where: { id }, data: payload });
+    const data = await this.db.questionnaire.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -36,6 +52,50 @@ class QuestionnaireService extends BaseService {
     const data = await this.db.questionnaire.delete({ where: { id } });
     return data;
   };
+
+  findResponse = async (id, response_id) => {
+    const data = await this.db.questionnaireResponse.findFirst({
+      where: { id: response_id, questionnaire_id: id },
+      select: this.include([
+        "id",
+        "note",
+        "user_id",
+        "client_id",
+        "is_locked",
+        ...questionAnswerFields.map((f) => "answers." + f),
+        "answers.question",
+      ]),
+    });
+    return data;
+  };
+
+  checkResponseAuthor = async (id, response_id, user_id) => {
+    return await this.db.questionnaireResponse.count({
+      where: {
+        id: response_id,
+        questionnaire_id: id,
+        user_id,
+      },
+    });
+  };
+
+  saveResponse = async (response_id, payload = [], lock = false) => {
+    await this.db.questionAnswer.deleteMany({
+      where: { response_id },
+    });
+
+    const data = await this.db.questionAnswer.createMany({
+      data: payload.map((p) => ({ response_id, ...p })),
+    });
+
+    if (lock)
+      await this.db.questionnaireResponse.update({
+        where: { id: response_id },
+        data: { is_locked: true },
+      });
+
+    return data;
+  };
 }
 
-export default QuestionnaireService;  
+export default QuestionnaireService;

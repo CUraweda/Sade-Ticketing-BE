@@ -76,3 +76,12 @@ export const questionFields = [
   "other",
   "required",
 ];
+
+export const questionAnswerFields = [
+  "id",
+  "response_id",
+  "question_id",
+  "text",
+  "number",
+  "date",
+];

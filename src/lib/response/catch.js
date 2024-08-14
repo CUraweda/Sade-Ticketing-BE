@@ -49,7 +49,7 @@ class ServerError extends HttpError {
 const catchResponse = (err, req, res) => {
   let httpCode = err.http_code || 500,
     message = err.message || "Kesalahan server",
-    data = env.NODE_ENV == "development" ? err?.stack : undefined;
+    data = env.NODE_ENV == "development" ? err?.stack?.split("\n") : undefined;
 
   if (err.code == "P2003") {
     httpCode = httpStatus.UNPROCESSABLE_ENTITY;

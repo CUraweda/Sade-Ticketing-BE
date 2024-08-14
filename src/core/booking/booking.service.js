@@ -101,6 +101,22 @@ class BookingService extends BaseService {
 
     return data;
   };
+
+  findRequiredQuestionnaires = async (user_id, booking_id) => {
+    const data = this.db.questionnaireResponse.findMany({
+      where: {
+        user_id: user_id,
+        client: {
+          user_id,
+        },
+        booking_service: {
+          booking_id: booking_id,
+        },
+      },
+      select: this.include(["id", "questionnaire.id", "questionnaire.title"]),
+    });
+    return data;
+  };
 }
 
 export default BookingService;

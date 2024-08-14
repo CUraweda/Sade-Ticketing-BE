@@ -41,6 +41,14 @@ class BookingController extends BaseController {
     const data = await this.#service.book(req.user.id, req.body);
     return this.ok(res, data, "Booking layanan berhasil dibuat");
   });
+
+  findQuestionnaires = this.wrapper(async (req, res) => {
+    const data = await this.#service.findRequiredQuestionnaires(
+      req.user.id,
+      req.params.id
+    );
+    return this.ok(res, data, "Banyak kuesioner booking berhasil didapatkan");
+  });
 }
 
 export default BookingController;
