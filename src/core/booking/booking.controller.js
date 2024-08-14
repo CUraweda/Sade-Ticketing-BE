@@ -11,7 +11,12 @@ class BookingController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    const q = this.joinBrowseQuery(
+      req.query,
+      "where",
+      req.user.role_code == "USR" ? `profile.user_id:${req.user.id}` : ""
+    );
+    const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Booking berhasil didapatkan");
   });
 

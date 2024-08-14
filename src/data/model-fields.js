@@ -85,3 +85,12 @@ export const questionAnswerFields = [
   "number",
   "date",
 ];
+
+export const bookingFields = [
+  "id",
+  "profile_id",
+  "status",
+  "total",
+  "created_at",
+  "updated_at",
+];

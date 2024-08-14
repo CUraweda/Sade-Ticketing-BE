@@ -57,6 +57,11 @@ class BaseController {
       }
     };
   }
+
+  joinBrowseQuery = (query, field, colval) => {
+    query[field] = query[field] ? `${query[field]}+${colval}` : colval;
+    return query;
+  };
 }
 
 export default BaseController;

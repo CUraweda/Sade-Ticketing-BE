@@ -1,6 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { serviceFields } from "../../data/model-fields.js";
+import { bookingFields, serviceFields } from "../../data/model-fields.js";
 import { BadRequest } from "../../lib/response/catch.js";
 
 class BookingService extends BaseService {
@@ -10,7 +10,14 @@ class BookingService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.booking.findMany({ ...q });
+    const data = await this.db.booking.findMany({
+      ...q,
+      select: this.include([
+        ...bookingFields,
+        "booking_services.title",
+        "booking_services.category_name",
+      ]),
+    });
 
     if (query.paginate) {
       const countData = await this.db.booking.count({ where: q.where });
