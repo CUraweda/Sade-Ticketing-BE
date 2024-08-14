@@ -99,7 +99,7 @@ class BaseService {
     let pagination = {};
 
     if (query && query.limit && query.limit > 0) {
-      pagination["take"] = query.limit;
+      if (query.paginate) pagination["take"] = query.limit;
     }
 
     if (query && query.paginate) {

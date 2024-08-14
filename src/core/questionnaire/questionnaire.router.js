@@ -1,19 +1,17 @@
 import { Router } from "express";
 import validatorMiddleware from "../../middlewares/validator.middleware.js";
-import ServiceController from "./service.controller.js";
-import ServiceValidator from "./service.validator.js";
+import QuestionnaireController from "./questionnaire.controller.js";
+import QuestionnaireValidator from "./questionnaire.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 const r = Router(),
-  validator = ServiceValidator,
-  controller = new ServiceController();
+  validator = QuestionnaireValidator,
+  controller = new QuestionnaireController();
 
 r.get(
   "/show-all",
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
-
-r.get("/questionnaires/:id", controller.findQuestionnaires);
 
 r.get("/show-one/:id", controller.findById);
 
@@ -31,7 +29,5 @@ r.put(
 
 r.delete("/delete/:id", controller.delete);
 
-r.put("/set-questionnaires/:id", controller.setQuestionnaires);
-
-const serviceRouter = r;
-export default serviceRouter;
+const questionnaireRouter = r;
+export default questionnaireRouter;

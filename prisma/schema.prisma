@@ -8,20 +8,22 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(uuid())
+  id              String    @id @default(uuid())
   full_name       String
-  email           String          @unique
+  email           String    @unique
   password        String
-  status          Boolean         @default(false)
-  email_verified  Boolean         @default(false)
+  status          Boolean   @default(false)
+  email_verified  Boolean   @default(false)
   avatar          String?
   reset_token     String?
   reset_token_exp DateTime?
-  created_at      DateTime        @default(now())
-  updated_at      DateTime        @default(now()) @updatedAt
-  user_roles      UserRole[]
-  doctors         DoctorProfile[]
-  profiles        ClientProfile[]
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @default(now()) @updatedAt
+
+  user_roles              UserRole[]
+  doctors                 DoctorProfile[]
+  profiles                ClientProfile[]
+  questionnaire_responses QuestionnaireResponse[]
 }
 
 model UserRole {
@@ -155,9 +157,10 @@ model Service {
   is_active     Boolean @default(true)
   is_additional Boolean @default(false)
 
-  category ServiceCategory? @relation(fields: [category_id], references: [id], onDelete: SetNull)
-  doctors  DoctorService[]
-  sessions DoctorSession[]
+  category       ServiceCategory?       @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  doctors        DoctorService[]
+  sessions       DoctorSession[]
+  questionnaires ServiceQuestionnaire[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -191,7 +194,93 @@ model ClientProfile {
   nationality  String?
   is_active    Boolean  @default(true)
 
-  user User? @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  questionnaire_responses QuestionnaireResponse[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// kuesioner 
+model Questionnaire {
+  id          String  @id @default(uuid())
+  title       String  @unique
+  description String?
+
+  questions Question[]
+  responses QuestionnaireResponse[]
+  services  ServiceQuestionnaire[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServiceQuestionnaire {
+  id               Int    @id @default(autoincrement())
+  questionnaire_id String
+  service_id       String
+
+  questionnaire Questionnaire @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  service       Service       @relation(fields: [service_id], references: [id], onDelete: Cascade)
+}
+
+model QuestionnaireResponse {
+  id               String  @id @default(uuid())
+  note             String?
+  user_id          String?
+  client_id        String?
+  questionnaire_id String?
+
+  user          User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client        ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  answers       QuestionAnswer[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model Question {
+  id               Int     @id @default(autoincrement())
+  questionnaire_id String
+  code             String  @unique
+  section          String?
+  label            String
+  name             String
+  hint             String?
+  help             String?
+  typ              String
+  min              Int?
+  max              Int?
+  file_typ         String?
+  file_max_byte    Int?
+  other            Boolean @default(false)
+  required         Boolean @default(false)
+
+  questionnaire Questionnaire    @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  options       QuestionOption[]
+  answers       QuestionAnswer[]
+}
+
+model QuestionOption {
+  id          Int    @id @default(autoincrement())
+  question_id Int
+  label       String
+  value       String
+
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+}
+
+model QuestionAnswer {
+  id          Int       @id @default(autoincrement())
+  response_id String
+  question_id Int?
+  text        String?
+  number      Float?
+  date        DateTime?
+
+  response QuestionnaireResponse @relation(fields: [response_id], references: [id], onDelete: Cascade)
+  question Question?             @relation(fields: [question_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
