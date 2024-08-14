@@ -11,6 +11,7 @@ import servicecategoryRouter from "./core/servicecategory/servicecategory.router
 import clientRouter from "./core/client/client.router.js";
 import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
 import questionRouter from "./core/question/question.router.js";
+import bookingRouter from "./core/booking/booking.router.js";
 
 const r = Router();
 
@@ -26,6 +27,7 @@ r.use("/service-category", servicecategoryRouter);
 r.use("/client", clientRouter);
 r.use("/questionnaire", questionnaireRouter);
 r.use("/question", questionRouter);
+r.use("/book", bookingRouter);
 
 const appRouter = r;
 export default appRouter;

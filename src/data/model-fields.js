@@ -33,6 +33,7 @@ export const doctorProfileFields = [
 
 export const serviceFields = [
   "id",
+  "location_id",
   "category_id",
   "title",
   "description",

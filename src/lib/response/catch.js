@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import fs from "fs";
+import { env } from "process";
 
 class HttpError extends Error {
   constructor(message = "Kesalahan http tidak tertangani") {
@@ -48,7 +49,7 @@ class ServerError extends HttpError {
 const catchResponse = (err, req, res) => {
   let httpCode = err.http_code || 500,
     message = err.message || "Kesalahan server",
-    data = undefined;
+    data = env.NODE_ENV == "development" ? err?.stack : undefined;
 
   if (err.code == "P2003") {
     httpCode = httpStatus.UNPROCESSABLE_ENTITY;

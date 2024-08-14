@@ -23,7 +23,6 @@ CREATE TABLE `Booking` (
     `profile_id` VARCHAR(191) NULL,
     `status` VARCHAR(191) NOT NULL,
     `total` DOUBLE NOT NULL,
-    `note` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -37,6 +36,7 @@ CREATE TABLE `BookingService` (
     `service_id` VARCHAR(191) NULL,
     `category_id` INTEGER NULL,
     `location_id` INTEGER NULL,
+    `compliant` VARCHAR(191) NULL,
     `quantity` INTEGER NOT NULL,
     `category_name` VARCHAR(191) NULL,
     `location_name` VARCHAR(191) NULL,
@@ -145,7 +145,7 @@ ALTER TABLE `QuestionnaireResponse` ADD CONSTRAINT `QuestionnaireResponse_bookin
 ALTER TABLE `Booking` ADD CONSTRAINT `Booking_profile_id_fkey` FOREIGN KEY (`profile_id`) REFERENCES `ClientProfile`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_booking_id_fkey` FOREIGN KEY (`booking_id`) REFERENCES `Booking`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_booking_id_fkey` FOREIGN KEY (`booking_id`) REFERENCES `Booking`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
