@@ -27,7 +27,11 @@ class BookingService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.booking.findUnique({ where: { id } });
+    const data = await this.db.booking.findUnique({ where: { id }, select: this.include([
+      ...bookingFields,
+      "profile",
+      "booking_services"
+    ])});
     return data;
   };
 
