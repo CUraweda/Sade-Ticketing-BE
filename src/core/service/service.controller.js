@@ -46,6 +46,15 @@ class ServiceController extends BaseController {
     const data = await this.#service.setQuestionnaires(req.params.id, req.body);
     return this.ok(res, data, "Berhasil menetapkan kuesioner Service");
   });
+
+  findDoctors = this.wrapper(async (req, res) => {
+    const data = await this.#service.findDoctors(req.params.id);
+    return this.ok(
+      res,
+      data.map((d) => d.doctor),
+      "Doctor layanan berhasil didapatkan"
+    );
+  });
 }
 
 export default ServiceController;

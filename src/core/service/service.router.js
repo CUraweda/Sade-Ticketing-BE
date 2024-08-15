@@ -15,6 +15,8 @@ r.get(
 
 r.get("/questionnaires/:id", controller.findQuestionnaires);
 
+r.get("/doctors/:id", controller.findDoctors);
+
 r.get("/show-one/:id", controller.findById);
 
 r.post(
