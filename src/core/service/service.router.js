@@ -3,6 +3,7 @@ import validatorMiddleware from "../../middlewares/validator.middleware.js";
 import ServiceController from "./service.controller.js";
 import ServiceValidator from "./service.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 const r = Router(),
   validator = ServiceValidator,
   controller = new ServiceController();
@@ -15,7 +16,7 @@ r.get(
 
 r.get("/questionnaires/:id", controller.findQuestionnaires);
 
-r.get("/doctors/:id", controller.findDoctors);
+r.get("/doctors/:id", authMiddleware(), controller.findDoctors);
 
 r.get("/show-one/:id", controller.findById);
 

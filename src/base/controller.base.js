@@ -64,7 +64,7 @@ class BaseController {
   };
 
   /**
-   * @param {{}} data
+   * @param {any} data
    * @param {string[]} selects
    * @param {boolean} isPaginate
    */
@@ -78,13 +78,19 @@ class BaseController {
       return data;
     }
 
-    return Object.fromEntries(
-      Object.entries(data).filter(([key]) => !selects.includes(key))
-    );
+    return Array.isArray(data)
+      ? data.map((d) =>
+          Object.fromEntries(
+            Object.entries(d).filter(([key]) => !selects.includes(key))
+          )
+        )
+      : Object.fromEntries(
+          Object.entries(data).filter(([key]) => !selects.includes(key))
+        );
   };
 
   /**
-   * @param {{}} data
+   * @param {any} data
    * @param {string[]} selects
    * @param {boolean} isPaginate
    */
@@ -98,9 +104,15 @@ class BaseController {
       return data;
     }
 
-    return Object.fromEntries(
-      Object.entries(data).filter(([key]) => selects.includes(key))
-    );
+    return Array.isArray(data)
+      ? data.map((d) =>
+          Object.fromEntries(
+            Object.entries(d).filter(([key]) => selects.includes(key))
+          )
+        )
+      : Object.fromEntries(
+          Object.entries(data).filter(([key]) => selects.includes(key))
+        );
   };
 }
 
