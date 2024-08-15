@@ -1,5 +1,5 @@
 import BaseController from "../../base/controller.base.js";
-import { NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import QuestionnaireService from "./questionnaire.service.js";
 
 class QuestionnaireController extends BaseController {
@@ -35,6 +35,51 @@ class QuestionnaireController extends BaseController {
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     this.noContent(res, "Questionnaire berhasil dihapus");
+  });
+
+  findResponse = this.wrapper(async (req, res) => {
+    const data = await this.#service.findResponse(
+      req.params.id,
+      req.params.response_id
+    );
+    if (!data || (data && data.user_id != req.user.id))
+      throw new NotFound("Respon kuesioner tidak ditemukan");
+    return this.ok(res, data, "Respons kuesioner berhasil didapatkan");
+  });
+
+  saveResponseDraft = this.wrapper(async (req, res) => {
+    const check = await this.#service.checkResponseAuthor(
+      req.params.id,
+      req.params.response_id,
+      req.user.id
+    );
+    if (!check) throw new Forbidden("Akses terlarang");
+
+    const data = await this.#service.saveResponse(
+      req.params.response_id,
+      req.body
+    );
+    return this.ok(
+      res,
+      data,
+      "Respon kuesioner berhasil disimpan sebagai draf"
+    );
+  });
+
+  submitResponse = this.wrapper(async (req, res) => {
+    const check = await this.#service.checkResponseAuthor(
+      req.params.id,
+      req.params.response_id,
+      req.user.id
+    );
+    if (!check) throw new Forbidden("Akses terlarang");
+
+    const data = await this.#service.saveResponse(
+      req.params.response_id,
+      req.body,
+      true
+    );
+    return this.ok(res, data, "Respon final kuesioner berhasil disimpan");
   });
 }
 

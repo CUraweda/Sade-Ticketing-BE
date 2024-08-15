@@ -1,22 +1,27 @@
 import { Router } from "express";
 import validatorMiddleware from "../../middlewares/validator.middleware.js";
-import QuestionnaireController from "./questionnaire.controller.js";
-import QuestionnaireValidator from "./questionnaire.validator.js";
+import BookingController from "./booking.controller.js";
+import BookingValidator from "./booking.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 const r = Router(),
-  validator = QuestionnaireValidator,
-  controller = new QuestionnaireController();
+  validator = BookingValidator,
+  controller = new BookingController();
 
 r.get(
   "/show-all",
+  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
 
 r.get("/show-one/:id", controller.findById);
 
-r.get("/response/:id/:response_id", authMiddleware(), controller.findResponse);
+r.get(
+  "/questionnaires/:id",
+  authMiddleware(["USR"]),
+  controller.findQuestionnaires
+);
 
 r.post(
   "/create",
@@ -25,17 +30,10 @@ r.post(
 );
 
 r.post(
-  "/response/save-draft/:id/:response_id",
-  authMiddleware(),
-  validatorMiddleware({ body: validator.saveAnswers }),
-  controller.saveResponseDraft
-);
-
-r.post(
-  "/response/submit/:id/:response_id",
-  authMiddleware(),
-  validatorMiddleware({ body: validator.saveAnswers }),
-  controller.submitResponse
+  "/book",
+  authMiddleware(["USR"]),
+  validatorMiddleware({ body: validator.book }),
+  controller.book
 );
 
 r.put(
@@ -46,5 +44,5 @@ r.put(
 
 r.delete("/delete/:id", controller.delete);
 
-const questionnaireRouter = r;
-export default questionnaireRouter;
+const bookingRouter = r;
+export default bookingRouter;

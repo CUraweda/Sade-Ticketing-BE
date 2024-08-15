@@ -3,6 +3,7 @@ import { relationExist } from "../../base/validator.base.js";
 
 export const ServiceValidator = {
   create: Joi.object({
+    location_id: Joi.number().external(relationExist("location")).required(),
     category_id: Joi.number()
       .external(relationExist("serviceCategory"))
       .required(),
@@ -15,6 +16,7 @@ export const ServiceValidator = {
     is_additional: Joi.bool().default(false),
   }),
   update: Joi.object({
+    location_id: Joi.number().external(relationExist("location")).optional(),
     category_id: Joi.number()
       .external(relationExist("serviceCategory"))
       .optional(),

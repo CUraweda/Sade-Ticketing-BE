@@ -116,7 +116,7 @@ class ${name}Controller extends BaseController {
 
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
-    this.noContent(res, "${name} berhasil dihapus");
+    return this.noContent(res, "${name} berhasil dihapus");
   });
 }
 

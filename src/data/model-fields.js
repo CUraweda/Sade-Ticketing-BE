@@ -33,6 +33,7 @@ export const doctorProfileFields = [
 
 export const serviceFields = [
   "id",
+  "location_id",
   "category_id",
   "title",
   "description",
@@ -74,4 +75,22 @@ export const questionFields = [
   "file_max_byte",
   "other",
   "required",
+];
+
+export const questionAnswerFields = [
+  "id",
+  "response_id",
+  "question_id",
+  "text",
+  "number",
+  "date",
+];
+
+export const bookingFields = [
+  "id",
+  "profile_id",
+  "status",
+  "total",
+  "created_at",
+  "updated_at",
 ];

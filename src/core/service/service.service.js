@@ -15,6 +15,8 @@ class ServiceService extends BaseService {
         ...serviceFields,
         "category.id",
         "category.name",
+        "location.id",
+        "location.title",
         "_count.doctors",
       ]),
     });
