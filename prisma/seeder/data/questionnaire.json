@@ -4,10 +4,19 @@
     "questions": {
       "create": [
         {
+          "code": "q-lk-0",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama depan",
+          "name": "first_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
           "code": "q-lk-1",
           "section": "IDENTITAS ANAK",
-          "label": "Nama",
-          "name": "name",
+          "label": "Nama belakang",
+          "name": "last_name",
           "typ": "text",
           "max": 50,
           "required": true
