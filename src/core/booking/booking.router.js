@@ -36,6 +36,13 @@ r.post(
   controller.book
 );
 
+r.post(
+  "/book-schedule/:id",
+  authMiddleware(["USR"]),
+  validatorMiddleware({ body: validator.bookSchedule }),
+  controller.bookSchedule
+);
+
 r.put(
   "/update/:id",
   validatorMiddleware({ body: validator.update }),

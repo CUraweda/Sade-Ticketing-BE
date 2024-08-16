@@ -23,6 +23,16 @@ export const BookingValidator = {
       .min(1)
       .required(),
   }),
+  bookSchedule: Joi.array().items(
+    Joi.object({
+      id: Joi.string().required(),
+      quantity: Joi.number().min(1).required(),
+      compliant: Joi.string().max(100).required(),
+      sessions: Joi.array().items(
+        Joi.string().external(relationExist("doctorSession")).required()
+      ),
+    })
+  ),
 };
 
 export default BookingValidator;

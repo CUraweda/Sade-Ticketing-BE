@@ -330,6 +330,7 @@ model BookingService {
   duration      Int?
   is_active     Boolean @default(true)
   is_additional Boolean @default(false)
+  is_locked     Boolean @default(false)
 
   questionnaire_responses QuestionnaireResponse[]
   attachments             Attachment[]

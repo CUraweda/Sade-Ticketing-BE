@@ -50,6 +50,7 @@ class DoctorService extends BaseService {
         ...doctorProfileFields,
         "location.id",
         "location.title",
+        "specialisms.specialism.name",
       ]),
     });
     return data;
