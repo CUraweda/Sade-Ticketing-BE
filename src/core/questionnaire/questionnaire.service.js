@@ -62,6 +62,7 @@ class QuestionnaireService extends BaseService {
         "user_id",
         "client_id",
         "is_locked",
+        "client",
         ...questionAnswerFields.map((f) => "answers." + f),
         "answers.question",
       ]),

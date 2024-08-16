@@ -77,6 +77,16 @@ class ServiceService extends BaseService {
 
     return data;
   };
+
+  findDoctors = async (id) => {
+    const data = await this.db.doctorService.findMany({
+      where: {
+        service_id: id,
+      },
+      select: this.include(["doctor"]),
+    });
+    return data;
+  };
 }
 
 export default ServiceService;

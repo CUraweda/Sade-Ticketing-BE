@@ -31,6 +31,43 @@ export const doctorProfileFields = [
   "updated_at",
 ];
 
+export const doctorFields = {
+  fields: {
+    id: [],
+    user_id: [],
+    location_id: [],
+    category: [],
+    title: [],
+    first_name: [],
+    last_name: [],
+    email: ["USR"],
+    phone_number: ["USR"],
+    pob: ["USR"],
+    dob: ["USR"],
+    address: ["USR"],
+    sex: [],
+    is_active: [],
+    created_at: [],
+    updated_at: [],
+    dkeoakde: [],
+  },
+  relations: {
+    location: [],
+    specialisms: [],
+  },
+  get(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  full(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};
+
 export const serviceFields = [
   "id",
   "location_id",

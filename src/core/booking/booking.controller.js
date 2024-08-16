@@ -22,7 +22,13 @@ class BookingController extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
-    if (!data) throw new NotFound("Booking tidak ditemukan");
+    if (
+      !data ||
+      (req.user?.role_code == "USR"
+        ? data.profile?.user_id != req.user.id
+        : false)
+    )
+      throw new NotFound("Booking tidak ditemukan");
 
     return this.ok(res, data, "Booking berhasil didapatkan");
   });
@@ -45,6 +51,15 @@ class BookingController extends BaseController {
   book = this.wrapper(async (req, res) => {
     const data = await this.#service.book(req.user.id, req.body);
     return this.ok(res, data, "Booking layanan berhasil dibuat");
+  });
+
+  bookSchedule = this.wrapper(async (req, res) => {
+    const data = await this.#service.bookSchedule(
+      req.params.id,
+      req.user.id,
+      req.body
+    );
+    return this.ok(res, data, "Booking jadwal berhasil dibuat");
   });
 
   findQuestionnaires = this.wrapper(async (req, res) => {

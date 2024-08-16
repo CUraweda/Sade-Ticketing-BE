@@ -1,7 +1,7 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { bookingFields, serviceFields } from "../../data/model-fields.js";
-import { BadRequest } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden } from "../../lib/response/catch.js";
 
 class BookingService extends BaseService {
   constructor() {
@@ -27,7 +27,29 @@ class BookingService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.booking.findUnique({ where: { id } });
+    const data = await this.db.booking.findUnique({
+      where: { id },
+      select: {
+        ...this.include([...bookingFields, "profile"]),
+        booking_services: {
+          include: {
+            doctor_sessions: {
+              include: {
+                doctor: {
+                  select: this.include([
+                    "id",
+                    "first_name",
+                    "last_name",
+                    "title",
+                    "category",
+                  ]),
+                },
+              },
+            },
+          },
+        },
+      },
+    });
     return data;
   };
 
@@ -86,7 +108,7 @@ class BookingService extends BaseService {
             category_id: fs.category_id,
             location_id: fs.location_id,
             category_name: fs.category?.name,
-            location_name: fs.location?.name,
+            location_name: fs.location?.title,
             title: fs.title,
             description: fs.description,
             price: fs.price,
@@ -122,6 +144,52 @@ class BookingService extends BaseService {
       },
       select: this.include(["id", "questionnaire.id", "questionnaire.title"]),
     });
+    return data;
+  };
+
+  bookSchedule = async (id, user_id, payload) => {
+    // check owner
+    const chkOwner = await this.db.booking.count({
+      where: { id, profile: { user_id } },
+    });
+    if (!chkOwner) throw new Forbidden();
+
+    // new total price
+    let total = 0;
+
+    for (const bs of payload) {
+      // update quantity and lock
+      const serv = await this.db.bookingService.update({
+        where: { id: bs.id },
+        data: {
+          compliant: bs.compliant,
+          quantity: bs.quantity,
+          is_locked: true,
+        },
+      });
+
+      // recalculate sub total
+      total += serv.quantity * serv.price;
+
+      // update doctor session and Lock
+      await this.db.doctorSession.updateMany({
+        where: { id: { in: bs.sessions ?? [] } },
+        data: {
+          is_locked: true,
+          booking_service_id: serv.id,
+        },
+      });
+    }
+
+    // update booking total
+    const data = await this.db.booking.update({
+      where: { id },
+      data: {
+        total: total,
+        status: "pending_payment",
+      },
+    });
+
     return data;
   };
 }

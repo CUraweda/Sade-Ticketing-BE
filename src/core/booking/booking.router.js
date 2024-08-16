@@ -15,7 +15,7 @@ r.get(
   controller.findAll
 );
 
-r.get("/show-one/:id", controller.findById);
+r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.get(
   "/questionnaires/:id",
@@ -34,6 +34,13 @@ r.post(
   authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.book }),
   controller.book
+);
+
+r.post(
+  "/book-schedule/:id",
+  authMiddleware(["USR"]),
+  validatorMiddleware({ body: validator.bookSchedule }),
+  controller.bookSchedule
 );
 
 r.put(
