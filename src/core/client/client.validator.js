@@ -10,6 +10,7 @@ export const clientBlood = ["A", "B", "AB", "O"];
 
 export const clientValidator = {
   create: Joi.object({
+    code: Joi.string().length(6).optional(),
     relation: Joi.string()
       .valid(...clientRelation)
       .required(),
@@ -32,6 +33,7 @@ export const clientValidator = {
     is_active: Joi.bool().default(true),
   }),
   update: Joi.object({
+    code: Joi.string().length(6).optional(),
     relation: Joi.string()
       .valid(...clientRelation)
       .optional(),

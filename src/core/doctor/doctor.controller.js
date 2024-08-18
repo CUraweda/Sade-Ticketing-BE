@@ -1,4 +1,5 @@
 import BaseController from "../../base/controller.base.js";
+import { doctorFields } from "../../data/model-fields.js";
 import { NotFound } from "../../lib/response/catch.js";
 import DoctorService from "./doctor.service.js";
 
@@ -11,14 +12,21 @@ class DoctorController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    let data = await this.#service.findAll(req.query);
+    data = this.include(
+      data,
+      doctorFields.full(req.user.role_code),
+      req.query.paginate
+    );
+
     return this.ok(res, data, "Banyak Doctor berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {
-    const data = await this.#service.findById(req.params.id);
+    let data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound("Doctor tidak ditemukan");
 
+    data = this.include(data, doctorFields.full(req.user.role_code));
     return this.ok(res, data, "Doctor berhasil didapatkan");
   });
 

@@ -10,5 +10,17 @@
   {
     "code": "USR",
     "name": "User"
+  },
+  {
+    "code": "PSI",
+    "name": "Psikolog"
+  },
+  {
+    "code": "ASR",
+    "name": "Asesor"
+  },
+  {
+    "code": "TRS",
+    "name": "Terapis"
   }
 ]

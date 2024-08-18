@@ -57,6 +57,63 @@ class BaseController {
       }
     };
   }
+
+  joinBrowseQuery = (query, field, colval) => {
+    query[field] = query[field] ? `${query[field]}+${colval}` : colval;
+    return query;
+  };
+
+  /**
+   * @param {any} data
+   * @param {string[]} selects
+   * @param {boolean} isPaginate
+   */
+  exclude = (data, selects, isPaginate = false) => {
+    if (isPaginate) {
+      data["items"] = data["items"].map((dat) =>
+        Object.fromEntries(
+          Object.entries(dat).filter(([key]) => !selects.includes(key))
+        )
+      );
+      return data;
+    }
+
+    return Array.isArray(data)
+      ? data.map((d) =>
+          Object.fromEntries(
+            Object.entries(d).filter(([key]) => !selects.includes(key))
+          )
+        )
+      : Object.fromEntries(
+          Object.entries(data).filter(([key]) => !selects.includes(key))
+        );
+  };
+
+  /**
+   * @param {any} data
+   * @param {string[]} selects
+   * @param {boolean} isPaginate
+   */
+  include = (data, selects = [], isPaginate = false) => {
+    if (isPaginate) {
+      data["items"] = data["items"].map((dat) =>
+        Object.fromEntries(
+          Object.entries(dat).filter(([key]) => selects.includes(key))
+        )
+      );
+      return data;
+    }
+
+    return Array.isArray(data)
+      ? data.map((d) =>
+          Object.fromEntries(
+            Object.entries(d).filter(([key]) => selects.includes(key))
+          )
+        )
+      : Object.fromEntries(
+          Object.entries(data).filter(([key]) => selects.includes(key))
+        );
+  };
 }
 
 export default BaseController;

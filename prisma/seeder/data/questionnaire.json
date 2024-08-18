@@ -1,0 +1,454 @@
+[
+  {
+    "title": "Lingkungan Kehidupan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-0",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama depan",
+          "name": "first_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-1",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama belakang",
+          "name": "last_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2",
+          "section": "IDENTITAS ANAK",
+          "label": "Jenis kelamin",
+          "name": "sex",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Perempuan",
+                "value": "P"
+              },
+              {
+                "label": "Laki-laki",
+                "value": "L"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3",
+          "section": "IDENTITAS ANAK",
+          "label": "Tempat lahir",
+          "name": "pob",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-4",
+          "section": "IDENTITAS ANAK",
+          "label": "Tanggal lahir",
+          "name": "dob",
+          "typ": "date",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-5",
+          "section": "IDENTITAS ANAK",
+          "label": "Suku",
+          "name": "ethnic",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-6",
+          "section": "IDENTITAS ANAK",
+          "label": "Alamat rumah",
+          "name": "address",
+          "typ": "textarea",
+          "max": 100,
+          "required": true
+        },
+        {
+          "code": "q-lk-7",
+          "section": "KEDUDUKAN DALAM KELUARGA",
+          "label": "Anak ke berapa?",
+          "name": "child_order",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-8",
+          "section": "KEDUDUKAN DALAM KELUARGA",
+          "label": "Dari berapa bersaudara?",
+          "name": "child_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-9",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Nama",
+          "name": "father_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-10",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Usia",
+          "name": "father_age",
+          "hint": "Bila sudah meninggal, tuliskan tahun meninggal dan usia meninggal",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-11",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Suku",
+          "name": "father_ethnic",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-12",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Agama",
+          "name": "father_religion",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-13",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Anak ke berapa?",
+          "name": "father_child_order",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-14",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Dari berapa bersaudara?",
+          "name": "father_child_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-15",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Perkawinan ke berapa?",
+          "name": "father_married_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-16",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Perkawinan pertama di usia ke berapa? tahun",
+          "name": "father_first_married_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-17",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Pendidikan terakhir",
+          "name": "father_last_education",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-18",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Pekerjaan saat ini",
+          "name": "father_work",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-19",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Alamat rumah",
+          "name": "father_address",
+          "typ": "textarea",
+          "max": 100,
+          "required": true
+        },
+        {
+          "code": "q-lk-20",
+          "section": "IDENTITAS ORANGTUA/WALI - AYAH",
+          "label": "Keterangan lainnya (jika ada)",
+          "name": "father_info",
+          "typ": "textarea",
+          "max": 100
+        },
+        {
+          "code": "q-lk-21",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Nama",
+          "name": "mother_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-22",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Usia",
+          "name": "mother_age",
+          "hint": "Bila sudah meninggal, tuliskan tahun meninggal dan usia meninggal",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-23",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Suku",
+          "name": "mother_ethnic",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-24",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Agama",
+          "name": "mother_religion",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-25",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Anak ke berapa?",
+          "name": "mother_child_order",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-26",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Dari berapa bersaudara?",
+          "name": "mother_child_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-27",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Perkawinan ke berapa?",
+          "name": "mother_married_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-28",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Perkawinan pertama di usia ke berapa? tahun",
+          "name": "mother_first_married_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-29",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Pendidikan terakhir",
+          "name": "mother_last_education",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-30",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Pekerjaan saat ini",
+          "name": "mother_work",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-31",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Alamat rumah",
+          "name": "mother_address",
+          "typ": "textarea",
+          "max": 100,
+          "required": true
+        },
+        {
+          "code": "q-lk-32",
+          "section": "IDENTITAS ORANGTUA/WALI - IBU",
+          "label": "Keterangan lainnya (jika ada)",
+          "name": "mother_info",
+          "typ": "textarea",
+          "max": 100
+        },
+        {
+          "code": "q-lk-33",
+          "section": "MASALAH/KELUHAN",
+          "label": "Masalah dan keluhan",
+          "name": "problem_complaint",
+          "typ": "textarea",
+          "max": 100,
+          "required": true
+        },
+        {
+          "code": "q-lk-34",
+          "section": "KELAHIRAN",
+          "label": "Proses kehamilan",
+          "name": "pregnant_process",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-35",
+          "section": "KELAHIRAN",
+          "label": "Proses kelahiran",
+          "name": "birth_process",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-36",
+          "section": "KELAHIRAN",
+          "label": "Kondisi bawaan",
+          "name": "congenital_condition",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-37",
+          "section": "KELAHIRAN",
+          "label": "Penyakit yang pernah di derita",
+          "name": "suffered_disease",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-38",
+          "section": "PERKEMBANGAN ANAK - FISIK",
+          "label": "Merangkak di usia berapa?",
+          "name": "crawl_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-39",
+          "section": "PERKEMBANGAN ANAK - FISIK",
+          "label": "Duduk di usia berapa?",
+          "name": "sit_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-40",
+          "section": "PERKEMBANGAN ANAK - FISIK",
+          "label": "Jalan di usia berapa?",
+          "name": "walk_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-41",
+          "section": "PERKEMBANGAN ANAK - MENTAL BAHASA",
+          "label": "Babbling di usia berapa?",
+          "name": "babbling_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-42",
+          "section": "PERKEMBANGAN ANAK - MENTAL BAHASA",
+          "label": "Kata pertama di usia berapa?",
+          "name": "first_word_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-43",
+          "section": "PERKEMBANGAN ANAK - MENTAL BAHASA",
+          "label": "Mampu mengungkapkan kebutuhannya secara lisan di usia berapa?",
+          "name": "speech_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-44",
+          "section": "HUBUNGAN DENGAN KELUARGA",
+          "label": "Ayah dengan Ibu",
+          "name": "rel_father_mother",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-45",
+          "section": "HUBUNGAN DENGAN KELUARGA",
+          "label": "Ayah dengan anak",
+          "name": "rel_father_child",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-46",
+          "section": "HUBUNGAN DENGAN KELUARGA",
+          "label": "Ibu dengan anak",
+          "name": "rel_mother_child",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-47",
+          "section": "HUBUNGAN DENGAN KELUARGA",
+          "label": "Anak dengan anak",
+          "name": "rel_child_child",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-48",
+          "section": "HUBUNGAN DENGAN KELUARGA",
+          "label": "Keterangan lainnya (jika ada)",
+          "name": "rel_info",
+          "typ": "textarea",
+          "max": 100
+        },
+        {
+          "code": "q-lk-49",
+          "section": "RIWAYAT PENDIDIKAN FORMAL",
+          "label": "Keterangan guru (jika ada)",
+          "name": "teacher_info",
+          "typ": "textarea",
+          "max": 100
+        },
+        {
+          "code": "q-lk-50",
+          "section": "KETERANGAN KHUSUS LAINNYA",
+          "label": "Keterangan lainnya (jika ada)",
+          "name": "other_info",
+          "typ": "textarea",
+          "max": 100
+        }
+      ]
+    }
+  }
+]

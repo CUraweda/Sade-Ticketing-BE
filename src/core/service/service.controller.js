@@ -1,4 +1,5 @@
 import BaseController from "../../base/controller.base.js";
+import { doctorFields } from "../../data/model-fields.js";
 import { NotFound } from "../../lib/response/catch.js";
 import ServiceService from "./service.service.js";
 
@@ -35,6 +36,26 @@ class ServiceController extends BaseController {
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     this.noContent(res, "Service berhasil dihapus");
+  });
+
+  findQuestionnaires = this.wrapper(async (req, res) => {
+    const data = await this.#service.findQuestionnaires(req.params.id);
+    return this.ok(res, data, "Banyak Kuesioner Service berhasil didapatkan");
+  });
+
+  setQuestionnaires = this.wrapper(async (req, res) => {
+    const data = await this.#service.setQuestionnaires(req.params.id, req.body);
+    return this.ok(res, data, "Berhasil menetapkan kuesioner Service");
+  });
+
+  findDoctors = this.wrapper(async (req, res) => {
+    let data = await this.#service.findDoctors(req.params.id);
+    data = this.include(
+      data.map((d) => d.doctor),
+      doctorFields.full(req.user?.role_code)
+    );
+
+    return this.ok(res, data, "Doctor layanan berhasil didapatkan");
   });
 }
 

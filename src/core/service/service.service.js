@@ -15,6 +15,8 @@ class ServiceService extends BaseService {
         ...serviceFields,
         "category.id",
         "category.name",
+        "location.id",
+        "location.title",
         "_count.doctors",
       ]),
     });
@@ -43,6 +45,46 @@ class ServiceService extends BaseService {
 
   delete = async (id) => {
     const data = await this.db.service.delete({ where: { id } });
+    return data;
+  };
+
+  findQuestionnaires = async (id) => {
+    const data = await this.db.serviceQuestionnaire.findMany({
+      where: { service_id: id },
+      select: this.include([
+        "id",
+        "questionnaire.id",
+        "questionnaire.title",
+        "questionnaire.description",
+      ]),
+    });
+    return data;
+  };
+
+  setQuestionnaires = async (id, payload) => {
+    await this.db.serviceQuestionnaire.deleteMany({
+      where: {
+        service_id: id,
+      },
+    });
+
+    const data = await this.db.serviceQuestionnaire.createMany({
+      data: payload.map((dat) => ({
+        service_id: id,
+        questionnaire_id: dat,
+      })),
+    });
+
+    return data;
+  };
+
+  findDoctors = async (id) => {
+    const data = await this.db.doctorService.findMany({
+      where: {
+        service_id: id,
+      },
+      select: this.include(["doctor"]),
+    });
     return data;
   };
 }
