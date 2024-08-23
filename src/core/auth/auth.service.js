@@ -49,7 +49,7 @@ class AuthService extends BaseService {
     });
     if (!user) throw new NotFound("Akun tidak ditemukan");
 
-    if (!user.status) throw new Forbidden("Akun saat ini sedang non-aktif");
+    if (!user.status) throw new Forbidden("Akun saat ini sedang non-aktif atau belum melakukan verifikasi email");
 
     const pwValid = await bcrypt.compare(payload.password, user.password);
     if (!pwValid) throw new BadRequest("Password tidak cocok");
@@ -218,7 +218,7 @@ class AuthService extends BaseService {
     }
     
     const encryptedEmail = encrypt(payload.email); 
-    const url = `${process.env.WEB_URL}/verifikasi/${base64url.encode(encryptedEmail)}`;
+    const url = `${process.env.WEB_URL}/reset-pass/${base64url.encode(encryptedEmail)}`;
     const mailBody = './src/register.html';
 
     this.mailHelper.sendEmail(
