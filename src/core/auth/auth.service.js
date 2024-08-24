@@ -212,47 +212,63 @@ class AuthService extends BaseService {
   };
 
   forgotPassword = async (payload) => {
-    const verifyEmail = await this.db.user.findFirst({ where: { email: payload.email } });
-    if (!verifyEmail) {
+    const user = await this.db.user.findFirst({ where: { email: payload.email } });
+    if (!user) {
       throw new BadRequest("Akun tidak ditemukan");
     }
-    
-    const encryptedEmail = encrypt(payload.email); 
-    const url = `${process.env.WEB_URL}/verifikasi/${base64url.encode(encryptedEmail)}`;
+
+    const resetToken = jwt.sign({ uid: user.id }, process.env.JWT_RESET_SECRET, { expiresIn: '1h' });
+    const resetTokenExp = new Date(Date.now() + 60 * 60 * 1000);
+
+    await this.db.user.update({
+      where: { id: user.id },
+      data: { reset_token: resetToken, reset_token_exp: resetTokenExp }
+    });
+
+    const encryptedToken = base64url.encode(resetToken); 
+    const url = `${process.env.WEB_URL}/reset-password/${encryptedToken}`;
     const mailBody = './src/forgotEmail.html';
 
     this.mailHelper.sendEmail(
-        url,
-        process.env.EMAIL_ACCOUNT,
-        payload.email,
-        process.env.RESET_PASSWORD_SUBJECT,
-        mailBody
+      url,
+      process.env.EMAIL_ACCOUNT,
+      payload.email,
+      process.env.RESET_PASSWORD_SUBJECT,
+      mailBody
     );
 
     return "Email dikirim!"
   }
   resetPass = async (payload) => {
-    const encodedEmail = payload.encoded_email;
-    const encryptedEmail = base64url.decode(encodedEmail);
-    const decodedEmail = decrypt(encryptedEmail);
+    const encodedToken = payload.encoded_token;
+    const resetToken = base64url.decode(encodedToken);
 
-    const user = await this.db.user.findFirst({ where: { email: decodedEmail } });
+    let decoded;
+    try {
+      decoded = jwt.verify(resetToken, process.env.JWT_RESET_SECRET);
+    } catch (err) {
+      throw new BadRequest("Token tidak valid atau sudah kadaluarsa.");
+    }
 
-    if (!user) {
-        throw new BadRequest("User tidak ditemukan.");
+    const user = await this.db.user.findFirst({ where: { reset_token: resetToken } });
+
+    if (!user || user.reset_token_exp < new Date()) {
+      throw new BadRequest("Token tidak valid atau sudah kadaluarsa.");
     }
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(payload.new_password, salt);
 
-    const data = await this.db.user.update({
-      where: { email: decodedEmail},
-        data: {
-          password: hashedPassword
-        }
+    await this.db.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        reset_token: null,
+        reset_token_exp: null
+      }
     });
-    
-    return {data, message: "Password berhasil diupdate!"}
+
+    return { message: "Password berhasil diupdate!" }
   }
 };
 
