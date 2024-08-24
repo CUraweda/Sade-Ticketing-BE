@@ -49,7 +49,7 @@ class AuthService extends BaseService {
     });
     if (!user) throw new NotFound("Akun tidak ditemukan");
 
-    if (!user.status) throw new Forbidden("Akun saat ini sedang non-aktif");
+    if (!user.status) throw new Forbidden("Akun saat ini sedang non-aktif atau belum melakukan verifikasi email");
 
     const pwValid = await bcrypt.compare(payload.password, user.password);
     if (!pwValid) throw new BadRequest("Password tidak cocok");
@@ -147,9 +147,6 @@ class AuthService extends BaseService {
     if (verifyEmail) {
         throw new Forbidden("Akun dengan email telah digunakan");
     }
-    if (payload.password !== payload.confirm_password) {
-        throw new BadRequest("Kata sandi tidak cocok. Mohon pastikan bahwa kedua kata sandi yang Anda masukkan adalah sama");
-    }
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(payload.password, salt);
@@ -243,10 +240,6 @@ class AuthService extends BaseService {
 
     if (!user) {
         throw new BadRequest("User tidak ditemukan.");
-    }
-    
-    if (payload.new_password !== payload.confirm_password) {
-      throw new BadRequest("Kata sandi tidak cocok. Mohon pastikan bahwa kedua kata sandi yang Anda masukkan adalah sama");
     }
 
     const salt = await bcrypt.genSalt();
