@@ -222,13 +222,13 @@ class AuthService extends BaseService {
     
     const encryptedEmail = encrypt(payload.email); 
     const url = `${process.env.WEB_URL}/verifikasi/${base64url.encode(encryptedEmail)}`;
-    const mailBody = './src/register.html';
+    const mailBody = './src/forgotEmail.html';
 
     this.mailHelper.sendEmail(
         url,
         process.env.EMAIL_ACCOUNT,
         payload.email,
-        process.env.SUBJECT,
+        process.env.RESET_PASSWORD_SUBJECT,
         mailBody
     );
 
