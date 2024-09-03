@@ -450,5 +450,898 @@
         }
       ]
     }
+  },
+  {
+    "title": "Orang Tua Klinik Liliput Binar Depok",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-2-1",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama Lengkap Anak",
+          "name": "full_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-2",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama Panggilan Anak",
+          "name": "nickname",
+          "typ": "text",
+          "max": 50,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-3",
+          "section": "IDENTITAS ANAK",
+          "label": "Tempat lahir Anak",
+          "name": "pob",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-4",
+          "section": "IDENTITAS ANAK",
+          "label": "Tanggal lahir Anak",
+          "name": "dob",
+          "typ": "date",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-5",
+          "section": "IDENTITAS ANAK",
+          "label": "Jenis kelamin",
+          "name": "sex",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Perempuan",
+                "value": "P"
+              },
+              {
+                "label": "Laki-laki",
+                "value": "L"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-6",
+          "section": "IDENTITAS ANAK",
+          "label": "Alamat rumah",
+          "name": "address",
+          "typ": "textarea",
+          "max": 100,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-7",
+          "section": "IDENTITAS ANAK",
+          "label": "Telepon Rumah",
+          "name": "landline",
+          "typ": "number",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-8",
+          "section": "IDENTITAS ANAK",
+          "label": "Status Anak",
+          "name": "child_status",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Kandung",
+                "value": "K"
+              },
+              {
+                "label": "Tiri",
+                "value": "T"
+              },
+              {
+                "label": "Adopsi",
+                "value": "A"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-9",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Nama Ayah",
+          "name": "father_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-10",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Usia Ayah",
+          "name": "father_age",
+          "typ": "number",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-11",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Pendidikan Ayah",
+          "name": "father_last_education",
+          "typ": "text",
+          "max": 50,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-12",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Pekerjaan Ayah",
+          "name": "father_occupation",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-13",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Nomor Telepon Ayah",
+          "name": "father_phone_number",
+          "typ": "number",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-14",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Email Ayah",
+          "name": "father_email",
+          "typ": "email",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-15",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Agama Ayah",
+          "name": "father_religion",
+          "typ": "text",
+          "max": 50,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-16",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Nama Ibu",
+          "name": "mother_name",
+          "typ": "text",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-17",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Usia Ibu",
+          "name": "mother_age",
+          "typ": "number",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-18",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Pendidikan Ibu",
+          "name": "mother_last_education",
+          "typ": "text",
+          "max": 50,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-19",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Pekerjaan Ibu",
+          "name": "mother_occupation",
+          "typ": "text",
+          "max": 50,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-20",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Nomor Telepon Ibu",
+          "name": "mother_phone_number",
+          "typ": "number",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-21",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Email Ibu",
+          "name": "mother_email",
+          "typ": "email",
+          "max": 50,
+          "required": true
+        },
+        {
+          "code": "q-lk-2-22",
+          "section": "IDENTITAS ORANG TUA",
+          "label": "Agama Ibu",
+          "name": "mother_religion",
+          "typ": "text",
+          "max": 50,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-23",
+          "section": "RIWAYAT MEDIS ANAK",
+          "hint": "2010 / Dr. Gani / GDD / Terapi Wicara dan Sensori Integrasi / 3 bulan terapi",
+          "label": "Tahun / Nama Dokter atau Psikolog / Diagnosa / Saran & Terapi / Keterangan",
+          "name": "child_medical_story",
+          "typ": "text",
+          "max": 100,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-24",
+          "section": "SAUDARA KANDUNG",
+          "hint": "1.Dimas / Laki-laki / 10 tahun / Sekolah kelas 5 SD",
+          "label": "Nama Anak / Jenis Kelamin / Usia / Pekerjaan atau Sekolah / keterangan",
+          "name": "siblings",
+          "typ": "textarea",
+          "max": 1000,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-25",
+          "section": "KEKHAWATIRAN ORANG TUA",
+          "label": "Apa yang menjadi kekhawatiran orang tua terhadap kondisi anak saat ini?",
+          "name": "parental_concerns",
+          "typ": "text",
+          "max": 100,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-26",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Apakah Kehamilan ini diinginkan",
+          "name": "pregnancy_wanted",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "Y"
+              },
+              {
+                "label": "Tidak",
+                "value": "T"
+              },
+              {
+                "label": "Mungkin",
+                "value": "M"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-27",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Oleh siapakah pemeriksaan dilakukan?",
+          "name": "examination_conducted",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              {
+                "label": "Dokter",
+                "value": "doctor"
+              },
+              {
+                "label": "Bidan",
+                "value": "midwife"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-28",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Kebiasaan ibu saat hamil",
+          "name": "mother_habits_pregnancy",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              {
+                "label": "Merokok",
+                "value": "smoking"
+              },
+              {
+                "label": "Minum Alkohol",
+                "value": "drinking_alcohol"
+              },
+              {
+                "label": "Minum Obat-obatan",
+                "value": "taking_medicine"
+              },
+              {
+                "label": "Minum Jamu",
+                "value": "drinking_herbal_medicine"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-29",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "KB yang digunakan sebelum hamil",
+          "name": "birth_control",
+          "typ": "checkbox",
+          "required": false,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Kalender",
+                "value": "calendar"
+              },
+              {
+                "label": "Suntik",
+                "value": "injection"
+              },
+              {
+                "label": "IUD",
+                "value": "iud"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-30",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Penyakit Ibu saat hamil",
+          "name": "pregnancy_illnesses",
+          "typ": "checkbox",
+          "required": false,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Pendarahan", "value": "bleeding" },
+              { "label": "Diabetes Melitus", "value": "diabetes_mellitus" },
+              { "label": "Penyakit Jantung", "value": "heart_disease" },
+              { "label": "Kejang", "value": "seizure" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-31",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Masalah Psikologi saat hamil",
+          "name": "pregnancy_psychological_issues",
+          "typ": "text",
+          "max": 255,
+          "required": false
+        },
+        {
+          "code": "q-lk-2-32",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Usia Kehamilan (minggu)",
+          "name": "pregnancy_age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-2-33",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Jenis Persalinan",
+          "name": "delivery_type",
+          "typ": "checkbox",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Spontan", "value": "spontaneous" },
+              { "label": "SC atas indikasi", "value": "c_section" },
+              { "label": "Eks. Forceps", "value": "forceps" },
+              { "label": "Eks. Vakum", "value": "vacuum" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-34",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Persalinan ditolong oleh",
+          "name": "assisted_by",
+          "typ": "checkbox",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Dokter", "value": "doctor" },
+              { "label": "Bidan", "value": "midwife" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-35",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Kondisi anak saat lahir",
+          "name": "birth_condition",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Segera menangis", "value": "cry_immediately" },
+              { "label": "Tidak segera menangis", "value": "cry_delayed" },
+              { "label": "Tidak menangis", "value": "no_cry" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-36",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Kelainan setelah lahir",
+          "name": "birth_complications",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Kuning", "value": "jaundice" },
+              { "label": "Kejang", "value": "seizure" },
+              { "label": "Kebiruan", "value": "cyanosis" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-37",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Berat badan lahir (kg)",
+          "name": "birth_weight",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-38",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Panjang badan lahir (cm)",
+          "name": "birth_length",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-39",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Lingkar kepala (cm)",
+          "name": "head_circumference",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-40",
+          "section": "RIWAYAT PRINATAL",
+          "label": "Apgar Score",
+          "name": "apgar_score",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-41",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Riwayat penyakit yang diderita",
+          "name": "illness_history",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-42",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Apakah anak minum",
+          "name": "feeding_type",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "ASI saja", "value": "breastmilk_only" },
+              { "label": "ASI + susu formula", "value": "breastmilk_formula" },
+              { "label": "Susu formula saja", "value": "formula_only" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-43",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Refleks hisap",
+          "name": "sucking_reflex",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              { "label": "Baik", "value": "good" },
+              { "label": "Kurang", "value": "poor" },
+              { "label": "Tidak", "value": "none" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-44",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Kesulitan menelan",
+          "name": "swallowing_difficulty",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              { "label": "Ya", "value": "yes" },
+              { "label": "Tidak", "value": "no" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-45",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Mengunyah",
+          "name": "chewing_ability",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Telan", "value": "swallow" },
+              { "label": "Emut", "value": "suck" },
+              { "label": "Kunyah", "value": "chew" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-46",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Pola makan bubur (bulan)",
+          "name": "porridge_start_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-47",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Pola makan nasi tim (bulan)",
+          "name": "rice_porridge_start_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-48",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Pola makan nasi biasa (bulan)",
+          "name": "regular_rice_start_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-49",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Masalah buang air besar",
+          "name": "bowel_movement_issue",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Ya", "value": "yes" },
+              { "label": "Tidak", "value": "no" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-50",
+          "section": "RIWAYAT POSTNATAL",
+          "label": "Riwayat imunisasi",
+          "name": "immunization_history",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "BCG", "value": "bcg" },
+              { "label": "Polio", "value": "polio" },
+              { "label": "DPT/DT", "value": "dpt_dt" },
+              { "label": "Campak", "value": "measles" },
+              { "label": "MMR", "value": "mmr" },
+              { "label": "Hepatitis B", "value": "hepatitis_b" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-51",
+          "section": "RIWAYAT PERKEMBANGAN PSIKOMOTORIK",
+          "label": "Tengkurap (bulan)",
+          "name": "prone_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-52",
+          "section": "RIWAYAT PERKEMBANGAN PSIKOMOTORIK",
+          "label": "Balik terlentang (bulan)",
+          "name": "roll_over_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-53",
+          "section": "RIWAYAT PERKEMBANGAN PSIKOMOTORIK",
+          "label": "Duduk (bulan)",
+          "name": "sit_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-54",
+          "section": "RIWAYAT PERKEMBANGAN PSIKOMOTORIK",
+          "label": "Merangkak",
+          "name": "crawling",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Ya", "value": "yes" },
+              { "label": "Tidak", "value": "no" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-55",
+          "section": "RIWAYAT PERKEMBANGAN PSIKOMOTORIK",
+          "label": "Berjalan (bulan)",
+          "name": "walking_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-56",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Komunikasi dua arah",
+          "name": "communication_type",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Verbal", "value": "verbal" },
+              { "label": "Gesture", "value": "gesture" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-57",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Tersenyum untuk orang lain (umur)",
+          "name": "social_smile_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-58",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Tertawa bersuara (umur)",
+          "name": "laugh_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-59",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Meniru kata-kata (umur)",
+          "name": "imitate_words_age",
+          "typ": "number",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-60",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Kejelasan bicara",
+          "name": "speech_clarity",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Jelas", "value": "clear" },
+              { "label": "Tidak Jelas", "value": "unclear" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-61",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Pemahaman perintah",
+          "name": "command_understanding",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Paham", "value": "understand" },
+              { "label": "Tidak paham", "value": "not_understand" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-62",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Pemahaman kosa kata (Kata Benda, Kata Kerja)",
+          "name": "vocabulary_understanding",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Paham", "value": "understand" },
+              { "label": "Tidak Paham", "value": "not_understand" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-63",
+          "section": "RIWAYAT BAHASA DAN BICARA",
+          "label": "Irama Kelancaran",
+          "name": "speech_rhythm",
+          "typ": "checkbox",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Gagap", "value": "stutter" },
+              { "label": "Latah", "value": "echolalia" },
+              { "label": "Normal", "value": "normal" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-2-64",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 1",
+          "name": "activity_1",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-65",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 2",
+          "name": "activity_2",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-66",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 3",
+          "name": "activity_3",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-67",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 4",
+          "name": "activity_4",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-68",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 5",
+          "name": "activity_5",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-69",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 6",
+          "name": "activity_6",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-70",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 7",
+          "name": "activity_7",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-71",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 8",
+          "name": "activity_8",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-72",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 9",
+          "name": "activity_9",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-73",
+          "section": "JADWAL HARIAN ANAK",
+          "hint": "Jam 08.00 = Bangun tidur, mandi, makan",
+          "label": "Kegiatan 10",
+          "name": "activity_10",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-2-74",
+          "section": "IDENTITAS PENGISI",
+          "label": "Nama Pengisi",
+          "name": "filler_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-2-75",
+          "section": "IDENTITAS PENGISI",
+          "label": "Hubungan dengan Pasien",
+          "name": "relationship",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              { "label": "Orang Tua Kandung", "value": "orang_tua_kandung" },
+              {
+                "label": "Orang Tua Sambung / Tiri",
+                "value": "orang_tua_tiri"
+              },
+              { "label": "Kakek atau Nenek", "value": "kakek_nenek" },
+              {
+                "label": "Saudara Orang Tua (Om/Tante)",
+                "value": "saudara_orang_tua"
+              },
+              { "label": "Saudara (Kakak/Adik)", "value": "saudara_kandung" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-2-76",
+          "section": "PERSETUJUAN",
+          "label": "Pernyataan Kebenaran Data",
+          "name": "data_approval",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              { "label": "Saya setuju", "value": "setuju" },
+              { "label": "Saya tidak setuju", "value": "tidak_setuju" }
+            ]
+          }
+        }
+      ]
+    }
   }
 ]
