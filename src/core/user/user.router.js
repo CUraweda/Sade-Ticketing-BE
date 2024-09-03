@@ -16,6 +16,10 @@ r.get(
 
 r.get("/show-one/:id", controller.findById);
 
+r.get("/me", authMiddleware(), controller.me);
+
+r.get("/roles/:id", controller.findUserRoles);
+
 r.post(
   "/create",
   validatorMiddleware({ body: validator.create }),

@@ -19,24 +19,41 @@ class BaseService {
     if (query && query.where) {
       query.where.split("+").forEach((q) => {
         let [col, val] = q.split(":");
+
         if (isInteger(val)) {
           val = parseInt(val);
         } else if (isBoolean(val)) {
           val = val === "true";
         }
-        wheres[col] = val;
+
+        const keys = col.split(".");
+        let current = wheres;
+
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            current[key] = val;
+          } else {
+            current[key] = current[key] || {};
+            current = current[key];
+          }
+        });
       });
     }
 
     // search
     let likes = {};
     if (query && query.search) {
+      const ors = [];
       query.search.split("+").forEach((q) => {
         const [col, val] = q.split(":");
-        likes[col] = {
-          startsWith: val,
-        };
+        ors.push({
+          [col]: {
+            startsWith: val,
+          },
+        });
       });
+
+      likes["OR"] = ors;
     }
 
     // in
@@ -82,7 +99,7 @@ class BaseService {
     let pagination = {};
 
     if (query && query.limit && query.limit > 0) {
-      pagination["take"] = query.limit;
+      if (query.paginate) pagination["take"] = query.limit;
     }
 
     if (query && query.paginate) {

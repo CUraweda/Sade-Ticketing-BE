@@ -1,8 +1,9 @@
 import httpStatus from "http-status";
 import fs from "fs";
+import { env } from "process";
 
 class HttpError extends Error {
-  constructor(message = "Unhandled http error") {
+  constructor(message = "Kesalahan http tidak tertangani") {
     super(message);
     this.name = this.constructor.name;
     this.http_code = httpStatus.INTERNAL_SERVER_ERROR;
@@ -11,37 +12,35 @@ class HttpError extends Error {
 }
 
 class NotFound extends HttpError {
-  constructor(message = "Resource not found") {
+  constructor(message = "Data tidak ditemukan") {
     super(message);
     this.http_code = httpStatus.NOT_FOUND;
   }
 }
 
 class Unauthenticated extends HttpError {
-  constructor(message = "Please authenticate") {
+  constructor(message = "Harap authenticate") {
     super(message);
     this.http_code = httpStatus.UNAUTHORIZED;
   }
 }
 
 class BadRequest extends HttpError {
-  constructor(
-    message = "Your request could not be processed due to invalid data"
-  ) {
+  constructor(message = "Permintaan tidak dapat diproses") {
     super(message);
     this.http_code = httpStatus.BAD_REQUEST;
   }
 }
 
 class Forbidden extends HttpError {
-  constructor(message = "You are not allowed to access this resource") {
+  constructor(message = "Anda tidak memiliki akses") {
     super(message);
     this.http_code = httpStatus.FORBIDDEN;
   }
 }
 
 class ServerError extends HttpError {
-  constructor(message = "Internal server error") {
+  constructor(message = "Kesalahan server") {
     super(message);
     this.http_code = httpStatus.INTERNAL_SERVER_ERROR;
   }
@@ -49,13 +48,13 @@ class ServerError extends HttpError {
 
 const catchResponse = (err, req, res) => {
   let httpCode = err.http_code || 500,
-    message = err.message || "Internal server error",
-    data = undefined;
+    message = err.message || "Kesalahan server",
+    data = undefined,
+    stack = env.NODE_ENV == "development" ? err?.stack?.split("\n") : undefined;
 
   if (err.code == "P2003") {
     httpCode = httpStatus.UNPROCESSABLE_ENTITY;
-    message =
-      "Cannot modified the resource because it is related to other resource";
+    message = "Tidak dapat mengubah data karena terkait dengan data lain";
   } else if (err.name == "PrismaClientValidationError") {
     httpCode = httpStatus.BAD_REQUEST;
     if (err.message.includes("Unknown argument")) {
@@ -72,10 +71,10 @@ const catchResponse = (err, req, res) => {
     err.code == "P2025"
   ) {
     httpCode = httpStatus.NOT_FOUND;
-    message = "Resource to execute not found";
+    message = "Data tidak ditemukan";
   } else if (err.name == "ValidationError" && err.details) {
     httpCode = httpStatus.UNPROCESSABLE_ENTITY;
-    message = "Request validation error";
+    message = "Validasi permintaan gagal";
     data = err.details.map((det) => det.message);
   } else if (err instanceof HttpError) {
     httpCode = err.http_code;
@@ -112,6 +111,7 @@ const catchResponse = (err, req, res) => {
     status: httpCode > 199 && httpCode < 300,
     message: message,
     data: data,
+    stack: stack,
   });
 };
 

@@ -45,6 +45,10 @@ class UserService extends BaseService {
         "avatar",
         "created_at",
         "updated_at",
+        "user_roles.id",
+        "user_roles.is_active",
+        "user_roles.role.code",
+        "user_roles.role.name",
       ]),
     });
     return data;
@@ -68,9 +72,23 @@ class UserService extends BaseService {
     return data;
   };
 
+  findUserRoles = async (id) => {
+    const data = await this.db.userRole.findMany({
+      where: {
+        user_id: id
+      },
+      select: this.include([
+        "id",
+        "is_active",
+        "role"
+      ])
+    })
+    return data
+  }
+
   assignRole = async (id, payload) => {
     if (payload.filter((dat) => dat.is_active).length > 1)
-      throw new BadRequest("There must be only one active role");
+      throw new BadRequest("Role aktif harus ada satu saja");
 
     await this.db.userRole.deleteMany({
       where: {
