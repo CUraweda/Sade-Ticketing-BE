@@ -458,8 +458,8 @@
         {
           "code": "q-lk-2-1",
           "section": "IDENTITAS ANAK",
-          "label": "Nama Lengkap Anak",
-          "name": "full_name",
+          "label": "Nama depan Anak",
+          "name": "first_name",
           "typ": "text",
           "max": 50,
           "required": true
@@ -467,8 +467,8 @@
         {
           "code": "q-lk-2-2",
           "section": "IDENTITAS ANAK",
-          "label": "Nama Panggilan Anak",
-          "name": "nickname",
+          "label": "Nama belakang Anak",
+          "name": "last_name",
           "typ": "text",
           "max": 50,
           "required": false
@@ -1309,20 +1309,23 @@
           "label": "Hubungan dengan Pasien",
           "name": "relationship",
           "typ": "radio",
-          "required": true,
+          "required": false,
           "options": {
             "create": [
-              { "label": "Orang Tua Kandung", "value": "orang_tua_kandung" },
+              { "label": "Orang Tua Kandung", "value": "biological_parents" },
               {
                 "label": "Orang Tua Sambung / Tiri",
-                "value": "orang_tua_tiri"
+                "value": "stepparents"
               },
-              { "label": "Kakek atau Nenek", "value": "kakek_nenek" },
+              {
+                "label": "Kakek atau Nenek",
+                "value": "grandfather or grandmother"
+              },
               {
                 "label": "Saudara Orang Tua (Om/Tante)",
-                "value": "saudara_orang_tua"
+                "value": "parents_siblings"
               },
-              { "label": "Saudara (Kakak/Adik)", "value": "saudara_kandung" }
+              { "label": "Saudara (Kakak/Adik)", "value": "siblings" }
             ]
           },
           "other": true
@@ -1336,8 +1339,2094 @@
           "required": true,
           "options": {
             "create": [
-              { "label": "Saya setuju", "value": "setuju" },
-              { "label": "Saya tidak setuju", "value": "tidak_setuju" }
+              { "label": "Saya setuju", "value": "agree" },
+              { "label": "Saya tidak setuju", "value": "disagree" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Sensory Devensiveness",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-3-1",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama depan Anak",
+          "name": "first_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-3-2",
+          "section": "IDENTITAS ANAK",
+          "label": "Nama belakang Anak",
+          "name": "last_name",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-3-3",
+          "section": "IDENTITAS ANAK",
+          "label": "Tempat Lahir Anak",
+          "name": "birthplace",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-3-4",
+          "section": "IDENTITAS ANAK",
+          "label": "Tanggal Lahir Anak",
+          "name": "birthdate",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-3-5",
+          "section": "IDENTITAS ANAK",
+          "label": "Jenis Kelamin",
+          "name": "gender",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              { "label": "Laki-laki", "value": "male" },
+              { "label": "Perempuan", "value": "female" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-6",
+          "section": "IDENTITAS ANAK",
+          "label": "Alamat",
+          "name": "address",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-3-7",
+          "section": "IDENTITAS ANAK",
+          "label": "Telephone",
+          "name": "phone_number",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-3-8",
+          "section": "IDENTITAS ANAK",
+          "label": "Status Anak",
+          "name": "child_status",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Kandung", "value": "kandung" },
+              { "label": "Tiri", "value": "tiri" },
+              { "label": "Adopsi", "value": "adopsi" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-9",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Susah tidur waktu malam",
+          "name": "sleep_difficulty",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-10",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Gelisah atau sering bangun pada malam hari",
+          "name": "restlessness",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-11",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Banyak gerak saat tidur",
+          "name": "excessive_movement",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-12",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Sering mimpi buruk",
+          "name": "nightmares",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-13",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Ngelindur/bicara/tertawa saat tidur",
+          "name": "sleep_talking",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-14",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Berjalan pada saat tidur",
+          "name": "sleepwalking",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-15",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Sering mimpi saat tidur siang",
+          "name": "daytime_dreams",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-16",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Suka bersembunyi di pojok ruangan, bawah meja, bawah selimut, dll",
+          "name": "hiding_behavior",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-17",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Saat buang air besar suka bersembunyi di pojok ruang atau tempat tertentu",
+          "name": "hiding_during_bowel_movement",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-18",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Susah beradaptasi/takut/cemas di tempat baru",
+          "name": "difficulty_adapting",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-19",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Tidak tertarik pada lingkungan sekitar",
+          "name": "lack_of_interest_environment",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-20",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Perilaku impulsive dan tidak tertarik untuk mengeksplorasi lingkungan",
+          "name": "impulsive_behavior",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-21",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Sering berteriak bila sedang takut atau gembira",
+          "name": "excessive_vocalization",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-22",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Bereaksi berlebihan pada rasa takut, suhu panas atau dingin",
+          "name": "excessive_reaction",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Kesulitan fokus pada tugas",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-23",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Senang memegang benda kecil di tangan",
+          "name": "enjoy_small_objects",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-24",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Telapak tangan basah",
+          "name": "sweaty_palms",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-25",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Tidak tahan pada bau-bau tertentu",
+          "name": "sensitive_to_smell",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-26",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Tidak tahan pada rasa-rasa tertentu",
+          "name": "sensitive_to_taste",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-27",
+          "section": "TANDA HIGH AROUSAL",
+          "label": "Tidak tahan pada suara-suara tertentu",
+          "name": "sensitive_to_sound",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-28",
+          "section": "TANDA SENSORI - VISUAL",
+          "label": "Menghindari kontak mata",
+          "name": "avoid_eye_contact",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-29",
+          "section": "TANDA SENSORI - VISUAL",
+          "label": "Menghindari sinar terang, lampu kamera, sinar matahari",
+          "name": "avoid_bright_light",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-30",
+          "section": "TANDA SENSORI - VISUAL",
+          "label": "Menghindari menonton TV secara langsung, lebih memilih bayangan",
+          "name": "prefer_shadow_over_tv",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-31",
+          "section": "TANDA SENSORI - VISUAL",
+          "label": "Perhatian mudah teralih oleh stimulus penglihatan",
+          "name": "easily_distracted_by_visual_stimuli",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-32",
+          "section": "TANDA SENSORI - VISUAL",
+          "label": "Tidak suka di foto",
+          "name": "dislikes_being_photographed",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-33",
+          "section": "TANDA SENSORI - AUDITORY",
+          "label": "Bereaksi secara selektif terhadap stimulus pendengaran",
+          "name": "selective_auditory_response",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-34",
+          "section": "TANDA SENSORI - AUDITORY",
+          "label": "Tidak nyaman dengan suara yang datang tiba-tiba",
+          "name": "disturbed_by_sudden_noise",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-35",
+          "section": "TANDA SENSORI - AUDITORY",
+          "label": "Tidak nyaman berada di keramaian",
+          "name": "uncomfortable_in_crowds",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-36",
+          "section": "TANDA SENSORI - AUDITORY",
+          "label": "Sulit berkonsentrasi bila ada suara",
+          "name": "difficulty_concentrating_with_noise",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-37",
+          "section": "TANDA SENSORI - AUDITORY",
+          "label": "Sering menutup telinga untuk melindungi diri",
+          "name": "often_covers_ears",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-38",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Lebih senang memegang dari pada dipegang",
+          "name": "prefers_holding_than_being_held",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-39",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak suka dipeluk atau dicium",
+          "name": "dislikes_hugs_and_kisses",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-40",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman wajahnya dibersihkan / rambutnya dicuci",
+          "name": "uncomfortable_with_washing",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-41",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman rambutnya digunting",
+          "name": "uncomfortable_with_haircut",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-42",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman kukunya dipotong",
+          "name": "uncomfortable_with_nail_cutting",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-43",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman dengan label baju",
+          "name": "uncomfortable_with_clothing_labels",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-44",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak suka dengan tekstur kain atau pakaian tertentu",
+          "name": "dislikes_certain_textures",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-45",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Lebih suka memakai baju lama dari pada baju baru",
+          "name": "prefers_old_clothes",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-46",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman rambutnya basah saat berenang",
+          "name": "uncomfortable_with_wet_hair",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-47",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman memakai selimut saat tidur",
+          "name": "uncomfortable_with_blankets",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-48",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Menghindari tekstur kain atau permukaan tertentu",
+          "name": "avoids_certain_textures",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-49",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman tangan menjadi kotor",
+          "name": "uncomfortable_with_dirty_hands",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-50",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman berjalan tanpa alas kaki dipermukaan lantai yang tidak biasa",
+          "name": "uncomfortable_barefoot_on_unusual_surfaces",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-51",
+          "section": "TANDA SENSORI - TACTILE",
+          "label": "Tidak nyaman berada di tengah kerumunan",
+          "name": "uncomfortable_in_crowds",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-52",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Hanya suka makanan atau minuman tertentu",
+          "name": "prefers_specific_foods_or_drinks",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-53",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Pemilih makanan atau minuman dengan rasa/suhu tertentu",
+          "name": "picky_eater_or_drinker",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-54",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak suka mencoba makanan baru",
+          "name": "does_not_like_trying_new_foods",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-55",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Menolak makanan atau minuman dengan suhu tertentu",
+          "name": "rejects_certain_temperatures",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-56",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Makannya lambat",
+          "name": "eats_slowly",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-57",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak berselera makan",
+          "name": "lack_of_appetite",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-58",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak berselera makan di pagi hari",
+          "name": "lack_of_morning_appetite",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-59",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak mau mengunyah / makan langsung di telan",
+          "name": "avoids_chewing",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-60",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Susah menelan tablet atau pil",
+          "name": "difficulty_swallowing_pills",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-61",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Sering merasa mau muntah / eneg / gagging",
+          "name": "frequent_nausea",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-62",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak suka sekitar mulut kotor saat makan / sangat rapih",
+          "name": "very_neat_eater",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-63",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak nyaman giginya di sikat",
+          "name": "uncomfortable_brushing_teeth",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-64",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak nyaman gigi depannya di sikat",
+          "name": "uncomfortable_brushing_front_teeth",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-65",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Hanya mau pasta gigi dengan merk tertentu",
+          "name": "prefers_specific_toothpaste",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-66",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Tidak suka memasukkan benda ke mulut saat bayi",
+          "name": "disliked_putting_objects_in_mouth_as_baby",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-67",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Keluar air liur dari mulut tidak terkontrol",
+          "name": "excessive_drooling",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-68",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Menyimpan makanan dalam mulut / ngemut",
+          "name": "keeps_food_in_mouth",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-69",
+          "section": "TANDA SENSORI - ORAL",
+          "label": "Suka menyemburkan makanan keluar",
+          "name": "spits_out_food",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-70",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut atau ragu-ragu dengan jenis mainan tertentu: ayunan, seluncuran, dll",
+          "name": "fear_of_specific_toys",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-71",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut atau ragu-ragu mencoba mainan baru",
+          "name": "fear_of_trying_new_toys",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-72",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut naik mainan yang digerakkan oleh mesin atau baterai",
+          "name": "fear_of_motorized_toys",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-73",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut ketinggian",
+          "name": "fear_of_heights",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-74",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut pada benda / objek yang digantung: Jam, poster, lampu, dll",
+          "name": "fear_of_hanging_objects",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-75",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Mudah mual, pusing, muntah saat naik mobil / elevator",
+          "name": "motion_sickness",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-76",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut naik eskalator",
+          "name": "fear_of_escalators",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-77",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut dengan bayangan",
+          "name": "fear_of_shadows",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-78",
+          "section": "TANDA SENSORI - MOVEMENT",
+          "label": "Takut lantai dengan design / pola tertentu",
+          "name": "fear_of_certain_floor_patterns",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-79",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka membenturkan kepala",
+          "name": "head_banging",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-80",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka mengadu gigi / teeth grinding",
+          "name": "teeth_grinding",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-81",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka membuat suara-suara di tenggorokan / throaty sounds",
+          "name": "throaty_sounds",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-82",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka menggigit benda: pensil / baju / kuku",
+          "name": "mouthing_objects",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-83",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka mengunyah benda bukan makanan: kain atau benda lain",
+          "name": "chews_nonfood_items",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-84",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Banyak makan snack / ngemil",
+          "name": "frequent_snacking",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-85",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka mengerjap-ngerjap-kan mata",
+          "name": "frequent_blinking",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-86",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Jalan jinjit",
+          "name": "toe_walking",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-87",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka melompat dan melonjak-lonjak / jump and bounce",
+          "name": "jumping_and_bouncing",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-88",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka memanjat dan berayun / climb and swing",
+          "name": "climbing_and_swinging",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-89",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka bila di peluk erat-erat",
+          "name": "likes_tight_hugs",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-90",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka bila badannya di tekan",
+          "name": "likes_deep_pressure",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-91",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka melempar barang",
+          "name": "likes_to_throw_things",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-92",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka membuat bunyi dengan menekuk sendi-sendi jari",
+          "name": "cracking_joints",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-93",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka meremas atau mencubit orang yang di kenal",
+          "name": "squeezing_pinching_people",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-94",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka menarik rambut orang lain",
+          "name": "pulling_hair",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-95",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka memukul diri sendiri",
+          "name": "self_hitting",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-96",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka menggosok-gosokkan tangan pada permukaan atau tekstur tertentu",
+          "name": "rubbing_surfaces",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-97",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Banyak menggerakkan tangan dan kaki saat duduk",
+          "name": "excessive_movement",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-98",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka melihat benda berputar",
+          "name": "likes_spinning_objects",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-99",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka memutar benda",
+          "name": "likes_spinning_things",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-100",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka memutar badan sendiri",
+          "name": "likes_spinning_self",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-101",
+          "section": "TANDA SENSORI - SEEKING",
+          "label": "Suka naik elevator",
+          "name": "likes_elevators",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya, saat ini ada gejala",
+                "value": "current_symptoms"
+              },
+              { "label": "Tidak ditemukan gejala", "value": "no_symptoms" },
+              {
+                "label": "Ya, gejala ditemukan dimasa lalu",
+                "value": "past_symptoms"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-3-102",
+          "section": "IDENTITAS PENGISI",
+          "label": "Nama Pengisi",
+          "name": "filler_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-3-103",
+          "section": "IDENTITAS PENGISI",
+          "label": "Hubungan dengan Pasien",
+          "name": "relationship",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              { "label": "Orang Tua Kandung", "value": "biological_parents" },
+              {
+                "label": "Orang Tua Sambung / Tiri",
+                "value": "stepparents"
+              },
+              {
+                "label": "Kakek atau Nenek",
+                "value": "grandfather or grandmother"
+              },
+              {
+                "label": "Saudara Orang Tua (Om/Tante)",
+                "value": "parents_siblings"
+              },
+              { "label": "Saudara (Kakak/Adik)", "value": "siblings" }
+            ]
+          },
+          "other": true
+        },
+        {
+          "code": "q-lk-3-104",
+          "section": "PERSETUJUAN",
+          "label": "Pernyataan Kebenaran Data",
+          "name": "data_approval",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              { "label": "Saya setuju", "value": "agree" },
+              { "label": "Saya tidak setuju", "value": "disagree" }
             ]
           }
         }
