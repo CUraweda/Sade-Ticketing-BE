@@ -27,5 +27,26 @@
     "password": "1234567",
     "status": true,
     "email_verified": true
+  },
+  {
+    "full_name": "Terapis",
+    "email": "terapis@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
+  },
+  {
+    "full_name": "Psikolog",
+    "email": "psikolog@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
+  },
+  {
+    "full_name": "Asesor",
+    "email": "asesor@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true
   }
 ]
