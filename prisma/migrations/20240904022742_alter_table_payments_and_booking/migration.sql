@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `payments` ADD COLUMN `booking_id` VARCHAR(191) NOT NULL,
+ALTER TABLE `Payments` ADD COLUMN `booking_id` VARCHAR(191) NOT NULL,
     ADD COLUMN `expiry_date` DATETIME(3) NULL,
     ADD COLUMN `payment_date` DATETIME(3) NULL,
     ADD COLUMN `transaction_id` VARCHAR(191) NULL;

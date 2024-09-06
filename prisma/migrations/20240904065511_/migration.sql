@@ -5,10 +5,10 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `payments` DROP FOREIGN KEY `Payments_booking_id_fkey`;
+ALTER TABLE `Payments` DROP FOREIGN KEY `Payments_booking_id_fkey`;
 
 -- AlterTable
-ALTER TABLE `payments` DROP COLUMN `booking_id`;
+ALTER TABLE `Payments` DROP COLUMN `booking_id`;
 
 -- CreateTable
 CREATE TABLE `_BookingPayments` (
