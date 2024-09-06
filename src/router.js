@@ -12,6 +12,7 @@ import clientRouter from "./core/client/client.router.js";
 import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
 import questionRouter from "./core/question/question.router.js";
 import bookingRouter from "./core/booking/booking.router.js";
+import paymentsRouter from "./core/payments/payments.router.js";
 
 const r = Router();
 
@@ -28,6 +29,7 @@ r.use("/client", clientRouter);
 r.use("/questionnaire", questionnaireRouter);
 r.use("/question", questionRouter);
 r.use("/book", bookingRouter);
+r.use("/payment", paymentsRouter);
 
 const appRouter = r;
 export default appRouter;

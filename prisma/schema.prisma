@@ -46,7 +46,6 @@ model Role {
   updated_at DateTime   @default(now()) @updatedAt
 }
 
-// data reference table
 model Location {
   id        Int     @id @default(autoincrement())
   title     String  @unique
@@ -87,8 +86,6 @@ model Specialism {
   name    String
   doctors DoctorSpecialism[]
 }
-
-// end: data reference table
 
 model DoctorProfile {
   id           String    @id @default(uuid())
@@ -182,7 +179,6 @@ model DoctorService {
   service Service       @relation(fields: [service_id], references: [id], onDelete: Cascade)
 }
 
-// client
 model ClientProfile {
   id           String   @id @default(uuid())
   code         String?  @unique
@@ -210,7 +206,6 @@ model ClientProfile {
   updated_at DateTime @default(now()) @updatedAt
 }
 
-// kuesioner 
 model Questionnaire {
   id          String  @id @default(uuid())
   title       String  @unique
@@ -298,7 +293,6 @@ model QuestionAnswer {
   updated_at DateTime @default(now()) @updatedAt
 }
 
-// booking 
 model Booking {
   id         String  @id @default(uuid())
   profile_id String?
@@ -307,6 +301,7 @@ model Booking {
 
   profile          ClientProfile?   @relation(fields: [profile_id], references: [id], onDelete: SetNull)
   booking_services BookingService[]
+  payments    Payments[] @relation("BookingPayments")
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -344,7 +339,6 @@ model BookingService {
   updated_at DateTime @default(now()) @updatedAt
 }
 
-// attachment 
 model Attachment {
   id          String  @id @default(uuid())
   file_path   String
@@ -360,7 +354,6 @@ model Attachment {
   updated_at DateTime @default(now()) @updatedAt
 }
 
-// schedule 
 model Schedule {
   id         String   @id @default(uuid())
   start_date DateTime
@@ -376,14 +369,16 @@ model Schedule {
   updated_at DateTime @default(now()) @updatedAt
 }
 
-// money money
 model Payments {
-  id                 String  @id @default(uuid())
+  id                 String      @id @default(uuid())
   amount_paid        Float
-  payment_method     String // manual, ...xendit methods
-  payment_proof_path String? // if manual
-  status             String // unpaid, paid, settled, expired, active, stopped, completed
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+  payment_method     String
+  payment_proof_path String?
+  status             String
+  transaction_id     String?
+  payment_date       DateTime?
+  expiry_date        DateTime?
+  bookings           Booking[]   @relation("BookingPayments")
+  created_at         DateTime    @default(now())
+  updated_at         DateTime    @default(now()) @updatedAt
 }
