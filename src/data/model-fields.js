@@ -77,8 +77,6 @@ export const serviceFields = [
   "price",
   "price_unit",
   "duration",
-  "is_additional",
-  "is_active",
   "created_at",
   "updated_at",
 ];
