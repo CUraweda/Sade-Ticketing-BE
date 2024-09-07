@@ -145,10 +145,29 @@ export const questionAnswerFields = [
   "date",
 ];
 
-export const bookingFields = [
-  "id",
-  "status",
-  "total",
-  "created_at",
-  "updated_at",
-];
+export const bookingFields = {
+  fields: {
+    id: [],
+    profile_id: [],
+    user_id: [],
+    status: [],
+    total: [],
+  },
+  relations: {
+    profile: [],
+    user: [],
+    services: [],
+    payments: [],
+  },
+  getFields(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  withRelation(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};

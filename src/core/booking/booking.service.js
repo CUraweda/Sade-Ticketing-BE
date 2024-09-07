@@ -11,14 +11,20 @@ class BookingService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.booking.findMany({
-      ...q,
-      select: this.include([
-        ...bookingFields,
-        "booking_services.title",
-        "booking_services.category_name",
-      ]),
-    });
+    const data = (
+      await this.db.booking.findMany({
+        ...q,
+        select: this.include([
+          ...bookingFields.getFields(),
+          "services.service_data",
+        ]),
+      })
+    ).map((dat) => ({
+      ...dat,
+      services: dat.services.map((s) =>
+        this.extractServiceData(s.service_data)
+      ),
+    }));
 
     if (query.paginate) {
       const countData = await this.db.booking.count({ where: q.where });
@@ -108,7 +114,8 @@ class BookingService extends BaseService {
             category_id: fs.category_id,
             compliant,
             quantity: fs.quantity,
-            service_data: JSON.stringify(fs) ?? "",
+            service_data:
+              JSON.stringify(this.exclude(fs, ["questionnaires"])) ?? "",
             questionnaire_responses: {
               create: fs.questionnaires?.map((fsq) => ({
                 user_id,
@@ -122,6 +129,15 @@ class BookingService extends BaseService {
     });
 
     return data;
+  };
+
+  extractServiceData = (data, keys = []) => {
+    const json = JSON.parse(data);
+    return keys.length
+      ? Object.fromEntries(
+          Object.entries(json).filter(([key]) => !keys.includes(key))
+        )
+      : json;
   };
 
   checkBookingOwner = async (id, user_id) => {
