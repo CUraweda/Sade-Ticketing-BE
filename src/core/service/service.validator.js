@@ -13,7 +13,6 @@ export const ServiceValidator = {
     price_unit: Joi.string().required(),
     duration: Joi.number().optional(),
     is_active: Joi.bool().default(true),
-    is_additional: Joi.bool().default(false),
   }),
   update: Joi.object({
     location_id: Joi.number().external(relationExist("location")).optional(),
@@ -26,7 +25,6 @@ export const ServiceValidator = {
     price_unit: Joi.string().optional(),
     duration: Joi.number().optional(),
     is_active: Joi.bool().optional(),
-    is_additional: Joi.bool().optional(),
   }),
   setQuestionnaires: Joi.array().items(
     Joi.string().external(relationExist("questionnaire")).required()
