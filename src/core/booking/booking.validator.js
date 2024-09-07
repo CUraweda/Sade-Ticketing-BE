@@ -1,6 +1,15 @@
 import Joi from "joi";
 import { relationExist } from "../../base/validator.base.js";
 
+export const BookingStatus = {
+  DRAFT: "draft",
+  NEED_CONFIRM: "need_confirm",
+  NEED_PAYMENT: "need_payment",
+  NEED_APPROVAL: "need_approval",
+  ONGOING: "ongoing",
+  COMPLETED: "completed",
+};
+
 export const BookingValidator = {
   create: Joi.object({
     // no-data

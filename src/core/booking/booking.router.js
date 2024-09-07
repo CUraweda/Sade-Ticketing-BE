@@ -36,12 +36,14 @@ r.post(
   controller.book
 );
 
-r.post(
+r.put(
   "/book-schedule/:id",
   authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.bookSchedule }),
   controller.bookSchedule
 );
+
+r.put("/book-confirm/:id", authMiddleware(["USR"]));
 
 r.put(
   "/update/:id",

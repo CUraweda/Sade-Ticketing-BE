@@ -294,7 +294,7 @@ model BookingService {
   compliant String?
   quantity  Int
 
-  service_data String? // stringify json; service data on booking
+  service_data String? @db.LongText // stringify json; service data on booking
   is_locked    Boolean @default(false)
 
   questionnaire_responses QuestionnaireResponse[]

@@ -2,6 +2,7 @@ import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { bookingFields, serviceFields } from "../../data/model-fields.js";
 import { BadRequest, Forbidden } from "../../lib/response/catch.js";
+import { BookingStatus } from "./booking.validator.js";
 
 class BookingService extends BaseService {
   constructor() {
@@ -76,7 +77,7 @@ class BookingService extends BaseService {
         },
       },
       select: this.include([
-        ...serviceFields,
+        ...serviceFields.getFields(),
         "category.name",
         "location.title",
         "questionnaires",
@@ -99,28 +100,20 @@ class BookingService extends BaseService {
       data: {
         profile_id,
         total,
-        status: "draft",
-        booking_services: {
+        status: BookingStatus.DRAFT,
+        services: {
           create: findServices.map((fs) => ({
+            service_id: fs.id,
+            location_id: fs.location_id,
+            category_id: fs.category_id,
             compliant,
             quantity: fs.quantity,
-            service_id: fs.id,
-            category_id: fs.category_id,
-            location_id: fs.location_id,
-            category_name: fs.category?.name,
-            location_name: fs.location?.title,
-            title: fs.title,
-            description: fs.description,
-            price: fs.price,
-            price_unit: fs.price_unit,
-            duration: fs.duration,
-            is_active: fs.is_active,
-            is_additional: fs.is_additional,
+            service_data: JSON.stringify(fs) ?? "",
             questionnaire_responses: {
               create: fs.questionnaires?.map((fsq) => ({
                 user_id,
                 client_id: profile_id,
-                questionnaire_id: fsq.questionnaire_id,
+                questionnaire_id: fsq.id,
               })),
             },
           })),

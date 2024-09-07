@@ -147,7 +147,6 @@ export const questionAnswerFields = [
 
 export const bookingFields = [
   "id",
-  "profile_id",
   "status",
   "total",
   "created_at",
