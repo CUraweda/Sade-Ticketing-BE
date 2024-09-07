@@ -124,6 +124,13 @@ class BookingService extends BaseService {
     return data;
   };
 
+  checkBookingOwner = async (id, user_id) => {
+    const chkOwner = await this.db.booking.count({
+      where: { id, profile: { user_id } },
+    });
+    if (!chkOwner) throw new Forbidden();
+  };
+
   findRequiredQuestionnaires = async (user_id, booking_id) => {
     const data = this.db.questionnaireResponse.findMany({
       where: {
@@ -141,11 +148,7 @@ class BookingService extends BaseService {
   };
 
   bookSchedule = async (id, user_id, payload) => {
-    // check owner
-    const chkOwner = await this.db.booking.count({
-      where: { id, profile: { user_id } },
-    });
-    if (!chkOwner) throw new Forbidden();
+    await this.checkBookingOwner(id, user_id);
 
     // new total price
     let total = 0;
