@@ -1,6 +1,12 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { bookingFields, serviceFields } from "../../data/model-fields.js";
+import {
+  bookingFields,
+  bookingServiceFields,
+  doctorFields,
+  doctorSessionFields,
+  serviceFields,
+} from "../../data/model-fields.js";
 import { BadRequest, Forbidden } from "../../lib/response/catch.js";
 import { BookingStatus } from "./booking.validator.js";
 
@@ -37,19 +43,28 @@ class BookingService extends BaseService {
     const data = await this.db.booking.findUnique({
       where: { id },
       select: {
-        ...this.include([...bookingFields, "profile"]),
-        booking_services: {
-          include: {
+        ...this.include(bookingFields.getFields()),
+        profile: true,
+        payments: true,
+        services: {
+          select: {
+            ...this.include(bookingServiceFields.getFields()),
+            questionnaire_responses: {
+              select: {
+                id: true,
+                questionnaire_id: true,
+                questionnaire: {
+                  select: {
+                    title: true,
+                  },
+                },
+              },
+            },
             doctor_sessions: {
-              include: {
+              select: {
+                ...this.include(doctorSessionFields.getFields()),
                 doctor: {
-                  select: this.include([
-                    "id",
-                    "first_name",
-                    "last_name",
-                    "title",
-                    "category",
-                  ]),
+                  select: this.include(doctorFields.full("USR")),
                 },
               },
             },
