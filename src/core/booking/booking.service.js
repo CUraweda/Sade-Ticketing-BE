@@ -52,6 +52,7 @@ class BookingService extends BaseService {
             questionnaire_responses: {
               select: {
                 id: true,
+                is_locked: true,
                 questionnaire_id: true,
                 questionnaire: {
                   select: {
