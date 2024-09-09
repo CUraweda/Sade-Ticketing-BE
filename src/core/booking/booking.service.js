@@ -197,7 +197,8 @@ class BookingService extends BaseService {
       });
 
       // recalculate sub total
-      total += serv.quantity * serv.price;
+      const serviceData = this.extractServiceData(serv.service_data);
+      total += serviceData.quantity * serviceData.price;
 
       // update doctor session and Lock
       await this.db.doctorSession.updateMany({
@@ -213,8 +214,8 @@ class BookingService extends BaseService {
     const data = await this.db.booking.update({
       where: { id },
       data: {
+        status: BookingStatus.NEED_CONFIRM,
         total: total,
-        status: "pending_payment",
       },
     });
 
