@@ -25,6 +25,7 @@ model User {
   clients                 ClientProfile[]
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
+  user_file               UserFile[]
 }
 
 model UserRole {
@@ -354,4 +355,16 @@ model ServiceRecommendationItem {
   service                Service               @relation(fields: [service_id], references: [id], onDelete: Cascade)
   doctor                 DoctorProfile?        @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
   service_recommendation ServiceRecommendation @relation(fields: [service_recommendation_id], references: [id], onDelete: Cascade)
+}
+
+model UserFile {
+  id          String       @id @default(uuid())
+  filename    String
+  mimetype    String
+  size        Int
+  url         String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+  user_id     String
+  user        User      @relation(fields: [user_id], references: [id])
 }

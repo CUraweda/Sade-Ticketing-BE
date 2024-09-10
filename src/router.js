@@ -1,18 +1,19 @@
 import { Router } from "express";
-import roleRouter from "./core/role/role.router.js";
-import userRouter from "./core/user/user.router.js";
 import authRouter from "./core/auth/auth.router.js";
+import bookingRouter from "./core/booking/booking.router.js";
+import clientRouter from "./core/client/client.router.js";
 import doctorRouter from "./core/doctor/doctor.router.js";
-import specialismRouter from "./core/specialism/specialism.router.js";
-import locationRouter from "./core/location/location.router.js";
 import doctorsessionRouter from "./core/doctorsession/doctorsession.router.js";
+import locationRouter from "./core/location/location.router.js";
+import paymentsRouter from "./core/payments/payments.router.js";
+import questionRouter from "./core/question/question.router.js";
+import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
+import roleRouter from "./core/role/role.router.js";
 import serviceRouter from "./core/service/service.router.js";
 import servicecategoryRouter from "./core/servicecategory/servicecategory.router.js";
-import clientRouter from "./core/client/client.router.js";
-import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
-import questionRouter from "./core/question/question.router.js";
-import bookingRouter from "./core/booking/booking.router.js";
-import paymentsRouter from "./core/payments/payments.router.js";
+import specialismRouter from "./core/specialism/specialism.router.js";
+import userRouter from "./core/user/user.router.js";
+import userFile from "./core/userfile/userfile.router.js";
 
 const r = Router();
 
@@ -30,6 +31,7 @@ r.use("/questionnaire", questionnaireRouter);
 r.use("/question", questionRouter);
 r.use("/book", bookingRouter);
 r.use("/payment", paymentsRouter);
+r.use("/user-file", userFile);
 
 const appRouter = r;
 export default appRouter;
