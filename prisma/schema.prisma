@@ -64,11 +64,12 @@ model Location {
 
 // BANK ACCOUNT
 model BankAccount {
-  id             Int    @id @default(autoincrement())
-  title          String @unique
+  id             Int        @id @default(autoincrement())
+  title          String     @unique
   in_name        String
   account_number String
   provider       String
+  payments       Payments[]
 }
 
 // DOCTORS
@@ -315,10 +316,12 @@ model Payments {
   payment_proof_path String?
   status             String
   transaction_id     String?
+  bank_account_id    Int?
   payment_date       DateTime?
   expiry_date        DateTime?
 
-  bookings Booking[]
+  bookings     Booking[]
+  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
