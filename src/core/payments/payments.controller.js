@@ -85,6 +85,28 @@ class PaymentsController extends BaseController {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "Payments berhasil dihapus");
   });
+
+  downloadPaymentProof = this.wrapper(async (req, res) => {
+    const { id } = req.params;
+    const payment = await this.#service.findById(id);
+  
+    if (!payment || !payment.payment_proof_path) {
+      return this.notFound(res, "Payment proof not found");
+    }
+  
+    const filePath = payment.payment_proof_path.replace('../../../', '');
+  
+    if (!fs.existsSync(filePath)) {
+      return this.notFound(res, "File tidak ditemukan");
+    }
+  
+    return res.download(filePath, (err) => {
+      if (err) {
+        console.error("Error sending file:", err);
+        return this.serverError(res, "Gagal mendownload file");
+      }
+    });
+  });
 }
 
 export default PaymentsController;

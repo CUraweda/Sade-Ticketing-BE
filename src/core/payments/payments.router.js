@@ -43,5 +43,7 @@ r.put(
 
 r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
+r.get("/download/:id", controller.downloadPaymentProof);
+
 const paymentsRouter = r;
 export default paymentsRouter;
