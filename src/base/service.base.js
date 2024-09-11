@@ -1,6 +1,7 @@
 import fs from "fs";
-import { isBoolean, isInteger } from "../utils/type.js";
+import { isBoolean, isDateAble, isInteger } from "../utils/type.js";
 import { PrismaClient } from "@prisma/client";
+import moment from "moment";
 
 class BaseService {
   /**
@@ -86,6 +87,28 @@ class BaseService {
       });
     }
 
+    // gte
+    let gte = {};
+    if (query && query.gte) {
+      query.gte.split("+").forEach((q) => {
+        const [col, val] = q.split(":");
+        gte[col] = {
+          gte: isDateAble(val) ? moment(val).toDate() : val,
+        };
+      });
+    }
+
+    // lte
+    let lte = {};
+    if (query && query.lte) {
+      query.lte.split("+").forEach((q) => {
+        const [col, val] = q.split(":");
+        lte[col] = {
+          lte: isDateAble(val) ? moment(val).toDate() : val,
+        };
+      });
+    }
+
     // order by
     let orderBy = {};
     if (query && query.order) {
@@ -111,7 +134,7 @@ class BaseService {
 
     return {
       where: {
-        AND: [wheres, likes, in_, not_, isnull],
+        AND: [wheres, likes, in_, not_, isnull, gte, lte],
       },
       take: pagination["take"],
       skip: pagination["skip"],
