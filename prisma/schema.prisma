@@ -25,7 +25,7 @@ model User {
   clients                 ClientProfile[]
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
-  schedules               ScheduleParticipant[]
+  schedules               Schedule[]
 }
 
 model UserRole {
@@ -104,7 +104,7 @@ model DoctorProfile {
   services                     Service[]
   service_recommendation_items ServiceRecommendationItem[]
   service_recommendations      ServiceRecommendation[]
-  schedules                    ScheduleParticipant[]
+  schedules                    Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -190,7 +190,7 @@ model ClientProfile {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   service_recommendations ServiceRecommendation[]
-  schedules               ScheduleParticipant[]
+  schedules               Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -371,25 +371,11 @@ model Schedule {
   title       String
   description String?
   is_locked   Boolean  @default(false)
+  creator_id  String
 
-  participants ScheduleParticipant[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-}
-
-model ScheduleParticipant {
-  id          Int     @id @default(autoincrement())
-  user_id     String
-  schedule_id String
-  client_id   String?
-  doctor_id   String?
-  is_creator  Boolean @default(false)
-
-  schedule Schedule       @relation(fields: [schedule_id], references: [id], onDelete: Cascade)
-  user     User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  doctor   DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
-  client   ClientProfile? @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  clients ClientProfile[]
+  doctors DoctorProfile[]
+  creator User            @relation(fields: [creator_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

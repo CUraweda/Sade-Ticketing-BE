@@ -14,6 +14,7 @@ import questionRouter from "./core/question/question.router.js";
 import bookingRouter from "./core/booking/booking.router.js";
 import paymentsRouter from "./core/payments/payments.router.js";
 import bankaccountRouter from "./core/bankaccount/bankaccount.router.js";
+import scheduleRouter from "./core/schedule/schedule.router.js";
 
 const r = Router();
 
@@ -32,6 +33,7 @@ r.use("/question", questionRouter);
 r.use("/book", bookingRouter);
 r.use("/payment", paymentsRouter);
 r.use("/bank-account", bankaccountRouter);
+r.use("/schedule", scheduleRouter);
 
 const appRouter = r;
 export default appRouter;
