@@ -30,7 +30,9 @@ class ScheduleController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    const data = await this.#service.create(req.body, req.user.id);
+    let payload = req.body;
+    payload["creator_id"] = req.user.id;
+    const data = await this.#service.create(payload);
     return this.created(res, data, "Jadwal berhasil dibuat");
   });
 

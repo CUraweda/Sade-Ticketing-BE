@@ -27,9 +27,11 @@ class ScheduleService extends BaseService {
       include: this.include([
         "creator.avatar",
         "creator.full_name",
+        "doctors.id",
         "doctors.first_name",
         "doctors.last_name",
         "doctors.category",
+        "clients.id",
         "clients.first_name",
         "clients.last_name",
         "clients.category",
@@ -39,11 +41,17 @@ class ScheduleService extends BaseService {
     return data;
   };
 
-  create = async (payload, user_id) => {
+  create = async (payload) => {
+    const { doctors = [], clients = [], ...restPayload } = payload;
     const data = await this.db.schedule.create({
       data: {
-        ...payload,
-        creator_id: user_id,
+        ...restPayload,
+        doctors: {
+          connect: doctors.map((d) => ({ id: d })),
+        },
+        clients: {
+          connect: clients.map((c) => ({ id: c })),
+        },
       },
     });
     return data;

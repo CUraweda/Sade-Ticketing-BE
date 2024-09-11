@@ -7,6 +7,12 @@ export const ScheduleValidator = {
     end_date: Joi.date().greater(Joi.ref("start_date")).required(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
+    doctors: Joi.array()
+      .items(Joi.string().external(relationExist("doctorProfile")).required())
+      .optional(),
+    clients: Joi.array()
+      .items(Joi.string().external(relationExist("clientProfile")).required())
+      .optional(),
   }),
   update: Joi.object({
     start_date: Joi.date().optional(),
