@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import {
@@ -8,6 +9,10 @@ import {
   serviceFields,
 } from "../../data/model-fields.js";
 import { BadRequest, Forbidden } from "../../lib/response/catch.js";
+import {
+  PaymentMethod,
+  PaymentStatus,
+} from "../payments/payments.validator.js";
 import { BookingStatus } from "./booking.validator.js";
 
 class BookingService extends BaseService {
@@ -220,6 +225,32 @@ class BookingService extends BaseService {
     });
 
     return data;
+  };
+
+  bookingConfirm = async (id, payload) => {
+    const booking = await this.findById(id);
+
+    await this.db.payments.create({
+      data: {
+        amount_paid: booking.total,
+        payment_method: PaymentMethod.MANUAL_TRANSFER,
+        status: PaymentStatus.UNPAID,
+        bank_account_id: payload.bank_account_id,
+        expiry_date: moment().add({ day: 1 }).toDate(),
+        bookings: {
+          connect: {
+            id: booking.id,
+          },
+        },
+      },
+    });
+
+    await this.db.booking.update({
+      where: { id },
+      data: {
+        status: BookingStatus.NEED_PAYMENT,
+      },
+    });
   };
 }
 

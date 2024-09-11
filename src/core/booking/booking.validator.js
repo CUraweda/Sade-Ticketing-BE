@@ -42,6 +42,11 @@ export const BookingValidator = {
       ),
     })
   ),
+  bookingConfirm: Joi.object({
+    bank_account_id: Joi.number()
+      .external(relationExist("bankAccount"))
+      .required(),
+  }),
 };
 
 export default BookingValidator;

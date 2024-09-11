@@ -43,6 +43,13 @@ r.put(
   controller.bookSchedule
 );
 
+r.put(
+  "/book-confirm/:id",
+  authMiddleware(["USR"]),
+  validatorMiddleware({ body: validator.bookingConfirm }),
+  controller.bookingConfirm
+);
+
 r.put("/book-confirm/:id", authMiddleware(["USR"]));
 
 r.put(

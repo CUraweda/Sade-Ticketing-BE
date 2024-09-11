@@ -13,6 +13,7 @@ import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
 import questionRouter from "./core/question/question.router.js";
 import bookingRouter from "./core/booking/booking.router.js";
 import paymentsRouter from "./core/payments/payments.router.js";
+import bankaccountRouter from "./core/bankaccount/bankaccount.router.js";
 
 const r = Router();
 
@@ -30,6 +31,7 @@ r.use("/questionnaire", questionnaireRouter);
 r.use("/question", questionRouter);
 r.use("/book", bookingRouter);
 r.use("/payment", paymentsRouter);
+r.use("/bank-account", bankaccountRouter);
 
 const appRouter = r;
 export default appRouter;
