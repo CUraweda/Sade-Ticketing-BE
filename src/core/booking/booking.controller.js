@@ -21,14 +21,9 @@ class BookingController extends BaseController {
   });
 
   findById = this.wrapper(async (req, res) => {
+    if (req.user?.role_code == "USR")
+      await this.#service.checkBookingOwner(req.params.id, req.user.id);
     const data = await this.#service.findById(req.params.id);
-    if (
-      !data ||
-      (req.user?.role_code == "USR"
-        ? data.profile?.user_id != req.user.id
-        : false)
-    )
-      throw new NotFound("Booking tidak ditemukan");
 
     return this.ok(res, data, "Booking berhasil didapatkan");
   });
@@ -54,12 +49,15 @@ class BookingController extends BaseController {
   });
 
   bookSchedule = this.wrapper(async (req, res) => {
-    const data = await this.#service.bookSchedule(
-      req.params.id,
-      req.user.id,
-      req.body
-    );
+    await this.#service.checkBookingOwner(req.params.id, req.user.id);
+    const data = await this.#service.bookSchedule(req.params.id, req.body);
     return this.ok(res, data, "Booking jadwal berhasil dibuat");
+  });
+
+  bookingConfirm = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.params.id, req.user.id);
+    await this.#service.bookingConfirm(req.params.id, req.body);
+    return this.ok(res, null, "Booking berhasil dikonfirmasi");
   });
 
   findQuestionnaires = this.wrapper(async (req, res) => {

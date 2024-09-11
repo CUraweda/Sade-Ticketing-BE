@@ -12,7 +12,7 @@ class doctorsessionService extends BaseService {
     const data = await this.db.doctorSession.findMany({
       ...q,
       select: this.include([
-        ...doctorSessionFields,
+        ...doctorSessionFields.getFields(),
         "service.id",
         "service.title",
       ]),
@@ -29,7 +29,7 @@ class doctorsessionService extends BaseService {
     const data = await this.db.doctorSession.findUnique({
       where: { id },
       select: this.include([
-        ...doctorSessionFields,
+        ...doctorSessionFields.getFields(),
         "service.id",
         "service.title",
       ]),
