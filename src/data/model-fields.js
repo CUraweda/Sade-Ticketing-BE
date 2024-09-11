@@ -171,6 +171,7 @@ export const bookingFields = {
     user_id: [],
     status: [],
     total: [],
+    is_locked: [],
     created_at: [],
     updated_at: [],
   },

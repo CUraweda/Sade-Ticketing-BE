@@ -184,9 +184,7 @@ class BookingService extends BaseService {
     return data;
   };
 
-  bookSchedule = async (id, user_id, payload) => {
-    await this.checkBookingOwner(id, user_id);
-
+  bookSchedule = async (id, payload) => {
     // new total price
     let total = 0;
 
@@ -249,6 +247,7 @@ class BookingService extends BaseService {
       where: { id },
       data: {
         status: BookingStatus.NEED_PAYMENT,
+        is_locked: true,
       },
     });
   };

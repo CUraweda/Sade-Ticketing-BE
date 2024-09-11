@@ -49,6 +49,7 @@ class BookingController extends BaseController {
   });
 
   bookSchedule = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.params.id, req.user.id);
     const data = await this.#service.bookSchedule(
       req.params.id,
       req.user.id,

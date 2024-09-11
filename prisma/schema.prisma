@@ -275,6 +275,7 @@ model Booking {
   user_id    String?
   status     String // draft, pending_payment, waiting, ongoing, completed
   total      Float
+  is_locked  Boolean @default(false)
 
   profile  ClientProfile?   @relation(fields: [profile_id], references: [id], onDelete: SetNull)
   user     User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
