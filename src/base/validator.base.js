@@ -67,6 +67,8 @@ export const baseValidator = {
     in_: Joi.string().optional().custom(containColon),
     not_: Joi.string().optional().custom(containColon),
     isnull: Joi.string().optional(),
+    gte: Joi.string().optional().custom(containColon),
+    lte: Joi.string().optional().custom(containColon),
     paginate: Joi.boolean().optional().default(true),
     limit: Joi.number().optional().default(10),
     page: Joi.number().optional().default(1),

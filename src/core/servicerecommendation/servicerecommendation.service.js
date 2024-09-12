@@ -11,12 +11,20 @@ class ServiceRecommendationService extends BaseService {
     const data = await this.db.serviceRecommendation.findMany({
       ...q,
       include: {
-        service_recommendation_items: true,
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
       },
     });
 
     if (query.paginate) {
-      const countData = await this.db.serviceRecommendation.count({ where: q.where });
+      const countData = await this.db.serviceRecommendation.count({
+        where: q.where,
+      });
       return this.paginate(data, countData, q);
     }
     return data;
@@ -26,7 +34,13 @@ class ServiceRecommendationService extends BaseService {
     const data = await this.db.serviceRecommendation.findUnique({
       where: { id },
       include: {
-        service_recommendation_items: true,
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
       },
     });
     return data;
@@ -42,7 +56,13 @@ class ServiceRecommendationService extends BaseService {
         },
       },
       include: {
-        service_recommendation_items: true,
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
       },
     });
     return data;
@@ -60,7 +80,13 @@ class ServiceRecommendationService extends BaseService {
         },
       },
       include: {
-        service_recommendation_items: true,
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
       },
     });
     return data;

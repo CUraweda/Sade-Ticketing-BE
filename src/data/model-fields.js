@@ -34,7 +34,7 @@ export const doctorProfileFields = [
 export const doctorFields = {
   fields: {
     id: [],
-    user_id: [],
+    user_id: ["USR"],
     location_id: [],
     category: [],
     title: [],
@@ -49,7 +49,6 @@ export const doctorFields = {
     is_active: [],
     created_at: [],
     updated_at: [],
-    dkeoakde: [],
   },
   relations: {
     location: [],
@@ -68,33 +67,75 @@ export const doctorFields = {
   },
 };
 
-export const serviceFields = [
-  "id",
-  "location_id",
-  "category_id",
-  "title",
-  "description",
-  "price",
-  "price_unit",
-  "duration",
-  "is_additional",
-  "is_active",
-  "created_at",
-  "updated_at",
-];
+export const serviceFields = {
+  fields: {
+    id: [],
+    category_id: [],
+    location_id: [],
+    title: [],
+    description: [],
+    duration: [],
+    duration_description: [],
+    price: [],
+    price_unit: [],
+    price_minimum: [],
+    doctor_fee: [],
+    is_active: [],
+  },
+  relations: {
+    category: [],
+    location: [],
+    doctors: [],
+    sessions: [],
+    required_services: [],
+    prerequisite_For: [],
+    questionnaires: [],
+    bookings: [],
+  },
+  getFields(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  withRelation(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};
 
-export const doctorSessionFields = [
-  "id",
-  "doctor_id",
-  "service_id",
-  "date",
-  "time_start",
-  "time_end",
-  "note",
-  "is_locked",
-  "created_at",
-  "updated_at",
-];
+export const doctorSessionFields = {
+  fields: {
+    id: [],
+    doctor_id: [],
+    service_id: [],
+    date: [],
+    time_start: [],
+    time_end: [],
+    note: [],
+    booking_service_id: [],
+    is_locked: [],
+    created_at: [],
+    updated_at: [],
+  },
+  relations: {
+    doctor: [],
+    service: [],
+    booking_service: [],
+  },
+  getFields(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  withRelation(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};
 
 export const questionFields = [
   "id",
@@ -123,11 +164,97 @@ export const questionAnswerFields = [
   "date",
 ];
 
-export const bookingFields = [
-  "id",
-  "profile_id",
-  "status",
-  "total",
-  "created_at",
-  "updated_at",
-];
+export const bookingFields = {
+  fields: {
+    id: [],
+    profile_id: [],
+    user_id: [],
+    status: [],
+    total: [],
+    is_locked: [],
+    created_at: [],
+    updated_at: [],
+  },
+  relations: {
+    profile: [],
+    user: [],
+    services: [],
+    payments: [],
+  },
+  getFields(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  withRelation(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};
+
+export const bookingServiceFields = {
+  fields: {
+    id: [],
+    booking_id: [],
+    service_id: [],
+    category_id: [],
+    location_id: [],
+    compliant: [],
+    quantity: [],
+    service_data: [],
+    is_locked: [],
+    created_at: [],
+    updated_at: [],
+  },
+  relations: {
+    questionnaire_responses: [],
+    doctor_sessions: [],
+    booking: [],
+    service: [],
+  },
+  getFields(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  withRelation(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};
+
+export const QuestionnaireResponseFields = {
+  fields: {
+    id: [],
+    note: [],
+    user_id: [],
+    client_id: [],
+    questionnaire_id: [],
+    booking_service_id: [],
+    is_locked: [],
+    created_at: [],
+    updated_at: [],
+  },
+  relations: {
+    user: [],
+    client: [],
+    questionnaire: [],
+    booking_service: [],
+    answers: [],
+  },
+  getFields(role = "") {
+    return Object.keys(this.fields).filter((k) =>
+      role ? !this.fields[k].includes(role) : true
+    );
+  },
+  withRelation(role = "") {
+    const join = { ...this.fields, ...this.relations };
+    return Object.keys(join).filter((k) =>
+      role ? !join[k].includes(role) : true
+    );
+  },
+};

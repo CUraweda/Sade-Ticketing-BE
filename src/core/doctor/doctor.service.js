@@ -22,17 +22,7 @@ class DoctorService extends BaseService {
             title: true,
           },
         },
-        specialisms: {
-          select: {
-            id: true,
-            specialism: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
+        specialisms: true,
       },
     });
 
@@ -50,7 +40,7 @@ class DoctorService extends BaseService {
         ...doctorProfileFields,
         "location.id",
         "location.title",
-        "specialisms.specialism.name",
+        "specialisms",
       ]),
     });
     return data;
@@ -75,58 +65,58 @@ class DoctorService extends BaseService {
   };
 
   findDoctorSpecialisms = async (id) => {
-    const data = await this.db.doctorSpecialism.findMany({
-      where: { doctor_id: id },
-      select: this.include(["id", "specialism"]),
+    const data = await this.db.doctorProfile.findMany({
+      where: { id },
+      select: {
+        specialisms: true,
+      },
     });
-    return data;
+
+    return data
+      .map((d) => d.specialisms)
+      .flat()
+      .map((s) => ({ specialism: s }));
   };
 
   findDoctorServices = async (id) => {
-    const data = await this.db.doctorService.findMany({
-      where: { doctor_id: id },
+    const data = await this.db.doctorProfile.findMany({
+      where: { id },
       select: this.include([
-        "id",
-        "service.id",
-        "service.title",
-        "service.category.name",
+        "services.id",
+        "services.title",
+        "services.category.name",
       ]),
     });
-    return data;
+    return data
+      .map((d) => d.services)
+      .flat()
+      .map((s) => ({ service: s }));
   };
 
   assignSpecialisms = async (id, payload) => {
-    await this.db.doctorSpecialism.deleteMany({
-      where: {
-        doctor_id: id,
+    await this.db.doctorProfile.update({
+      where: { id },
+      data: {
+        specialisms: {
+          set: payload.map((id) => ({ id })),
+        },
       },
     });
 
-    const data = await this.db.doctorSpecialism.createMany({
-      data: payload.map((dat) => ({
-        doctor_id: id,
-        specialism_id: dat,
-      })),
-    });
-
-    return data;
+    return null;
   };
 
   assignServices = async (id, payload) => {
-    await this.db.doctorService.deleteMany({
-      where: {
-        doctor_id: id,
+    await this.db.doctorProfile.update({
+      where: { id },
+      data: {
+        services: {
+          set: payload.map((id) => ({ id })),
+        },
       },
     });
 
-    const data = await this.db.doctorService.createMany({
-      data: payload.map((dat) => ({
-        doctor_id: id,
-        service_id: dat,
-      })),
-    });
-
-    return data;
+    return null;
   };
 }
 

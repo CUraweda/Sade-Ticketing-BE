@@ -12,7 +12,7 @@ class ServiceService extends BaseService {
     const data = await this.db.service.findMany({
       ...q,
       select: this.include([
-        ...serviceFields,
+        ...serviceFields.getFields(),
         "category.id",
         "category.name",
         "location.id",
@@ -49,43 +49,40 @@ class ServiceService extends BaseService {
   };
 
   findQuestionnaires = async (id) => {
-    const data = await this.db.serviceQuestionnaire.findMany({
-      where: { service_id: id },
-      select: this.include([
-        "id",
-        "questionnaire.id",
-        "questionnaire.title",
-        "questionnaire.description",
-      ]),
+    const data = await this.db.service.findUnique({
+      where: { id },
+      select: this.include(["questionnaires"]),
     });
-    return data;
+    return data.questionnaires.map((q) => ({ questionnaire: q }));
   };
 
   setQuestionnaires = async (id, payload) => {
-    await this.db.serviceQuestionnaire.deleteMany({
+    await this.db.service.update({
       where: {
-        service_id: id,
+        id,
+      },
+      data: {
+        questionnaires: {
+          set: payload.map((id) => ({ id })),
+        },
       },
     });
 
-    const data = await this.db.serviceQuestionnaire.createMany({
-      data: payload.map((dat) => ({
-        service_id: id,
-        questionnaire_id: dat,
-      })),
-    });
-
-    return data;
+    return null;
   };
 
   findDoctors = async (id) => {
-    const data = await this.db.doctorService.findMany({
-      where: {
-        service_id: id,
+    const data = await this.db.service.findUnique({
+      where: { id },
+      select: {
+        doctors: {
+          where: {
+            is_active: true,
+          },
+        },
       },
-      select: this.include(["doctor"]),
     });
-    return data;
+    return data.doctors;
   };
 }
 

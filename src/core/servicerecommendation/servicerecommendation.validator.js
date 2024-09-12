@@ -11,7 +11,6 @@ export const ServiceRecommendationValidator = {
           quantity: Joi.number().integer().required(),
           note: Joi.string().required(),
           service_id: Joi.string().required(),
-          doctor_id: Joi.string().optional(),
         })
       )
       .required(),
@@ -26,7 +25,6 @@ export const ServiceRecommendationValidator = {
           quantity: Joi.number().integer().required(),
           note: Joi.string().required(),
           service_id: Joi.string().required(),
-          doctor_id: Joi.string().optional(),
         })
       )
       .optional(),

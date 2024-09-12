@@ -50,10 +50,7 @@ class ServiceController extends BaseController {
 
   findDoctors = this.wrapper(async (req, res) => {
     let data = await this.#service.findDoctors(req.params.id);
-    data = this.include(
-      data.map((d) => d.doctor),
-      doctorFields.full(req.user?.role_code)
-    );
+    data = this.include(data, doctorFields.full(req.user?.role_code));
 
     return this.ok(res, data, "Doctor layanan berhasil didapatkan");
   });
