@@ -372,11 +372,11 @@ model Schedule {
   title       String
   description String?
   is_locked   Boolean  @default(false)
-  creator_id  String
+  creator_id  String?
 
   clients ClientProfile[]
   doctors DoctorProfile[]
-  creator User            @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  creator User?           @relation(fields: [creator_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

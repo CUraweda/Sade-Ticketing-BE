@@ -133,6 +133,7 @@ CREATE TABLE `Service` (
     `price_unit` VARCHAR(191) NOT NULL,
     `price_minimum` DOUBLE NULL,
     `doctor_fee` DECIMAL(5, 2) NULL,
+    `is_active` BOOLEAN NULL DEFAULT true,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -245,6 +246,7 @@ CREATE TABLE `Booking` (
     `user_id` VARCHAR(191) NULL,
     `status` VARCHAR(191) NOT NULL,
     `total` DOUBLE NOT NULL,
+    `is_locked` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -260,7 +262,7 @@ CREATE TABLE `BookingService` (
     `location_id` INTEGER NULL,
     `compliant` VARCHAR(191) NULL,
     `quantity` INTEGER NOT NULL,
-    `service_data` VARCHAR(191) NULL,
+    `service_data` LONGTEXT NULL,
     `is_locked` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -276,10 +278,64 @@ CREATE TABLE `Payments` (
     `payment_proof_path` VARCHAR(191) NULL,
     `status` VARCHAR(191) NOT NULL,
     `transaction_id` VARCHAR(191) NULL,
+    `bank_account_id` INTEGER NULL,
+    `user_id` VARCHAR(191) NULL,
     `payment_date` DATETIME(3) NULL,
     `expiry_date` DATETIME(3) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ServiceRecommendation` (
+    `id` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(191) NULL,
+    `doctor_id` VARCHAR(191) NULL,
+    `client_id` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ServiceRecommendationItem` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `quantity` INTEGER NOT NULL,
+    `note` VARCHAR(191) NOT NULL,
+    `service_id` VARCHAR(191) NOT NULL,
+    `service_recommendation_id` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Schedule` (
+    `id` VARCHAR(191) NOT NULL,
+    `start_date` DATETIME(3) NOT NULL,
+    `end_date` DATETIME(3) NOT NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `is_locked` BOOLEAN NOT NULL DEFAULT false,
+    `creator_id` VARCHAR(191) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `UserFile` (
+    `id` VARCHAR(191) NOT NULL,
+    `filename` VARCHAR(191) NOT NULL,
+    `mimetype` VARCHAR(191) NOT NULL,
+    `size` INTEGER NOT NULL,
+    `url` VARCHAR(191) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `user_id` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -303,12 +359,30 @@ CREATE TABLE `_DoctorProfileToService` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `_DoctorProfileToSchedule` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_DoctorProfileToSchedule_AB_unique`(`A`, `B`),
+    INDEX `_DoctorProfileToSchedule_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `_RequiredServices` (
     `A` VARCHAR(191) NOT NULL,
     `B` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `_RequiredServices_AB_unique`(`A`, `B`),
     INDEX `_RequiredServices_B_index`(`B`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `_ClientProfileToSchedule` (
+    `A` VARCHAR(191) NOT NULL,
+    `B` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `_ClientProfileToSchedule_AB_unique`(`A`, `B`),
+    INDEX `_ClientProfileToSchedule_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -396,6 +470,30 @@ ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_booking_id_fkey` FOR
 ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Payments` ADD CONSTRAINT `Payments_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Payments` ADD CONSTRAINT `Payments_bank_account_id_fkey` FOREIGN KEY (`bank_account_id`) REFERENCES `BankAccount`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ServiceRecommendation` ADD CONSTRAINT `ServiceRecommendation_doctor_id_fkey` FOREIGN KEY (`doctor_id`) REFERENCES `DoctorProfile`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ServiceRecommendation` ADD CONSTRAINT `ServiceRecommendation_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `ClientProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ServiceRecommendationItem` ADD CONSTRAINT `ServiceRecommendationItem_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ServiceRecommendationItem` ADD CONSTRAINT `ServiceRecommendationItem_service_recommendation_id_fkey` FOREIGN KEY (`service_recommendation_id`) REFERENCES `ServiceRecommendation`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Schedule` ADD CONSTRAINT `Schedule_creator_id_fkey` FOREIGN KEY (`creator_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `UserFile` ADD CONSTRAINT `UserFile_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `_DoctorProfileToSpecialism` ADD CONSTRAINT `_DoctorProfileToSpecialism_A_fkey` FOREIGN KEY (`A`) REFERENCES `DoctorProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -408,10 +506,22 @@ ALTER TABLE `_DoctorProfileToService` ADD CONSTRAINT `_DoctorProfileToService_A_
 ALTER TABLE `_DoctorProfileToService` ADD CONSTRAINT `_DoctorProfileToService_B_fkey` FOREIGN KEY (`B`) REFERENCES `Service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `_DoctorProfileToSchedule` ADD CONSTRAINT `_DoctorProfileToSchedule_A_fkey` FOREIGN KEY (`A`) REFERENCES `DoctorProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_DoctorProfileToSchedule` ADD CONSTRAINT `_DoctorProfileToSchedule_B_fkey` FOREIGN KEY (`B`) REFERENCES `Schedule`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `_RequiredServices` ADD CONSTRAINT `_RequiredServices_A_fkey` FOREIGN KEY (`A`) REFERENCES `Service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_RequiredServices` ADD CONSTRAINT `_RequiredServices_B_fkey` FOREIGN KEY (`B`) REFERENCES `Service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_ClientProfileToSchedule` ADD CONSTRAINT `_ClientProfileToSchedule_A_fkey` FOREIGN KEY (`A`) REFERENCES `ClientProfile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `_ClientProfileToSchedule` ADD CONSTRAINT `_ClientProfileToSchedule_B_fkey` FOREIGN KEY (`B`) REFERENCES `Schedule`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_QuestionnaireToService` ADD CONSTRAINT `_QuestionnaireToService_A_fkey` FOREIGN KEY (`A`) REFERENCES `Questionnaire`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
