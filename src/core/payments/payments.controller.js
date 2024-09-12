@@ -2,7 +2,7 @@ import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
 import PaymentsService from "./payments.service.js";
 import fs from "fs";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 class PaymentsController extends BaseController {
   #service;
@@ -13,12 +13,23 @@ class PaymentsController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    const q =
+      req.user.role_code != "SDM" && req.user.role_code != "ADM"
+        ? this.joinBrowseQuery(req.query, "where", `user_id:${req.user.id}`)
+        : req.query;
+    const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Payments berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {
-    const data = await this.#service.findById(req.params.id);
+    let data;
+
+    if (req.user.role_code != "SDM" && req.user.role_code != "ADM") {
+      data = await this.#service.findByIdOwner(req.params.id, req.user.id);
+    }
+
+    data = await this.#service.findById(req.params.id);
+    
     if (!data) throw new NotFound("Payments tidak ditemukan");
 
     return this.ok(res, data, "Payments berhasil didapatkan");
@@ -32,13 +43,13 @@ class PaymentsController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    let payload = req.body
+    let payload = req.body;
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 30);
 
-    payload.status = "unpaid"
-    payload.transaction_id = uuidv4()
-    payload.expiry_date = currentDate
+    payload.status = "unpaid";
+    payload.transaction_id = uuidv4();
+    payload.expiry_date = currentDate;
 
     const data = await this.#service.create(req.body);
     return this.created(res, data, "Payments berhasil dibuat");
@@ -47,32 +58,35 @@ class PaymentsController extends BaseController {
   uploadPayment = this.wrapper(async (req, res) => {
     const { id } = req.params;
     const file = req.file;
-  
+
     if (!file) {
       return this.badRequest(res, "No file uploaded");
     }
-  
+
     const newFilePath = `../../../uploads/payments/${file.filename}`;
-  
+
     const existingPayment = await this.#service.findById(id);
-  
+
     if (!existingPayment) {
       return this.notFound(res, "Payment not found");
     }
-  
+
     if (existingPayment.payment_proof_path) {
-      const oldFilePath = existingPayment.payment_proof_path.replace('../../../', '');
+      const oldFilePath = existingPayment.payment_proof_path.replace(
+        "../../../",
+        ""
+      );
       fs.unlink(oldFilePath, (err) => {
         if (err) {
           console.error("Error deleting old file:", err);
         }
       });
     }
-  
+
     const updatedPayment = await this.#service.update(id, {
       payment_proof_path: newFilePath,
     });
-  
+
     return this.created(res, updatedPayment, "Upload berhasil");
   });
 
@@ -89,17 +103,17 @@ class PaymentsController extends BaseController {
   downloadPaymentProof = this.wrapper(async (req, res) => {
     const { id } = req.params;
     const payment = await this.#service.findById(id);
-  
+
     if (!payment || !payment.payment_proof_path) {
       return this.notFound(res, "Payment proof not found");
     }
-  
-    const filePath = payment.payment_proof_path.replace('../../../', '');
-  
+
+    const filePath = payment.payment_proof_path.replace("../../../", "");
+
     if (!fs.existsSync(filePath)) {
       return this.notFound(res, "File tidak ditemukan");
     }
-  
+
     return res.download(filePath, (err) => {
       if (err) {
         console.error("Error sending file:", err);

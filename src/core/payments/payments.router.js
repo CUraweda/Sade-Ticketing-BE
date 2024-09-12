@@ -12,18 +12,18 @@ const r = Router(),
 
 r.get(
   "/show-all",
-  // authMiddleware(["SDM"]),
+  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
 
-r.get("/show-by-id/:id", controller.findById);
+r.get("/show-by-id/:id", authMiddleware(), controller.findById);
 
 r.get("/show-by-booking-id/:id", controller.findByBookingId);
 
 r.post(
   "/create",
-  // authMiddleware(["SDM"]),
+  authMiddleware(["SDM"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
@@ -36,7 +36,7 @@ r.put(
 
 r.put(
   "/update/:id",
-  // authMiddleware(["ADM", "SDM"]),
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );

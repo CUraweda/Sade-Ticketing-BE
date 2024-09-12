@@ -15,6 +15,7 @@ import bookingRouter from "./core/booking/booking.router.js";
 import paymentsRouter from "./core/payments/payments.router.js";
 import bankaccountRouter from "./core/bankaccount/bankaccount.router.js";
 import scheduleRouter from "./core/schedule/schedule.router.js";
+import serviceRecommendation from "./core/servicerecommendation/servicerecommendation.router.js"
 
 const r = Router();
 
@@ -34,6 +35,7 @@ r.use("/book", bookingRouter);
 r.use("/payment", paymentsRouter);
 r.use("/bank-account", bankaccountRouter);
 r.use("/schedule", scheduleRouter);
+r.use("/service-recommendation", serviceRecommendation)
 
 const appRouter = r;
 export default appRouter;

@@ -25,6 +25,16 @@ class PaymentsService extends BaseService {
     return data;
   };
 
+  findByIdOwner = async (id, user_id) => {
+    const data = await this.db.payments.findFirst({
+      where: {
+        id,
+        user_id,
+      },
+    });
+    return data;
+  };
+
   findByBookingId = async (id) => {
     const data = await this.db.payments.findMany({
       where: {

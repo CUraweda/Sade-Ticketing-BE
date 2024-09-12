@@ -26,6 +26,7 @@ model User {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   schedules               Schedule[]
+  payments                Payments[] 
 }
 
 model UserRole {
@@ -324,10 +325,12 @@ model Payments {
   status             String
   transaction_id     String?
   bank_account_id    Int?
+  user_id            String?
   payment_date       DateTime?
   expiry_date        DateTime?
 
   bookings     Booking[]
+  user         User?      @relation(fields: [user_id], references: [id], onDelete: SetNull)
   bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
