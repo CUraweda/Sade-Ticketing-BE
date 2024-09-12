@@ -19,7 +19,7 @@ r.get("/show-one/:id", controller.findById);
 
 r.post(
   "/create",
-  uploader("./uploads/userfile/", "image", 5000000).single("filename"),
+  uploader("./uploads/userfile/", "*", 5000000).single("filename"),
   controller.create
 );
 
