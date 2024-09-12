@@ -28,7 +28,7 @@ async function seedDatabase() {
         }
 
         try {
-          await prisma[file.split(".")[0]].create({
+          await prisma[file.split("_")[1].split(".")[0]].create({
             data: dat,
           });
           console.log("DONE: seed " + file);
