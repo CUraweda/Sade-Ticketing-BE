@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "category_id": 1,
+    "location_id": 1,
+    "title": "Konseling",
+    "description": "deskripsi sementara",
+    "duration": 60,
+    "price": 350000,
+    "price_unit": "sesi",
+    "doctor_fee": 78.57
+  },
+  {
+    "category_id": 1,
+    "location_id": 1,
+    "title": "Test IQ",
+    "description": "deskripsi sementara",
+    "duration": 120,
+    "price": 425000,
+    "price_unit": "sesi",
+    "doctor_fee": 82.35
+  },
+  {
+    "category_id": 1,
+    "location_id": 1,
+    "title": "Test IQ + konseling 30 menit",
+    "description": "deskripsi sementara",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi",
+    "doctor_fee": 90
+  }
+]
