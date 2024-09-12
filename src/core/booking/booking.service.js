@@ -1,7 +1,19 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { bookingFields, serviceFields } from "../../data/model-fields.js";
+import {
+  bookingFields,
+  bookingServiceFields,
+  doctorFields,
+  doctorSessionFields,
+  serviceFields,
+} from "../../data/model-fields.js";
 import { BadRequest, Forbidden } from "../../lib/response/catch.js";
+import {
+  PaymentMethod,
+  PaymentStatus,
+} from "../payments/payments.validator.js";
+import { BookingStatus } from "./booking.validator.js";
 
 class BookingService extends BaseService {
   constructor() {
@@ -10,14 +22,20 @@ class BookingService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.booking.findMany({
-      ...q,
-      select: this.include([
-        ...bookingFields,
-        "booking_services.title",
-        "booking_services.category_name",
-      ]),
-    });
+    const data = (
+      await this.db.booking.findMany({
+        ...q,
+        select: this.include([
+          ...bookingFields.getFields(),
+          "services.service_data",
+        ]),
+      })
+    ).map((dat) => ({
+      ...dat,
+      services: dat.services.map((s) =>
+        this.extractServiceData(s.service_data)
+      ),
+    }));
 
     if (query.paginate) {
       const countData = await this.db.booking.count({ where: q.where });
@@ -30,19 +48,29 @@ class BookingService extends BaseService {
     const data = await this.db.booking.findUnique({
       where: { id },
       select: {
-        ...this.include([...bookingFields, "profile"]),
-        booking_services: {
-          include: {
+        ...this.include(bookingFields.getFields()),
+        profile: true,
+        payments: true,
+        services: {
+          select: {
+            ...this.include(bookingServiceFields.getFields()),
+            questionnaire_responses: {
+              select: {
+                id: true,
+                is_locked: true,
+                questionnaire_id: true,
+                questionnaire: {
+                  select: {
+                    title: true,
+                  },
+                },
+              },
+            },
             doctor_sessions: {
-              include: {
+              select: {
+                ...this.include(doctorSessionFields.getFields()),
                 doctor: {
-                  select: this.include([
-                    "id",
-                    "first_name",
-                    "last_name",
-                    "title",
-                    "category",
-                  ]),
+                  select: this.include(doctorFields.full("USR")),
                 },
               },
             },
@@ -76,7 +104,7 @@ class BookingService extends BaseService {
         },
       },
       select: this.include([
-        ...serviceFields,
+        ...serviceFields.getFields(),
         "category.name",
         "location.title",
         "questionnaires",
@@ -99,28 +127,21 @@ class BookingService extends BaseService {
       data: {
         profile_id,
         total,
-        status: "draft",
-        booking_services: {
+        status: BookingStatus.DRAFT,
+        services: {
           create: findServices.map((fs) => ({
+            service_id: fs.id,
+            location_id: fs.location_id,
+            category_id: fs.category_id,
             compliant,
             quantity: fs.quantity,
-            service_id: fs.id,
-            category_id: fs.category_id,
-            location_id: fs.location_id,
-            category_name: fs.category?.name,
-            location_name: fs.location?.title,
-            title: fs.title,
-            description: fs.description,
-            price: fs.price,
-            price_unit: fs.price_unit,
-            duration: fs.duration,
-            is_active: fs.is_active,
-            is_additional: fs.is_additional,
+            service_data:
+              JSON.stringify(this.exclude(fs, ["questionnaires"])) ?? "",
             questionnaire_responses: {
               create: fs.questionnaires?.map((fsq) => ({
                 user_id,
                 client_id: profile_id,
-                questionnaire_id: fsq.questionnaire_id,
+                questionnaire_id: fsq.id,
               })),
             },
           })),
@@ -129,6 +150,22 @@ class BookingService extends BaseService {
     });
 
     return data;
+  };
+
+  extractServiceData = (data, keys = []) => {
+    const json = JSON.parse(data);
+    return keys.length
+      ? Object.fromEntries(
+          Object.entries(json).filter(([key]) => !keys.includes(key))
+        )
+      : json;
+  };
+
+  checkBookingOwner = async (id, user_id) => {
+    const chkOwner = await this.db.booking.count({
+      where: { id, profile: { user_id } },
+    });
+    if (!chkOwner) throw new Forbidden();
   };
 
   findRequiredQuestionnaires = async (user_id, booking_id) => {
@@ -147,13 +184,7 @@ class BookingService extends BaseService {
     return data;
   };
 
-  bookSchedule = async (id, user_id, payload) => {
-    // check owner
-    const chkOwner = await this.db.booking.count({
-      where: { id, profile: { user_id } },
-    });
-    if (!chkOwner) throw new Forbidden();
-
+  bookSchedule = async (id, payload) => {
     // new total price
     let total = 0;
 
@@ -169,7 +200,8 @@ class BookingService extends BaseService {
       });
 
       // recalculate sub total
-      total += serv.quantity * serv.price;
+      const serviceData = this.extractServiceData(serv.service_data);
+      total += serviceData.quantity * serviceData.price;
 
       // update doctor session and Lock
       await this.db.doctorSession.updateMany({
@@ -185,12 +217,39 @@ class BookingService extends BaseService {
     const data = await this.db.booking.update({
       where: { id },
       data: {
+        status: BookingStatus.NEED_CONFIRM,
         total: total,
-        status: "pending_payment",
       },
     });
 
     return data;
+  };
+
+  bookingConfirm = async (id, payload) => {
+    const booking = await this.findById(id);
+
+    await this.db.payments.create({
+      data: {
+        amount_paid: booking.total,
+        payment_method: PaymentMethod.MANUAL_TRANSFER,
+        status: PaymentStatus.UNPAID,
+        bank_account_id: payload.bank_account_id,
+        expiry_date: moment().add({ day: 1 }).toDate(),
+        bookings: {
+          connect: {
+            id: booking.id,
+          },
+        },
+      },
+    });
+
+    await this.db.booking.update({
+      where: { id },
+      data: {
+        status: BookingStatus.NEED_PAYMENT,
+        is_locked: true,
+      },
+    });
   };
 }
 

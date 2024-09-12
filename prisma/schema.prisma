@@ -26,6 +26,7 @@ model User {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   user_file               UserFile[]
+  schedules               Schedule[]
 }
 
 model UserRole {
@@ -65,11 +66,12 @@ model Location {
 
 // BANK ACCOUNT
 model BankAccount {
-  id             Int    @id @default(autoincrement())
-  title          String @unique
+  id             Int        @id @default(autoincrement())
+  title          String     @unique
   in_name        String
   account_number String
   provider       String
+  payments       Payments[]
 }
 
 // DOCTORS
@@ -103,6 +105,7 @@ model DoctorProfile {
   services                     Service[]
   service_recommendation_items ServiceRecommendationItem[]
   service_recommendations      ServiceRecommendation[]
+  schedules                    Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -188,6 +191,7 @@ model ClientProfile {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   service_recommendations ServiceRecommendation[]
+  schedules               Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -279,6 +283,7 @@ model Booking {
   user_id    String?
   status     String // draft, pending_payment, waiting, ongoing, completed
   total      Float
+  is_locked  Boolean @default(false)
 
   profile  ClientProfile?   @relation(fields: [profile_id], references: [id], onDelete: SetNull)
   user     User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -299,7 +304,7 @@ model BookingService {
   compliant String?
   quantity  Int
 
-  service_data String? // stringify json; service data on booking
+  service_data String? @db.LongText // stringify json; service data on booking
   is_locked    Boolean @default(false)
 
   questionnaire_responses QuestionnaireResponse[]
@@ -320,10 +325,12 @@ model Payments {
   payment_proof_path String?
   status             String
   transaction_id     String?
+  bank_account_id    Int?
   payment_date       DateTime?
   expiry_date        DateTime?
 
-  bookings Booking[]
+  bookings     Booking[]
+  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -356,6 +363,24 @@ model ServiceRecommendationItem {
   doctor                 DoctorProfile?        @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
   service_recommendation ServiceRecommendation @relation(fields: [service_recommendation_id], references: [id], onDelete: Cascade)
 }
+
+model Schedule {
+  id          String   @id @default(uuid())
+  start_date  DateTime
+  end_date    DateTime
+  title       String
+  description String?
+  is_locked   Boolean  @default(false)
+  creator_id  String
+
+  clients ClientProfile[]
+  doctors DoctorProfile[]
+  creator User            @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
 
 model UserFile {
   id          String       @id @default(uuid())
