@@ -144,7 +144,7 @@ model Service {
   category_id          Int?
   location_id          Int?
   title                String
-  description          String?
+  description          String?  @db.LongText
   duration             Int? // in minute
   duration_description String?
   price                Float
