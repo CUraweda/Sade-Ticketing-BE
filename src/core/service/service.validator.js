@@ -8,11 +8,14 @@ export const ServiceValidator = {
       .external(relationExist("serviceCategory"))
       .required(),
     title: Joi.string().max(50).required(),
-    description: Joi.string().max(100).optional(),
+    description: Joi.string().optional(),
+    duration: Joi.number().optional(),
+    duration_description: Joi.string().max(24).optional(),
     price: Joi.number().required(),
     price_unit: Joi.string().required(),
-    duration: Joi.number().optional(),
-    is_active: Joi.bool().default(true),
+    price_minimum: Joi.number().optional(),
+    doctor_fee: Joi.number().optional(),
+    is_active: Joi.bool().default(false),
   }),
   update: Joi.object({
     location_id: Joi.number().external(relationExist("location")).optional(),
@@ -20,10 +23,13 @@ export const ServiceValidator = {
       .external(relationExist("serviceCategory"))
       .optional(),
     title: Joi.string().max(50).optional(),
-    description: Joi.string().max(100).optional(),
+    description: Joi.string().optional(),
+    duration: Joi.number().optional(),
+    duration_description: Joi.string().max(24).optional(),
     price: Joi.number().optional(),
     price_unit: Joi.string().optional(),
-    duration: Joi.number().optional(),
+    price_minimum: Joi.number().optional(),
+    doctor_fee: Joi.number().optional(),
     is_active: Joi.bool().optional(),
   }),
   setQuestionnaires: Joi.array().items(

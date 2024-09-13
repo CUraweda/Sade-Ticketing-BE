@@ -29,7 +29,10 @@ class ServiceService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.service.findUnique({ where: { id } });
+    const data = await this.db.service.findUnique({
+      where: { id },
+      include: this.include(["category.name", "location.title"]),
+    });
     return data;
   };
 
