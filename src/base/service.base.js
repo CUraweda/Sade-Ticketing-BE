@@ -61,10 +61,34 @@ class BaseService {
     let in_ = {};
     if (query && query.in_) {
       query.in_.split("+").forEach((q) => {
-        const [col, val] = q.split(":");
-        in_[col] = {
-          in: val.split(","),
-        };
+        let [col, val] = q.split(":");
+
+        if (isInteger(val)) {
+          val = parseInt(val);
+        } else if (isBoolean(val)) {
+          val = val === "true";
+        }
+
+        const keys = col.split(".");
+        let current = in_;
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            if (keys[keys.length - 2]?.endsWith("s")) {
+              current["some"] = {
+                [key]: {
+                  in: Array.isArray(val) ? val : [val],
+                },
+              };
+            } else {
+              current[key] = {
+                in: Array.isArray(val) ? val : [val],
+              };
+            }
+          } else {
+            current[key] = current[key] || {};
+            current = current[key];
+          }
+        });
       });
     }
 
