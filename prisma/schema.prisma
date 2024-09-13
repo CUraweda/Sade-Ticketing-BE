@@ -28,6 +28,7 @@ model User {
   user_file               UserFile[]
   schedules               Schedule[]
   payments                Payments[]
+  reschedule_requests     RescheduleRequest[]
 }
 
 model UserRole {
@@ -378,11 +379,31 @@ model Schedule {
   service_id         String?
   booking_service_id String?
 
-  clients         ClientProfile[]
-  doctors         DoctorProfile[]
-  creator         User?           @relation(fields: [creator_id], references: [id], onDelete: Cascade)
-  service         Service?        @relation(fields: [service_id], references: [id], onDelete: SetNull)
-  booking_service BookingService? @relation(fields: [booking_service_id], references: [id], onDelete: Cascade)
+  clients               ClientProfile[]
+  doctors               DoctorProfile[]
+  creator               User?               @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  booking_service       BookingService?     @relation(fields: [booking_service_id], references: [id], onDelete: Cascade)
+  reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
+  new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model RescheduleRequest {
+  id              String    @id @default(uuid())
+  reason          String
+  schedule_id     String
+  start_date      DateTime?
+  end_date        DateTime?
+  new_schedule_id String?
+  user_id         String
+  is_approved     Boolean   @default(false)
+
+  schedule     Schedule  @relation("reschedule_request", fields: [schedule_id], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  new_schedule Schedule? @relation("new_reschedule_request", fields: [new_schedule_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
