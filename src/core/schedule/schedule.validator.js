@@ -4,7 +4,7 @@ import { relationExist } from "../../base/validator.base.js";
 export const ScheduleValidator = {
   create: Joi.object({
     start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     doctors: Joi.array()
