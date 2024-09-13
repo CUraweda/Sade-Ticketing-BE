@@ -162,6 +162,7 @@ model Service {
   questionnaires               Questionnaire[]
   bookings                     BookingService[]
   service_recommendation_items ServiceRecommendationItem[]
+  schedules                    Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -310,8 +311,9 @@ model BookingService {
   questionnaire_responses QuestionnaireResponse[]
   doctor_sessions         DoctorSession[]
 
-  booking Booking? @relation(fields: [booking_id], references: [id], onDelete: Cascade)
-  service Service? @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  booking   Booking?   @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  service   Service?   @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  schedules Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -366,17 +368,21 @@ model ServiceRecommendationItem {
 
 // SCHEDULE
 model Schedule {
-  id          String    @id @default(uuid())
-  start_date  DateTime
-  end_date    DateTime?
-  title       String
-  description String?
-  is_locked   Boolean   @default(false)
-  creator_id  String?
+  id                 String    @id @default(uuid())
+  start_date         DateTime
+  end_date           DateTime?
+  title              String
+  description        String?
+  is_locked          Boolean   @default(false)
+  creator_id         String?
+  service_id         String?
+  booking_service_id String?
 
-  clients ClientProfile[]
-  doctors DoctorProfile[]
-  creator User?           @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  clients         ClientProfile[]
+  doctors         DoctorProfile[]
+  creator         User?           @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  service         Service?        @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  booking_service BookingService? @relation(fields: [booking_service_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

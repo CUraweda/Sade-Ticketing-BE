@@ -102,6 +102,7 @@ class BookingService extends BaseService {
         id: {
           in: services.map((s) => s.id) ?? [],
         },
+        is_active: true,
       },
       select: this.include([
         ...serviceFields.getFields(),
@@ -166,22 +167,6 @@ class BookingService extends BaseService {
       where: { id, profile: { user_id } },
     });
     if (!chkOwner) throw new Forbidden();
-  };
-
-  findRequiredQuestionnaires = async (user_id, booking_id) => {
-    const data = this.db.questionnaireResponse.findMany({
-      where: {
-        user_id: user_id,
-        client: {
-          user_id,
-        },
-        booking_service: {
-          booking_id: booking_id,
-        },
-      },
-      select: this.include(["id", "questionnaire.id", "questionnaire.title"]),
-    });
-    return data;
   };
 
   bookSchedule = async (id, payload) => {

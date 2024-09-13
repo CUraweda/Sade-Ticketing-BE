@@ -36,6 +36,9 @@ class ScheduleService extends BaseService {
         "clients.last_name",
         "clients.category",
         "clients.dob",
+        "service.id",
+        "service.title",
+        "service.category.name",
       ]),
     });
     return data;
