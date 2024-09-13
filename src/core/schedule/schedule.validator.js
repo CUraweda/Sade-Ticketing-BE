@@ -3,6 +3,7 @@ import { relationExist } from "../../base/validator.base.js";
 
 export const ScheduleValidator = {
   create: Joi.object({
+    service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().required(),
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).required(),
@@ -15,6 +16,7 @@ export const ScheduleValidator = {
       .optional(),
   }),
   update: Joi.object({
+    service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().optional(),
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).optional(),
