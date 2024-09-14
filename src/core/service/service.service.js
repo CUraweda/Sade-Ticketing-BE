@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { serviceFields } from "../../data/model-fields.js";
@@ -72,18 +73,21 @@ class ServiceService extends BaseService {
     });
   };
 
-  findDoctors = async (id) => {
-    const data = await this.db.service.findUnique({
-      where: { id },
-      select: {
-        doctors: {
-          where: {
-            is_active: true,
+  findAvailableDoctors = async (id) => {
+    const data = await this.db.doctorProfile.findMany({
+      where: {
+        schedules: {
+          some: {
+            is_locked: false,
+            service_id: id,
+            start_date: {
+              gte: moment(),
+            },
           },
         },
       },
     });
-    return data.doctors;
+    return data;
   };
 }
 

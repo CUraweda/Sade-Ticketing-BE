@@ -47,13 +47,11 @@ class BookingService extends BaseService {
   findById = async (id) => {
     const data = await this.db.booking.findUnique({
       where: { id },
-      select: {
-        ...this.include(bookingFields.getFields()),
+      include: {
         profile: true,
         payments: true,
         services: {
-          select: {
-            ...this.include(bookingServiceFields.getFields()),
+          include: {
             questionnaire_responses: {
               select: {
                 id: true,
@@ -66,10 +64,9 @@ class BookingService extends BaseService {
                 },
               },
             },
-            doctor_sessions: {
-              select: {
-                ...this.include(doctorSessionFields.getFields()),
-                doctor: {
+            schedules: {
+              include: {
+                doctors: {
                   select: this.include(doctorFields.full("USR")),
                 },
               },
@@ -127,6 +124,7 @@ class BookingService extends BaseService {
     const data = await this.db.booking.create({
       data: {
         profile_id,
+        user_id,
         total,
         status: BookingStatus.DRAFT,
         services: {
@@ -163,77 +161,103 @@ class BookingService extends BaseService {
   };
 
   checkBookingOwner = async (id, user_id) => {
-    const chkOwner = await this.db.booking.count({
-      where: { id, profile: { user_id } },
+    const find = await this.db.booking.findFirst({
+      where: { id, user_id },
     });
-    if (!chkOwner) throw new Forbidden();
+    if (!find) throw new Forbidden();
+    return find;
   };
 
   bookSchedule = async (id, payload) => {
     // new total price
-    let total = 0;
+    let totalPrice = 0;
+
+    // recheck schedule availability
+    const lockedSchedules = await this.db.schedule.findMany({
+      where: {
+        id: {
+          in: payload.map((p) => p.schedules).flat(),
+        },
+        is_locked: true,
+      },
+      select: {
+        start_date: true,
+      },
+    });
+
+    if (lockedSchedules.length)
+      throw new BadRequest(
+        `Jadwal pada tanggal ${lockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} tidak tersedia saat ini. Silakan pilih jadwal lain yang masih tersedia.`
+      );
 
     for (const bs of payload) {
-      // update quantity and lock
-      const serv = await this.db.bookingService.update({
+      // update compliant, quantity, and lock the booking item
+      const bookingService = await this.db.bookingService.update({
         where: { id: bs.id },
         data: {
-          compliant: bs.compliant,
           quantity: bs.quantity,
+          compliant: bs.compliant,
           is_locked: true,
         },
+        include: this.include(["booking.profile_id"]),
       });
 
-      // recalculate sub total
-      const serviceData = this.extractServiceData(serv.service_data);
-      total += serviceData.quantity * serviceData.price;
+      // recalculate totalPrice price
+      const serviceData = this.extractServiceData(bookingService.service_data);
+      totalPrice += bs.quantity * serviceData.price;
 
-      // update doctor session and Lock
-      await this.db.doctorSession.updateMany({
-        where: { id: { in: bs.sessions ?? [] } },
-        data: {
-          is_locked: true,
-          booking_service_id: serv.id,
-        },
-      });
+      // lock schedule
+      for (const schId of bs.schedules)
+        await this.db.schedule.update({
+          where: { id: schId },
+          data: {
+            clients: {
+              set: { id: bookingService.booking.profile_id },
+            },
+            is_locked: true,
+            booking_service_id: bookingService.id,
+            service_id: null,
+          },
+        });
     }
 
-    // update booking total
-    const data = await this.db.booking.update({
-      where: { id },
-      data: {
-        status: BookingStatus.NEED_CONFIRM,
-        total: total,
-      },
-    });
-
-    return data;
-  };
-
-  bookingConfirm = async (id, payload) => {
-    const booking = await this.findById(id);
-
-    await this.db.payments.create({
-      data: {
-        amount_paid: booking.total,
-        payment_method: PaymentMethod.MANUAL_TRANSFER,
-        status: PaymentStatus.UNPAID,
-        bank_account_id: payload.bank_account_id,
-        expiry_date: moment().add({ day: 1 }).toDate(),
-        bookings: {
-          connect: {
-            id: booking.id,
-          },
-        },
-      },
-    });
-
+    // update booking totalPrice
     await this.db.booking.update({
       where: { id },
       data: {
-        status: BookingStatus.NEED_PAYMENT,
-        is_locked: true,
+        status: BookingStatus.NEED_CONFIRM,
+        total: totalPrice,
       },
+    });
+  };
+
+  bookingConfirm = async (id, { user_id, bank_account_id }) => {
+    const booking = await this.findById(id);
+
+    await this.db.$transaction(async (db) => {
+      await this.db.payments.create({
+        data: {
+          user_id: user_id,
+          amount_paid: booking.total,
+          payment_method: PaymentMethod.MANUAL_TRANSFER,
+          status: PaymentStatus.UNPAID,
+          bank_account_id: bank_account_id,
+          expiry_date: moment().add({ day: 1 }).toDate(),
+          bookings: {
+            connect: {
+              id: booking.id,
+            },
+          },
+        },
+      });
+
+      await this.db.booking.update({
+        where: { id },
+        data: {
+          status: BookingStatus.NEED_PAYMENT,
+          is_locked: true,
+        },
+      });
     });
   };
 }

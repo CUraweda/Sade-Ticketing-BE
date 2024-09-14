@@ -14,7 +14,11 @@ r.get(
   controller.findAll
 );
 
-r.get("/doctors/:id", authMiddleware(), controller.findDoctors);
+r.get(
+  "/available-doctors/:id",
+  authMiddleware(),
+  controller.findAvailableDoctors
+);
 
 r.get("/show-one/:id", controller.findById);
 
