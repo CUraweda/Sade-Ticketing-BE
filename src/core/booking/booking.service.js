@@ -204,7 +204,7 @@ class BookingService extends BaseService {
 
       // recalculate totalPrice price
       const serviceData = this.extractServiceData(bookingService.service_data);
-      totalPrice += serviceData.quantity * serviceData.price;
+      totalPrice += bs.quantity * serviceData.price;
 
       // lock schedule
       for (const schId of bs.schedules)
