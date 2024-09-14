@@ -29,7 +29,7 @@ class PaymentsController extends BaseController {
     }
 
     data = await this.#service.findById(req.params.id);
-    
+
     if (!data) throw new NotFound("Payments tidak ditemukan");
 
     return this.ok(res, data, "Payments berhasil didapatkan");

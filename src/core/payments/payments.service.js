@@ -1,22 +1,49 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import BookingService from "../booking/booking.service.js";
 
 class PaymentsService extends BaseService {
+  #bookingService;
+
   constructor() {
     super(prism);
+    this.#bookingService = new BookingService();
   }
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.payments.findMany({
+    let data = await this.db.payments.findMany({
       ...q,
       include: this.include([
-        "bookings",
+        "bookings.services.service_data",
         "user.id",
         "user.full_name",
         "user.avatar",
-        "user.email"
+        "user.email",
       ]),
+    });
+
+    data = data.map((dat) => {
+      return {
+        ...dat,
+        bookings: undefined,
+        items: [
+          ...dat.bookings
+            .map((b) =>
+              b.services
+                .map((s) => {
+                  const data = this.#bookingService.extractServiceData(
+                    s.service_data
+                  );
+                  return {
+                    title: `${data.category?.name ?? "-"} - ${data.title}`,
+                  };
+                })
+                .flat()
+            )
+            .flat(),
+        ],
+      };
     });
 
     if (query.paginate) {
