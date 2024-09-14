@@ -47,13 +47,11 @@ class BookingService extends BaseService {
   findById = async (id) => {
     const data = await this.db.booking.findUnique({
       where: { id },
-      select: {
-        ...this.include(bookingFields.getFields()),
+      include: {
         profile: true,
         payments: true,
         services: {
-          select: {
-            ...this.include(bookingServiceFields.getFields()),
+          include: {
             questionnaire_responses: {
               select: {
                 id: true,
@@ -126,6 +124,7 @@ class BookingService extends BaseService {
     const data = await this.db.booking.create({
       data: {
         profile_id,
+        user_id,
         total,
         status: BookingStatus.DRAFT,
         services: {
@@ -162,10 +161,11 @@ class BookingService extends BaseService {
   };
 
   checkBookingOwner = async (id, user_id) => {
-    const chkOwner = await this.db.booking.count({
-      where: { id, profile: { user_id } },
+    const find = await this.db.booking.findFirst({
+      where: { id, user_id },
     });
-    if (!chkOwner) throw new Forbidden();
+    if (!find) throw new Forbidden();
+    return find;
   };
 
   bookSchedule = async (id, payload) => {
@@ -231,30 +231,33 @@ class BookingService extends BaseService {
     });
   };
 
-  bookingConfirm = async (id, payload) => {
+  bookingConfirm = async (id, { user_id, bank_account_id }) => {
     const booking = await this.findById(id);
 
-    await this.db.payments.create({
-      data: {
-        amount_paid: booking.total,
-        payment_method: PaymentMethod.MANUAL_TRANSFER,
-        status: PaymentStatus.UNPAID,
-        bank_account_id: payload.bank_account_id,
-        expiry_date: moment().add({ day: 1 }).toDate(),
-        bookings: {
-          connect: {
-            id: booking.id,
+    await this.db.$transaction(async (db) => {
+      await this.db.payments.create({
+        data: {
+          user_id: user_id,
+          amount_paid: booking.total,
+          payment_method: PaymentMethod.MANUAL_TRANSFER,
+          status: PaymentStatus.UNPAID,
+          bank_account_id: bank_account_id,
+          expiry_date: moment().add({ day: 1 }).toDate(),
+          bookings: {
+            connect: {
+              id: booking.id,
+            },
           },
         },
-      },
-    });
+      });
 
-    await this.db.booking.update({
-      where: { id },
-      data: {
-        status: BookingStatus.NEED_PAYMENT,
-        is_locked: true,
-      },
+      await this.db.booking.update({
+        where: { id },
+        data: {
+          status: BookingStatus.NEED_PAYMENT,
+          is_locked: true,
+        },
+      });
     });
   };
 }

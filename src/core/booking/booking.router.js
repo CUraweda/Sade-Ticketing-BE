@@ -48,11 +48,12 @@ r.put("/book-confirm/:id", authMiddleware(["USR"]));
 
 r.put(
   "/update/:id",
+  authMiddleware(),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const bookingRouter = r;
 export default bookingRouter;
