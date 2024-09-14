@@ -31,7 +31,13 @@ class ServiceService extends BaseService {
   findById = async (id) => {
     const data = await this.db.service.findUnique({
       where: { id },
-      include: this.include(["category.name", "location.title"]),
+      include: this.include([
+        "category.name",
+        "location.title",
+        "questionnaires.id",
+        "questionnaires.title",
+        "questionnaires._count.questions",
+      ]),
     });
     return data;
   };
@@ -51,27 +57,19 @@ class ServiceService extends BaseService {
     return data;
   };
 
-  findQuestionnaires = async (id) => {
-    const data = await this.db.service.findUnique({
-      where: { id },
-      select: this.include(["questionnaires"]),
-    });
-    return data.questionnaires.map((q) => ({ questionnaire: q }));
-  };
-
-  setQuestionnaires = async (id, payload) => {
+  setQuestionnaire = async (id, payload) => {
     await this.db.service.update({
       where: {
         id,
       },
       data: {
         questionnaires: {
-          set: payload.map((id) => ({ id })),
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.que_id,
+          },
         },
       },
     });
-
-    return null;
   };
 
   findDoctors = async (id) => {

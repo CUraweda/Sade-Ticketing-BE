@@ -32,9 +32,10 @@ export const ServiceValidator = {
     doctor_fee: Joi.number().optional(),
     is_active: Joi.bool().optional(),
   }),
-  setQuestionnaires: Joi.array().items(
-    Joi.string().external(relationExist("questionnaire")).required()
-  ),
+  setQuestionnaire: Joi.object({
+    que_id: Joi.string().external(relationExist("questionnaire")).required(),
+    set: Joi.string().valid("add", "remove"),
+  }),
 };
 
 export default ServiceValidator;
