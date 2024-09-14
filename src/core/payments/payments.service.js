@@ -10,7 +10,13 @@ class PaymentsService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.payments.findMany({
       ...q,
-      include: { bookings: true },
+      include: this.include([
+        "bookings",
+        "user.id",
+        "user.full_name",
+        "user.avatar",
+        "user.email"
+      ]),
     });
 
     if (query.paginate) {
