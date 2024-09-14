@@ -13,7 +13,7 @@ class ScheduleController extends BaseController {
   findAll = this.wrapper(async (req, res) => {
     const q =
       req.user.role_code != "SDM" && req.user.role_code != "ADM"
-        ? this.joinBrowseQuery(req.query, "where", `creator_id:${req.user.id}`)
+        ? this.joinBrowseQuery(req.query, "where", `is_locked:false`)
         : req.query;
     const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Schedule berhasil didapatkan");

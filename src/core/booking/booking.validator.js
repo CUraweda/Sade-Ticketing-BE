@@ -37,9 +37,9 @@ export const BookingValidator = {
       id: Joi.string().required(),
       quantity: Joi.number().min(1).required(),
       compliant: Joi.string().max(100).required(),
-      sessions: Joi.array().items(
-        Joi.string().external(relationExist("doctorSession")).required()
-      ),
+      schedules: Joi.array()
+        .items(Joi.string().external(relationExist("schedule")).required())
+        .length(Joi.ref("quantity")),
     })
   ),
   bookingConfirm: Joi.object({

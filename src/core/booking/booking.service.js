@@ -66,10 +66,9 @@ class BookingService extends BaseService {
                 },
               },
             },
-            doctor_sessions: {
-              select: {
-                ...this.include(doctorSessionFields.getFields()),
-                doctor: {
+            schedules: {
+              include: {
+                doctors: {
                   select: this.include(doctorFields.full("USR")),
                 },
               },
@@ -171,43 +170,65 @@ class BookingService extends BaseService {
 
   bookSchedule = async (id, payload) => {
     // new total price
-    let total = 0;
+    let totalPrice = 0;
 
-    for (const bs of payload) {
-      // update quantity and lock
-      const serv = await this.db.bookingService.update({
-        where: { id: bs.id },
-        data: {
-          compliant: bs.compliant,
-          quantity: bs.quantity,
-          is_locked: true,
+    // recheck schedule availability
+    const lockedSchedules = await this.db.schedule.findMany({
+      where: {
+        id: {
+          in: payload.map((p) => p.schedules).flat(),
         },
-      });
-
-      // recalculate sub total
-      const serviceData = this.extractServiceData(serv.service_data);
-      total += serviceData.quantity * serviceData.price;
-
-      // update doctor session and Lock
-      await this.db.doctorSession.updateMany({
-        where: { id: { in: bs.sessions ?? [] } },
-        data: {
-          is_locked: true,
-          booking_service_id: serv.id,
-        },
-      });
-    }
-
-    // update booking total
-    const data = await this.db.booking.update({
-      where: { id },
-      data: {
-        status: BookingStatus.NEED_CONFIRM,
-        total: total,
+        is_locked: true,
+      },
+      select: {
+        start_date: true,
       },
     });
 
-    return data;
+    if (lockedSchedules.length)
+      throw new BadRequest(
+        `Jadwal pada tanggal ${lockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} tidak tersedia saat ini. Silakan pilih jadwal lain yang masih tersedia.`
+      );
+
+    for (const bs of payload) {
+      // update compliant, quantity, and lock the booking item
+      const bookingService = await this.db.bookingService.update({
+        where: { id: bs.id },
+        data: {
+          quantity: bs.quantity,
+          compliant: bs.compliant,
+          is_locked: true,
+        },
+        include: this.include(["booking.profile_id"]),
+      });
+
+      // recalculate totalPrice price
+      const serviceData = this.extractServiceData(bookingService.service_data);
+      totalPrice += serviceData.quantity * serviceData.price;
+
+      // lock schedule
+      for (const schId of bs.schedules)
+        await this.db.schedule.update({
+          where: { id: schId },
+          data: {
+            clients: {
+              set: { id: bookingService.booking.profile_id },
+            },
+            is_locked: true,
+            booking_service_id: bookingService.id,
+            service_id: null,
+          },
+        });
+    }
+
+    // update booking totalPrice
+    await this.db.booking.update({
+      where: { id },
+      data: {
+        status: BookingStatus.NEED_CONFIRM,
+        total: totalPrice,
+      },
+    });
   };
 
   bookingConfirm = async (id, payload) => {
