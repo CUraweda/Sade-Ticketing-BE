@@ -72,18 +72,18 @@ class ServiceService extends BaseService {
     });
   };
 
-  findDoctors = async (id) => {
-    const data = await this.db.service.findUnique({
-      where: { id },
-      select: {
-        doctors: {
-          where: {
-            is_active: true,
+  findAvailableDoctors = async (id) => {
+    const data = await this.db.doctorProfile.findMany({
+      where: {
+        schedules: {
+          some: {
+            is_locked: false,
+            service_id: id,
           },
         },
       },
     });
-    return data.doctors;
+    return data;
   };
 }
 
