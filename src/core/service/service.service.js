@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { serviceFields } from "../../data/model-fields.js";
@@ -79,6 +80,9 @@ class ServiceService extends BaseService {
           some: {
             is_locked: false,
             service_id: id,
+            start_date: {
+              gte: moment(),
+            },
           },
         },
       },
