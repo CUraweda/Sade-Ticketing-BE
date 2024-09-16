@@ -3,6 +3,7 @@ import { NotFound } from "../../lib/response/catch.js";
 import PaymentsService from "./payments.service.js";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
+import { PaymentStatus } from "./payments.validator.js";
 
 class PaymentsController extends BaseController {
   #service;
@@ -54,6 +55,8 @@ class PaymentsController extends BaseController {
   });
 
   uploadPayment = this.wrapper(async (req, res) => {
+    await this.#service.checkOwner(req.params.id, req.user.id);
+
     const { id } = req.params;
     const file = req.file;
 
@@ -83,6 +86,7 @@ class PaymentsController extends BaseController {
 
     const updatedPayment = await this.#service.update(id, {
       payment_proof_path: newFilePath,
+      status: PaymentStatus.PAID,
     });
 
     return this.created(res, updatedPayment, "Upload berhasil");

@@ -30,6 +30,7 @@ r.post(
 
 r.put(
   "/upload-payment/:id",
+  authMiddleware(),
   uploader("./uploads/payments/", "image", 5000000).single("file"),
   controller.uploadPayment
 );
