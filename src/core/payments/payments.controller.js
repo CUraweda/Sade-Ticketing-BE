@@ -22,13 +22,11 @@ class PaymentsController extends BaseController {
   });
 
   findById = this.wrapper(async (req, res) => {
-    let data;
-
     if (req.user.role_code != "SDM" && req.user.role_code != "ADM") {
-      data = await this.#service.findByIdOwner(req.params.id, req.user.id);
+      await this.#service.checkOwner(req.params.id, req.user.id);
     }
 
-    data = await this.#service.findById(req.params.id);
+    const data = await this.#service.findById(req.params.id);
 
     if (!data) throw new NotFound("Payments tidak ditemukan");
 

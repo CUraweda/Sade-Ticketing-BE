@@ -1,5 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { NotFound } from "../../lib/response/catch.js";
 import BookingService from "../booking/booking.service.js";
 
 class PaymentsService extends BaseService {
@@ -53,11 +54,6 @@ class PaymentsService extends BaseService {
     return data;
   };
 
-  findById = async (id) => {
-    const data = await this.db.payments.findUnique({ where: { id } });
-    return data;
-  };
-
   findByIdOwner = async (id, user_id) => {
     const data = await this.db.payments.findFirst({
       where: {
@@ -66,6 +62,13 @@ class PaymentsService extends BaseService {
       },
     });
     return data;
+  };
+
+  checkOwner = async (id, user_id) => {
+    const check = await this.db.payments.count({
+      where: { id, user_id },
+    });
+    if (!check) throw new NotFound();
   };
 
   findByBookingId = async (id) => {
@@ -107,6 +110,7 @@ class PaymentsService extends BaseService {
   findById = async (id) => {
     return this.db.payments.findUnique({
       where: { id },
+      include: this.include(["bank_account"]),
     });
   };
 
