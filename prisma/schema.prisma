@@ -379,8 +379,10 @@ model Schedule {
   title       String
   description String?
   is_locked   Boolean   @default(false)
-  creator_id  String?
-  service_id  String?
+
+  creator_id String?
+  service_id String?
+  booking_id String?
 
   clients               ClientProfile[]
   doctors               DoctorProfile[]
@@ -388,11 +390,10 @@ model Schedule {
   service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
   reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
   new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
+  booking               Booking?            @relation(fields: [booking_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
-  Booking    Booking? @relation(fields: [bookingId], references: [id])
-  bookingId  String?
 }
 
 model RescheduleRequest {
