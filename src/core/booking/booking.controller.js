@@ -68,14 +68,9 @@ class BookingController extends BaseController {
     return this.noContent(res, "Booking berhasil dihapus");
   });
 
-  book = this.wrapper(async (req, res) => {
-    const data = await this.#service.book(req.user.id, req.body);
-    return this.ok(res, data, "Booking layanan berhasil dibuat");
-  });
-
-  bookSchedule = this.wrapper(async (req, res) => {
+  setSchedules = this.wrapper(async (req, res) => {
     await this.#service.checkBookingOwner(req.params.id, req.user.id);
-    const data = await this.#service.bookSchedule(req.params.id, req.body);
+    const data = await this.#service.setSchedules(req.params.id, req.body);
     return this.ok(res, data, "Booking jadwal berhasil dibuat");
   });
 

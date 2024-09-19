@@ -35,16 +35,13 @@ export const BookingValidator = {
       .min(1)
       .required(),
   }),
-  bookSchedule: Joi.array().items(
-    Joi.object({
-      id: Joi.string().required(),
-      quantity: Joi.number().min(1).required(),
-      compliant: Joi.string().max(100).required(),
-      schedules: Joi.array()
-        .items(Joi.string().external(relationExist("schedule")).required())
-        .length(Joi.ref("quantity")),
-    })
-  ),
+  setSchedules: Joi.object({
+    quantity: Joi.number().min(1).required(),
+    compliant: Joi.string().max(100).required(),
+    scheduleIds: Joi.array()
+      .items(Joi.string().external(relationExist("schedule")).required())
+      .length(Joi.ref("quantity")),
+  }),
   bookingConfirm: Joi.object({
     bank_account_id: Joi.number()
       .external(relationExist("bankAccount"))

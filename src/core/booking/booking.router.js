@@ -24,18 +24,11 @@ r.post(
   controller.create
 );
 
-r.post(
-  "/book",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.book }),
-  controller.book
-);
-
 r.put(
-  "/book-schedule/:id",
+  "/set-schedules/:id",
   authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.bookSchedule }),
-  controller.bookSchedule
+  validatorMiddleware({ body: validator.setSchedules }),
+  controller.setSchedules
 );
 
 r.put(
