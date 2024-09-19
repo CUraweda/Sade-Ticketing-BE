@@ -29,6 +29,7 @@ model User {
   schedules               Schedule[]
   payments                Payments[]
   reschedule_requests     RescheduleRequest[]
+  invoices                Invoice[]
 }
 
 model UserRole {
@@ -309,6 +310,7 @@ model Booking {
 model Invoice {
   id              String @id @default(uuid())
   bank_account_id Int?
+  user_id         String
 
   title       String
   total       Float
@@ -318,6 +320,7 @@ model Invoice {
   note        String?
 
   bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
   bookings     Booking[]
   payments     Payments[]
 
