@@ -12,7 +12,10 @@ export const BookingStatus = {
 
 export const BookingValidator = {
   create: Joi.object({
-    // no-data
+    client_id: Joi.string().external(relationExist("clientProfile")).required(),
+    service_id: Joi.string().external(relationExist("service")).required(),
+    compliant: Joi.string().max(100).required(),
+    quantity: Joi.number().precision(0).min(1).required(),
   }),
   update: Joi.object({
     // no-data

@@ -79,7 +79,36 @@ class BookingService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.booking.create({ data: payload });
+    const service = await this.db.service.findFirst({
+      where: {
+        id: payload.service_id,
+        is_active: true,
+      },
+      include: this.include([
+        "category.name",
+        "location.title",
+        "questionnaires",
+      ]),
+    });
+
+    const data = await this.db.booking.create({
+      data: {
+        // ...payload,
+        price: service.price,
+        service_data:
+          JSON.stringify(this.exclude(fs, ["questionnaires"])) ?? "",
+        status: BookingStatus.DRAFT,
+        title: service.title,
+        questionnaire_responses: {
+          create: service.questionnaires?.map((que) => ({
+            user_id: payload.user_id,
+            client_id: payload.client_id,
+            questionnaire_id: que.id,
+          })),
+        },
+      },
+    });
+
     return data;
   };
 

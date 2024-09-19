@@ -19,6 +19,7 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
+  authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );

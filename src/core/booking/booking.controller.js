@@ -29,7 +29,10 @@ class BookingController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    const data = await this.#service.create(req.body);
+    let payload = req.body;
+    payload["user_id"] = req.user.id;
+
+    const data = await this.#service.create(payload);
     return this.created(res, data, "Booking berhasil dibuat");
   });
 
