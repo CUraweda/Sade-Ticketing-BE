@@ -80,10 +80,10 @@ class BookingService extends BaseService {
 
     const data = await this.db.booking.create({
       data: {
-        // ...payload,
+        ...payload,
         price: service.price,
         service_data:
-          JSON.stringify(this.exclude(fs, ["questionnaires"])) ?? "",
+          JSON.stringify(this.exclude(service, ["questionnaires"])) ?? "",
         status: BookingStatus.DRAFT,
         title: `${service.category?.name ?? ""} - ${service.title}`,
         questionnaire_responses: {
