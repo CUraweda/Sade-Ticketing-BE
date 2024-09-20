@@ -19,9 +19,7 @@ class BookingService extends BaseService {
       })
     ).map((dat) => ({
       ...dat,
-      services: dat.services.map((s) =>
-        this.extractServiceData(s.service_data)
-      ),
+      service_data: this.extractServiceData(dat.service_data),
     }));
 
     if (query.paginate) {
@@ -35,28 +33,15 @@ class BookingService extends BaseService {
     const data = await this.db.booking.findUnique({
       where: { id },
       include: {
-        profile: true,
+        client: true,
         payments: true,
-        services: {
+        questionnaire_responses: {
+          include: this.select(["questionnaire.title"]),
+        },
+        schedules: {
           include: {
-            questionnaire_responses: {
-              select: {
-                id: true,
-                is_locked: true,
-                questionnaire_id: true,
-                questionnaire: {
-                  select: {
-                    title: true,
-                  },
-                },
-              },
-            },
-            schedules: {
-              include: {
-                doctors: {
-                  select: this.include(doctorFields.full("USR")),
-                },
-              },
+            doctors: {
+              select: this.select(doctorFields.full("USR")),
             },
           },
         },
@@ -71,7 +56,7 @@ class BookingService extends BaseService {
         id: payload.service_id,
         is_active: true,
       },
-      include: this.include([
+      include: this.select([
         "category.name",
         "location.title",
         "questionnaires",

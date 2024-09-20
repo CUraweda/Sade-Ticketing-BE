@@ -11,7 +11,7 @@ class doctorsessionService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.doctorSession.findMany({
       ...q,
-      select: this.include([
+      select: this.select([
         ...doctorSessionFields.getFields(),
         "service.id",
         "service.title",
@@ -28,7 +28,7 @@ class doctorsessionService extends BaseService {
   findById = async (id) => {
     const data = await this.db.doctorSession.findUnique({
       where: { id },
-      select: this.include([
+      select: this.select([
         ...doctorSessionFields.getFields(),
         "service.id",
         "service.title",
