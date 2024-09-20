@@ -77,11 +77,11 @@ class BookingController extends BaseController {
   });
 
   userConfirm = this.wrapper(async (req, res) => {
-    await this.#service.checkBookingOwner(req.params.id, req.user.id);
+    await this.#service.checkBookingOwner(req.params.ids, req.user.id);
 
     let payload = req.body;
     payload["user_id"] = req.user.id;
-    await this.#service.userConfirm([req.params.id], payload);
+    await this.#service.userConfirm([req.params.ids], payload);
 
     return this.ok(res, null, "Booking berhasil dikonfirmasi");
   });

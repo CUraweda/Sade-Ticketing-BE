@@ -172,7 +172,11 @@ class BookingService extends BaseService {
 
   userConfirm = async (ids, payload) => {
     const bookings = await this.db.booking.findMany({
-      where: ids,
+      where: {
+        id: {
+          in: ids,
+        },
+      },
     });
 
     await this.db.$transaction(async (db) => {
@@ -181,9 +185,7 @@ class BookingService extends BaseService {
           bank_account_id: payload.bank_account_id,
           user_id: payload.user_id,
           title: "Tagihan layanan",
-          total: bookings.reduce((a, c) => {
-            a += c.quantity * c.price;
-          }, 0),
+          total: bookings.reduce((a, c) => (a += c.quantity * c.price), 0),
           status: InvoiceStatus.ISSUED,
           expiry_date: moment().add({ day: 1 }).toDate(),
           bookings: {
