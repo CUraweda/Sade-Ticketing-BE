@@ -1,18 +1,8 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import {
-  bookingFields,
-  bookingServiceFields,
-  doctorFields,
-  doctorSessionFields,
-  serviceFields,
-} from "../../data/model-fields.js";
+import { doctorFields } from "../../data/model-fields.js";
 import { BadRequest, Forbidden } from "../../lib/response/catch.js";
-import {
-  PaymentMethod,
-  PaymentStatus,
-} from "../payments/payments.validator.js";
 import { BookingStatus } from "./booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 
@@ -26,10 +16,6 @@ class BookingService extends BaseService {
     const data = (
       await this.db.booking.findMany({
         ...q,
-        select: this.include([
-          ...bookingFields.getFields(),
-          "services.service_data",
-        ]),
       })
     ).map((dat) => ({
       ...dat,
