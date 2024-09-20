@@ -53,6 +53,7 @@ class QuestionnaireService extends BaseService {
     const data = await this.db.questionnaireResponse.findFirst({
       where: { id: response_id, questionnaire_id: id },
       include: {
+        client: true,
         answers: {
           include: {
             question: true,

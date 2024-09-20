@@ -34,7 +34,6 @@ class BookingService extends BaseService {
       where: { id },
       include: {
         client: true,
-        payments: true,
         questionnaire_responses: {
           include: this.select(["questionnaire.title"]),
         },
@@ -112,32 +111,36 @@ class BookingService extends BaseService {
   };
 
   setSchedules = async (id, payload) => {
+    // check schedule availability
+    const lockedSchedules = await this.db.schedule.findMany({
+      where: {
+        id: {
+          in: payload.schedule_ids,
+        },
+        booking_id: {
+          not: id,
+        },
+        is_locked: true,
+      },
+      select: {
+        start_date: true,
+      },
+    });
+
+    if (lockedSchedules.length)
+      throw new BadRequest(
+        `Jadwal pada tanggal ${lockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} tidak tersedia saat ini. Silakan pilih jadwal lain yang masih tersedia.`
+      );
+
     return await this.db.$transaction(async (db) => {
-      // check schedule availability
-      const lockedSchedules = await db.schedule.findMany({
-        where: {
-          id: {
-            in: payload.schedulesIds,
-          },
-          booking_id: {
-            not: id,
-          },
-          is_locked: true,
-        },
-        select: {
-          start_date: true,
-        },
-      });
-
-      if (lockedSchedules.length)
-        throw new BadRequest(
-          `Jadwal pada tanggal ${lockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} tidak tersedia saat ini. Silakan pilih jadwal lain yang masih tersedia.`
-        );
-
       // disconnect previous schedule if any
-      await db.schedule.deleteMany({
+      await db.schedule.updateMany({
         where: {
           booking_id: id,
+        },
+        data: {
+          booking_id: null,
+          is_locked: false,
         },
       });
 
@@ -149,12 +152,19 @@ class BookingService extends BaseService {
         data: {
           compliant: payload.compliant,
           quantity: payload.quantity,
-          schedules: {
-            connect: payload.schedules.map((sc) => ({
-              id: sc,
-              is_locked: true,
-            })),
+        },
+      });
+
+      // update schedules and connect to booking
+      await db.schedule.updateMany({
+        where: {
+          id: {
+            in: payload.schedule_ids,
           },
+        },
+        data: {
+          booking_id: id,
+          is_locked: true,
         },
       });
     });
