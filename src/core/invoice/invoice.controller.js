@@ -11,7 +11,10 @@ class InvoiceController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    const q = this.isAdmin(req)
+      ? req.query
+      : this.joinBrowseQuery(req.query, "where", `user_id:${req.user.id}`);
+    const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Invoice berhasil didapatkan");
   });
 
