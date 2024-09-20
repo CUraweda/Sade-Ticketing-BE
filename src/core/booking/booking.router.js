@@ -19,32 +19,24 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
+  authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
-r.post(
-  "/book",
+r.put(
+  "/set-schedules/:id",
   authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.book }),
-  controller.book
+  validatorMiddleware({ body: validator.setSchedules }),
+  controller.setSchedules
 );
 
 r.put(
-  "/book-schedule/:id",
+  "/confirm/:ids",
   authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.bookSchedule }),
-  controller.bookSchedule
+  validatorMiddleware({ body: validator.confirm }),
+  controller.userConfirm
 );
-
-r.put(
-  "/book-confirm/:id",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.bookingConfirm }),
-  controller.bookingConfirm
-);
-
-r.put("/book-confirm/:id", authMiddleware(["USR"]));
 
 r.put(
   "/update/:id",

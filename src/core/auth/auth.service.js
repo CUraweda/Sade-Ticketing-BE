@@ -1,26 +1,24 @@
-import base64url from 'base64url';
+import base64url from "base64url";
 import bcrypt from "bcrypt";
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 import BaseService from "../../base/service.base.js";
 import constant from "../../config/constant.js";
 import { prism } from "../../config/db.js";
-import { userFields } from "../../data/model-fields.js";
 import EmailHelper from "../../helper/emailHelper.js";
 import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 
-function encrypt (text) {
-  const passphrase = '123';
+function encrypt(text) {
+  const passphrase = "123";
   return CryptoJS.AES.encrypt(text, passphrase).toString();
-};
+}
 
-function decrypt (ciphertext) {
-  const passphrase = '123';
+function decrypt(ciphertext) {
+  const passphrase = "123";
   const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
   const originalText = bytes.toString(CryptoJS.enc.Utf8);
   return originalText;
-};
-
+}
 
 class AuthService extends BaseService {
   constructor() {
@@ -31,8 +29,7 @@ class AuthService extends BaseService {
   login = async (payload) => {
     const user = await this.db.user.findUnique({
       where: { email: payload.email },
-      select: {
-        ...this.include(userFields),
+      include: {
         user_roles: {
           select: {
             id: true,
@@ -49,7 +46,10 @@ class AuthService extends BaseService {
     });
     if (!user) throw new NotFound("Akun tidak ditemukan");
 
-    if (!user.status) throw new Forbidden("Akun saat ini sedang non-aktif atau belum melakukan verifikasi email");
+    if (!user.status)
+      throw new Forbidden(
+        "Akun saat ini sedang non-aktif atau belum melakukan verifikasi email"
+      );
 
     const pwValid = await bcrypt.compare(payload.password, user.password);
     if (!pwValid) throw new BadRequest("Password tidak cocok");
@@ -89,8 +89,7 @@ class AuthService extends BaseService {
   refreshToken = async (payload) => {
     const user = await this.db.user.findUnique({
       where: { email: payload.email },
-      select: {
-        ...this.include(userFields),
+      include: {
         user_roles: {
           select: {
             id: true,
@@ -142,48 +141,50 @@ class AuthService extends BaseService {
   };
 
   register = async (payload) => {
-    const verifyEmail = await this.db.user.findFirst({ where: { email: payload.email } });
+    const verifyEmail = await this.db.user.findFirst({
+      where: { email: payload.email },
+    });
 
     if (verifyEmail) {
-        throw new Forbidden("Akun dengan email telah digunakan");
+      throw new Forbidden("Akun dengan email telah digunakan");
     }
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(payload.password, salt);
 
     const data = await this.db.user.create({
-        data: {
-            full_name: payload.full_name,
-            email: payload.email,
-            password: hashedPassword
-        }
+      data: {
+        full_name: payload.full_name,
+        email: payload.email,
+        password: hashedPassword,
+      },
     });
 
     const user_role = await this.db.role.findFirst({ where: { code: "USR" } });
 
     await this.db.userRole.create({
-        data: {
-            role_id: user_role.id,
-            user_id: data.id,
-            is_active: false
-        }
+      data: {
+        role_id: user_role.id,
+        user_id: data.id,
+        is_active: false,
+      },
     });
 
-    const encryptedEmail = encrypt(payload.email); 
+    const encryptedEmail = encrypt(payload.email);
     const url = `${process.env.WEB_URL}/verifikasi/${base64url.encode(encryptedEmail)}`;
-    const mailBody = './src/register.html';
+    const mailBody = "./src/register.html";
 
     this.mailHelper.sendEmail(
-        url,
-        process.env.EMAIL_ACCOUNT,
-        payload.email,
-        process.env.SUBJECT,
-        mailBody
+      url,
+      process.env.EMAIL_ACCOUNT,
+      payload.email,
+      process.env.SUBJECT,
+      mailBody
     );
 
     return {
-        data,
-        message: "Akun anda berhasil terdaftar! Silahkan verifikasi email anda"
+      data,
+      message: "Akun anda berhasil terdaftar! Silahkan verifikasi email anda",
     };
   };
 
@@ -192,42 +193,50 @@ class AuthService extends BaseService {
     const encryptedEmail = base64url.decode(encodedEmail);
     const decodedEmail = decrypt(encryptedEmail);
 
-    const user = await this.db.user.findFirst({ where: { email: decodedEmail } });
+    const user = await this.db.user.findFirst({
+      where: { email: decodedEmail },
+    });
 
     if (!user) {
-        throw new BadRequest("User tidak ditemukan.");
+      throw new BadRequest("User tidak ditemukan.");
     }
 
     await this.db.user.update({
-        where: {id: user.id},
-        data: {status: true, email_verified: true}
+      where: { id: user.id },
+      data: { status: true, email_verified: true },
     });
 
     await this.db.userRole.updateMany({
-        where: { user_id: user.id },
-        data: { is_active: true }
+      where: { user_id: user.id },
+      data: { is_active: true },
     });
 
     return "Email berhasil diverifikasi!";
   };
 
   forgotPassword = async (payload) => {
-    const user = await this.db.user.findFirst({ where: { email: payload.email } });
+    const user = await this.db.user.findFirst({
+      where: { email: payload.email },
+    });
     if (!user) {
       throw new BadRequest("Akun tidak ditemukan");
     }
 
-    const resetToken = jwt.sign({ uid: user.id }, process.env.JWT_RESET_SECRET, { expiresIn: '1h' });
+    const resetToken = jwt.sign(
+      { uid: user.id },
+      process.env.JWT_RESET_SECRET,
+      { expiresIn: "1h" }
+    );
     const resetTokenExp = new Date(Date.now() + 60 * 60 * 1000);
 
     await this.db.user.update({
       where: { id: user.id },
-      data: { reset_token: resetToken, reset_token_exp: resetTokenExp }
+      data: { reset_token: resetToken, reset_token_exp: resetTokenExp },
     });
 
-    const encryptedToken = base64url.encode(resetToken); 
+    const encryptedToken = base64url.encode(resetToken);
     const url = `${process.env.WEB_URL}/reset-password/${encryptedToken}`;
-    const mailBody = './src/forgotEmail.html';
+    const mailBody = "./src/forgotEmail.html";
 
     this.mailHelper.sendEmail(
       url,
@@ -237,8 +246,8 @@ class AuthService extends BaseService {
       mailBody
     );
 
-    return "Email dikirim!"
-  }
+    return "Email dikirim!";
+  };
   resetPass = async (payload) => {
     const encodedToken = payload.encoded_token;
     const resetToken = base64url.decode(encodedToken);
@@ -250,7 +259,9 @@ class AuthService extends BaseService {
       throw new BadRequest("Token tidak valid atau sudah kadaluarsa.");
     }
 
-    const user = await this.db.user.findFirst({ where: { reset_token: resetToken } });
+    const user = await this.db.user.findFirst({
+      where: { reset_token: resetToken },
+    });
 
     if (!user || user.reset_token_exp < new Date()) {
       throw new BadRequest("Token tidak valid atau sudah kadaluarsa.");
@@ -264,12 +275,12 @@ class AuthService extends BaseService {
       data: {
         password: hashedPassword,
         reset_token: null,
-        reset_token_exp: null
-      }
+        reset_token_exp: null,
+      },
     });
 
-    return { message: "Password berhasil diupdate!" }
-  }
-};
+    return { message: "Password berhasil diupdate!" };
+  };
+}
 
 export default AuthService;

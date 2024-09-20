@@ -11,7 +11,7 @@ class QuestionService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.question.findMany({
       ...q,
-      select: this.include([...questionFields, "options"]),
+      include: this.select(["options"]),
     });
 
     if (query.paginate) {

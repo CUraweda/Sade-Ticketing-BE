@@ -14,7 +14,7 @@ class UserService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.user.findMany({
       ...q,
-      select: this.include([
+      select: this.select([
         "id",
         "full_name",
         "email",
@@ -36,7 +36,7 @@ class UserService extends BaseService {
   findById = async (id) => {
     const data = await this.db.user.findUnique({
       where: { id },
-      select: this.include([
+      select: this.select([
         "id",
         "full_name",
         "email",
@@ -75,16 +75,12 @@ class UserService extends BaseService {
   findUserRoles = async (id) => {
     const data = await this.db.userRole.findMany({
       where: {
-        user_id: id
+        user_id: id,
       },
-      select: this.include([
-        "id",
-        "is_active",
-        "role"
-      ])
-    })
-    return data
-  }
+      select: this.select(["id", "is_active", "role"]),
+    });
+    return data;
+  };
 
   assignRole = async (id, payload) => {
     if (payload.filter((dat) => dat.is_active).length > 1)

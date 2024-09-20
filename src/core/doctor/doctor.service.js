@@ -1,6 +1,5 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { doctorProfileFields } from "../../data/model-fields.js";
 
 class DoctorService extends BaseService {
   constructor() {
@@ -36,12 +35,7 @@ class DoctorService extends BaseService {
   findById = async (id) => {
     const data = await this.db.doctorProfile.findUnique({
       where: { id },
-      select: this.include([
-        ...doctorProfileFields,
-        "location.id",
-        "location.title",
-        "specialisms",
-      ]),
+      include: this.select(["location.id", "location.title", "specialisms"]),
     });
     return data;
   };
@@ -81,7 +75,7 @@ class DoctorService extends BaseService {
   findDoctorServices = async (id) => {
     const data = await this.db.doctorProfile.findMany({
       where: { id },
-      select: this.include([
+      include: this.select([
         "services.id",
         "services.title",
         "services.category.name",

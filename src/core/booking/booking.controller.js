@@ -24,12 +24,17 @@ class BookingController extends BaseController {
     if (req.user?.role_code == "USR")
       await this.#service.checkBookingOwner(req.params.id, req.user.id);
     const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound("Booking tidak ditemukan");
+    data["service_data"] = this.#service.extractServiceData(data.service_data);
 
     return this.ok(res, data, "Booking berhasil didapatkan");
   });
 
   create = this.wrapper(async (req, res) => {
-    const data = await this.#service.create(req.body);
+    let payload = req.body;
+    payload["user_id"] = req.user.id;
+
+    const data = await this.#service.create(payload);
     return this.created(res, data, "Booking berhasil dibuat");
   });
 
@@ -65,23 +70,18 @@ class BookingController extends BaseController {
     return this.noContent(res, "Booking berhasil dihapus");
   });
 
-  book = this.wrapper(async (req, res) => {
-    const data = await this.#service.book(req.user.id, req.body);
-    return this.ok(res, data, "Booking layanan berhasil dibuat");
-  });
-
-  bookSchedule = this.wrapper(async (req, res) => {
+  setSchedules = this.wrapper(async (req, res) => {
     await this.#service.checkBookingOwner(req.params.id, req.user.id);
-    const data = await this.#service.bookSchedule(req.params.id, req.body);
+    const data = await this.#service.setSchedules(req.params.id, req.body);
     return this.ok(res, data, "Booking jadwal berhasil dibuat");
   });
 
-  bookingConfirm = this.wrapper(async (req, res) => {
-    await this.#service.checkBookingOwner(req.params.id, req.user.id);
+  userConfirm = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.params.ids, req.user.id);
 
     let payload = req.body;
     payload["user_id"] = req.user.id;
-    await this.#service.bookingConfirm(req.params.id, payload);
+    await this.#service.userConfirm([req.params.ids], payload);
 
     return this.ok(res, null, "Booking berhasil dikonfirmasi");
   });

@@ -15,7 +15,7 @@ class PaymentsService extends BaseService {
     const q = this.transformBrowseQuery(query);
     let data = await this.db.payments.findMany({
       ...q,
-      include: this.include([
+      include: this.select([
         "bookings.services.service_data",
         "user.id",
         "user.full_name",
@@ -110,7 +110,7 @@ class PaymentsService extends BaseService {
   findById = async (id) => {
     return this.db.payments.findUnique({
       where: { id },
-      include: this.include(["bank_account"]),
+      include: this.select(["bank_account"]),
     });
   };
 
