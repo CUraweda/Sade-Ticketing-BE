@@ -32,13 +32,11 @@ r.put(
 );
 
 r.put(
-  "/book-confirm/:id",
+  "/confirm/:ids",
   authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.bookingConfirm }),
-  controller.bookingConfirm
+  validatorMiddleware({ body: validator.confirm }),
+  controller.userConfirm
 );
-
-r.put("/book-confirm/:id", authMiddleware(["USR"]));
 
 r.put(
   "/update/:id",

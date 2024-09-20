@@ -14,6 +14,7 @@ import {
   PaymentStatus,
 } from "../payments/payments.validator.js";
 import { BookingStatus } from "./booking.validator.js";
+import { InvoiceStatus } from "../invoice/invoice.validator.js";
 
 class BookingService extends BaseService {
   constructor() {
@@ -188,28 +189,34 @@ class BookingService extends BaseService {
     });
   };
 
-  bookingConfirm = async (id, { user_id, bank_account_id }) => {
-    const booking = await this.findById(id);
+  userConfirm = async (ids, payload) => {
+    const bookings = await this.db.booking.findMany({
+      where: ids,
+    });
 
     await this.db.$transaction(async (db) => {
-      await this.db.payments.create({
+      await db.invoice.create({
         data: {
-          user_id: user_id,
-          amount_paid: booking.total,
-          payment_method: PaymentMethod.MANUAL_TRANSFER,
-          status: PaymentStatus.UNPAID,
-          bank_account_id: bank_account_id,
+          bank_account_id: payload.bank_account_id,
+          user_id: payload.user_id,
+          title: "Tagihan layanan",
+          total: bookings.reduce((a, c) => {
+            a += c.quantity * c.price;
+          }, 0),
+          status: InvoiceStatus.ISSUED,
           expiry_date: moment().add({ day: 1 }).toDate(),
           bookings: {
-            connect: {
-              id: booking.id,
-            },
+            connect: ids.map((id) => ({ id })),
           },
         },
       });
 
-      await this.db.booking.update({
-        where: { id },
+      await db.booking.updateMany({
+        where: {
+          id: {
+            in: ids,
+          },
+        },
         data: {
           status: BookingStatus.NEED_PAYMENT,
           is_locked: true,
