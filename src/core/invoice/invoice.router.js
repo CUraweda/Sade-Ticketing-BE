@@ -3,12 +3,14 @@ import validatorMiddleware from "../../middlewares/validator.middleware.js";
 import InvoiceController from "./invoice.controller.js";
 import InvoiceValidator from "./invoice.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 const r = Router(),
   validator = InvoiceValidator,
   controller = new InvoiceController();
 
 r.get(
   "/show-all",
+  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );

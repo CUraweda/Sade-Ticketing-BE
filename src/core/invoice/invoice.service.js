@@ -8,7 +8,23 @@ class InvoiceService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.invoice.findMany({ ...q });
+    const data = await this.db.invoice.findMany({
+      ...q,
+      include: {
+        user: {
+          select: {
+            avatar: true,
+            full_name: true,
+            email: true,
+          },
+        },
+        _count: {
+          select: {
+            bookings: true,
+          },
+        },
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.invoice.count({ where: q.where });
@@ -38,4 +54,4 @@ class InvoiceService extends BaseService {
   };
 }
 
-export default InvoiceService;  
+export default InvoiceService;
