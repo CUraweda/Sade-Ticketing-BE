@@ -12,7 +12,10 @@ export const BookingStatus = {
 
 export const BookingValidator = {
   create: Joi.object({
-    // no-data
+    client_id: Joi.string().external(relationExist("clientProfile")).required(),
+    service_id: Joi.string().external(relationExist("service")).required(),
+    compliant: Joi.string().max(100).required(),
+    quantity: Joi.number().precision(0).min(1).required(),
   }),
   update: Joi.object({
     // no-data
@@ -32,17 +35,14 @@ export const BookingValidator = {
       .min(1)
       .required(),
   }),
-  bookSchedule: Joi.array().items(
-    Joi.object({
-      id: Joi.string().required(),
-      quantity: Joi.number().min(1).required(),
-      compliant: Joi.string().max(100).required(),
-      schedules: Joi.array()
-        .items(Joi.string().external(relationExist("schedule")).required())
-        .length(Joi.ref("quantity")),
-    })
-  ),
-  bookingConfirm: Joi.object({
+  setSchedules: Joi.object({
+    quantity: Joi.number().min(1).required(),
+    compliant: Joi.string().max(100).required(),
+    schedule_ids: Joi.array()
+      .items(Joi.string().external(relationExist("schedule")).required())
+      .length(Joi.ref("quantity")),
+  }),
+  confirm: Joi.object({
     bank_account_id: Joi.number()
       .external(relationExist("bankAccount"))
       .required(),

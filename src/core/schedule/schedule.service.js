@@ -11,7 +11,7 @@ class ScheduleService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.schedule.findMany({
       ...q,
-      include: this.include(["creator.full_name", "creator.avatar"]),
+      include: this.select(["creator.full_name", "creator.avatar"]),
     });
 
     if (query.paginate) {
@@ -24,7 +24,7 @@ class ScheduleService extends BaseService {
   findById = async (id) => {
     const data = await this.db.schedule.findUnique({
       where: { id },
-      include: this.include([
+      include: this.select([
         "creator.avatar",
         "creator.full_name",
         "doctors.id",

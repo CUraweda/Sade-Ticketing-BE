@@ -1,7 +1,6 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { serviceFields } from "../../data/model-fields.js";
 
 class ServiceService extends BaseService {
   constructor() {
@@ -12,8 +11,7 @@ class ServiceService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.service.findMany({
       ...q,
-      select: this.include([
-        ...serviceFields.getFields(),
+      include: this.select([
         "category.id",
         "category.name",
         "location.id",
@@ -32,7 +30,7 @@ class ServiceService extends BaseService {
   findById = async (id) => {
     const data = await this.db.service.findUnique({
       where: { id },
-      include: this.include([
+      include: this.select([
         "category.name",
         "location.title",
         "questionnaires.id",

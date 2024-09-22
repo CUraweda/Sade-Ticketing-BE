@@ -190,7 +190,7 @@ class BaseService {
   /**
    * @param {string[]} selects
    */
-  include = (selects = []) => {
+  select = (selects = []) => {
     if (!selects.length) return undefined;
 
     const select = {};

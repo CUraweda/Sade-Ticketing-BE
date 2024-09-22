@@ -29,6 +29,7 @@ model User {
   schedules               Schedule[]
   payments                Payments[]
   reschedule_requests     RescheduleRequest[]
+  invoices                Invoice[]
   sender_user     UserChat[] @relation("SenderUser")
   receiver_user     UserChat[] @relation("ReceiverUser")
 }
@@ -76,6 +77,7 @@ model BankAccount {
   account_number String
   provider       String
   payments       Payments[]
+  invoices       Invoice[]
 }
 
 // DOCTORS
@@ -115,19 +117,17 @@ model DoctorProfile {
 }
 
 model DoctorSession {
-  id                 String   @id @default(uuid())
-  doctor_id          String?
-  service_id         String?
-  date               DateTime
-  time_start         String
-  time_end           String
-  note               String?
-  booking_service_id String?
-  is_locked          Boolean  @default(false)
+  id         String   @id @default(uuid())
+  doctor_id  String?
+  service_id String?
+  date       DateTime
+  time_start String
+  time_end   String
+  note       String?
+  is_locked  Boolean  @default(false)
 
-  doctor          DoctorProfile?  @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
-  service         Service?        @relation(fields: [service_id], references: [id])
-  booking_service BookingService? @relation(fields: [booking_service_id], references: [id])
+  doctor  DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  service Service?       @relation(fields: [service_id], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -163,9 +163,9 @@ model Service {
   required_services            Service[]                   @relation("RequiredServices")
   prerequisite_For             Service[]                   @relation("RequiredServices")
   questionnaires               Questionnaire[]
-  bookings                     BookingService[]
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
+  bookings                     Booking[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -216,19 +216,19 @@ model Questionnaire {
 }
 
 model QuestionnaireResponse {
-  id                 String  @id @default(uuid())
-  note               String?
-  user_id            String?
-  client_id          String?
-  questionnaire_id   String?
-  booking_service_id String?
-  is_locked          Boolean @default(false)
+  id               String  @id @default(uuid())
+  user_id          String?
+  client_id        String?
+  questionnaire_id String?
+  booking_id       String?
+  note             String?
+  is_locked        Boolean @default(false)
 
-  user            User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  client          ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  questionnaire   Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
-  booking_service BookingService?  @relation(fields: [booking_service_id], references: [id], onDelete: Cascade)
-  answers         QuestionAnswer[]
+  user          User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client        ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking       Booking?         @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  answers       QuestionAnswer[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -283,46 +283,53 @@ model QuestionAnswer {
 // BOOKING SERVICE
 model Booking {
   id         String  @id @default(uuid())
-  profile_id String?
+  client_id  String?
   user_id    String?
-  status     String // draft, pending_payment, waiting, ongoing, completed
-  total      Float
-  is_locked  Boolean @default(false)
+  service_id String?
 
-  profile  ClientProfile?   @relation(fields: [profile_id], references: [id], onDelete: SetNull)
-  user     User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  services BookingService[]
-  payments Payments[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-}
-
-model BookingService {
-  id          String  @id @default(uuid())
-  booking_id  String?
-  service_id  String?
-  category_id Int?
-  location_id Int?
-
-  compliant String?
-  quantity  Int
-
-  service_data String? @db.LongText // stringify json; service data on booking
+  compliant    String?
+  quantity     Int
+  price        Float
+  service_data String? @db.LongText
+  status       String // draft, pending_payment, waiting, ongoing, completed
+  title        String?
+  group_label  String?
   is_locked    Boolean @default(false)
+  is_approved  Boolean @default(false)
 
+  client                  ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  service                 Service?                @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  schedules               Schedule[]
   questionnaire_responses QuestionnaireResponse[]
-  doctor_sessions         DoctorSession[]
-
-  booking   Booking?   @relation(fields: [booking_id], references: [id], onDelete: Cascade)
-  service   Service?   @relation(fields: [service_id], references: [id], onDelete: SetNull)
-  schedules Schedule[]
+  invoices                Invoice[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
 
-// payments 
+// INVOICE AND PAYMENT
+model Invoice {
+  id              String @id @default(uuid())
+  bank_account_id Int?
+  user_id         String
+
+  title       String
+  total       Float
+  status      String // issued, paid, overdue
+  expiry_date DateTime?
+  paid_date   DateTime?
+  note        String?
+
+  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  bookings     Booking[]
+  payments     Payments[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
 model Payments {
   id                 String    @id @default(uuid())
   amount_paid        Float
@@ -335,9 +342,9 @@ model Payments {
   payment_date       DateTime?
   expiry_date        DateTime?
 
-  bookings     Booking[]
   user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
   bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  invoices     Invoice[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -371,23 +378,24 @@ model ServiceRecommendationItem {
 
 // SCHEDULE
 model Schedule {
-  id                 String    @id @default(uuid())
-  start_date         DateTime
-  end_date           DateTime?
-  title              String
-  description        String?
-  is_locked          Boolean   @default(false)
-  creator_id         String?
-  service_id         String?
-  booking_service_id String?
+  id          String    @id @default(uuid())
+  start_date  DateTime
+  end_date    DateTime?
+  title       String
+  description String?
+  is_locked   Boolean   @default(false)
+
+  creator_id String?
+  service_id String?
+  booking_id String?
 
   clients               ClientProfile[]
   doctors               DoctorProfile[]
   creator               User?               @relation(fields: [creator_id], references: [id], onDelete: Cascade)
   service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
-  booking_service       BookingService?     @relation(fields: [booking_service_id], references: [id], onDelete: Cascade)
   reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
   new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
+  booking               Booking?            @relation(fields: [booking_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
