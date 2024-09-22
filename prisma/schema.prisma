@@ -29,6 +29,8 @@ model User {
   schedules               Schedule[]
   payments                Payments[]
   reschedule_requests     RescheduleRequest[]
+  sender_user     UserChat[] @relation("SenderUser")
+  receiver_user     UserChat[] @relation("ReceiverUser")
 }
 
 model UserRole {
@@ -420,4 +422,25 @@ model UserFile {
   updated_at DateTime @default(now())
   user_id    String
   user       User     @relation(fields: [user_id], references: [id])
+}
+
+model UserChat {
+  id            String         @id @default(uuid())
+  sender_id     String
+  receiver_id   String
+  unique_id     String?         
+  
+  sender        User           @relation("SenderUser", fields: [sender_id], references: [id])
+  receiver      User           @relation("ReceiverUser", fields: [receiver_id], references: [id])
+}
+
+model ChatMessage {
+  id          String   @id @default(uuid())
+  sender_id   String
+  receiver_id String
+  message     String
+  is_read     Boolean  @default(false)
+  unique_id   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
 }
