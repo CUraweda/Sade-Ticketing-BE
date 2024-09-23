@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 
@@ -34,7 +35,43 @@ class InvoiceService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.invoice.findUnique({ where: { id } });
+    const data = await this.db.invoice.findUnique({
+      where: { id },
+      include: {
+        bookings: {
+          include: {
+            schedules: true,
+          },
+        },
+      },
+    });
+
+    data["items"] = data.bookings
+      .map((b, _, arr) => {
+        return b.schedules.reduce((a, c) => {
+          const date = moment(c.start_date).format("YYYY-MM-DD");
+          const found = a.find((item) => item.date == date);
+
+          if (found) {
+            found.quantity += 1;
+            found.total_price = found.quantity * b.price;
+          } else
+            a.push({
+              date,
+              service: b.title,
+              quantity: 1,
+              price: b.price,
+              total_price: b.price,
+              note: "",
+            });
+
+          return a;
+        }, []);
+      })
+      .flat();
+
+    delete data.bookings;
+
     return data;
   };
 
