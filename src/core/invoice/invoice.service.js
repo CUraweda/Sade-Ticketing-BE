@@ -43,6 +43,11 @@ class InvoiceService extends BaseService {
             schedules: true,
           },
         },
+        payment: {
+          include: {
+            bank_account: true,
+          },
+        },
       },
     });
 
