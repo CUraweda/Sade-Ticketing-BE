@@ -2,6 +2,8 @@ import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { NotFound } from "../../lib/response/catch.js";
 import BookingService from "../booking/booking.service.js";
+import { InvoiceStatus } from "../invoice/invoice.validator.js";
+import { PaymentStatus } from "./payments.validator.js";
 
 class PaymentsService extends BaseService {
   #bookingService;
@@ -127,6 +129,18 @@ class PaymentsService extends BaseService {
       where: { id },
       data: payload,
     });
+
+    await this.db.invoice.updateMany({
+      where: { payment_id: id },
+      data: {
+        status: [PaymentStatus.COMPLETED, PaymentStatus.SETTLED].includes(
+          payload.status
+        )
+          ? InvoiceStatus.PAID
+          : InvoiceStatus.ISSUED,
+      },
+    });
+
     return data;
   };
 
