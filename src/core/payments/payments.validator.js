@@ -30,7 +30,7 @@ export const PaymentsValidator = {
       .items(Joi.string().external(relationExist("invoice")).required())
       .min(1)
       .required(),
-    bank_account_id: Joi.string()
+    bank_account_id: Joi.number()
       .external(relationExist("bankAccount"))
       .optional(),
   }),

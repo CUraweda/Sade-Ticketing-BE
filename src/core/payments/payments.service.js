@@ -18,35 +18,11 @@ class PaymentsService extends BaseService {
     let data = await this.db.payments.findMany({
       ...q,
       include: this.select([
-        "bookings.services.service_data",
         "user.id",
         "user.full_name",
         "user.avatar",
         "user.email",
       ]),
-    });
-
-    data = data.map((dat) => {
-      return {
-        ...dat,
-        bookings: undefined,
-        items: [
-          ...dat.bookings
-            .map((b) =>
-              b.services
-                .map((s) => {
-                  const data = this.#bookingService.extractServiceData(
-                    s.service_data
-                  );
-                  return {
-                    title: `${data.category?.name ?? "-"} - ${data.title}`,
-                  };
-                })
-                .flat()
-            )
-            .flat(),
-        ],
-      };
     });
 
     if (query.paginate) {
