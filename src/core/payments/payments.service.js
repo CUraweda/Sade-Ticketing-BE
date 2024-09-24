@@ -82,29 +82,36 @@ class PaymentsService extends BaseService {
     return data;
   };
 
-  create = async (payload) => {
-    const booking = await this.db.booking.findUnique({
-      where: { id: payload.booking_id },
-    });
+  create = async (payload, invoice_ids) => {
+    let total = payload?.amount_paid ?? 0;
 
-    if (!booking) {
-      throw new Error("Booking not found");
+    if (invoice_ids.length) {
+      total = (
+        await this.db.invoice.aggregate({
+          where: {
+            id: {
+              in: payload.invoice_ids,
+            },
+            user_id: payload.user_id,
+          },
+          _sum: {
+            total: true,
+          },
+        })
+      )._sum.total;
     }
 
-    const payment = await this.db.payments.create({
+    const data = await this.db.payments.create({
       data: {
-        amount_paid: booking.total,
-        payment_method: payload.payment_method,
-        status: payload.status,
-        transaction_id: payload.transaction_id,
-        expiry_date: payload.expiry_date,
-        bookings: {
-          connect: { id: payload.booking_id },
+        ...payload,
+        amount_paid: total,
+        invoices: {
+          connect: invoice_ids?.map((i) => ({ id: i })) ?? [],
         },
       },
     });
 
-    return payment;
+    return data;
   };
 
   findById = async (id) => {
