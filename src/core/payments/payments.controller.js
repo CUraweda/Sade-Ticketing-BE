@@ -1,9 +1,10 @@
 import BaseController from "../../base/controller.base.js";
-import { NotFound } from "../../lib/response/catch.js";
+import { BadRequest, NotFound } from "../../lib/response/catch.js";
 import PaymentsService from "./payments.service.js";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
-import { PaymentStatus } from "./payments.validator.js";
+import { PaymentMethod, PaymentStatus } from "./payments.validator.js";
+import moment from "moment";
 
 class PaymentsController extends BaseController {
   #service;
@@ -104,6 +105,9 @@ class PaymentsController extends BaseController {
 
   downloadPaymentProof = this.wrapper(async (req, res) => {
     const { id } = req.params;
+
+    if (!this.isAdmin(req)) await this.#service.checkOwner(id, req.user.id);
+
     const payment = await this.#service.findById(id);
 
     if (!payment || !payment.payment_proof_path) {
@@ -122,6 +126,23 @@ class PaymentsController extends BaseController {
         return this.serverError(res, "Gagal mendownload file");
       }
     });
+  });
+
+  payManualTransfer = this.wrapper(async (req, res) => {
+    if (!req.file)
+      throw new BadRequest("Mohon lampirkan file bukti pembayaran");
+
+    const { invoice_ids, ...payload } = req.body;
+    payload.payment_method = PaymentMethod.MANUAL_TRANSFER;
+    payload.payment_proof_path = req.file.path;
+    payload.status = PaymentStatus.PAID;
+    payload.transaction_id = uuidv4();
+    payload.user_id = req.user.id;
+    payload.payment_date = moment();
+
+    await this.#service.create(payload, invoice_ids);
+
+    return this.ok(res, `${invoice_ids?.length} tagihan berhasil dibayarkan`);
   });
 }
 

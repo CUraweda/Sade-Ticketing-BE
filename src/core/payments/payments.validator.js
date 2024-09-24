@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { relationExist } from "../../base/validator.base.js";
 
 export const PaymentMethod = {
   MANUAL_TRANSFER: "manual_transfer",
@@ -23,6 +24,15 @@ export const PaymentsValidator = {
     status: Joi.string()
       .valid(...Object.values(PaymentStatus))
       .required(),
+  }),
+  payManualTransfer: Joi.object({
+    invoice_ids: Joi.array()
+      .items(Joi.string().external(relationExist("invoice")).required())
+      .min(1)
+      .required(),
+    bank_account_id: Joi.number()
+      .external(relationExist("bankAccount"))
+      .optional(),
   }),
 };
 
