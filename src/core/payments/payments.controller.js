@@ -105,6 +105,9 @@ class PaymentsController extends BaseController {
 
   downloadPaymentProof = this.wrapper(async (req, res) => {
     const { id } = req.params;
+
+    if (!this.isAdmin(req)) await this.#service.checkOwner(id, req.user.id);
+
     const payment = await this.#service.findById(id);
 
     if (!payment || !payment.payment_proof_path) {
