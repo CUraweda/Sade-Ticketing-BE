@@ -17,6 +17,7 @@ import serviceRecommendation from "./core/servicerecommendation/servicerecommend
 import specialismRouter from "./core/specialism/specialism.router.js";
 import userRouter from "./core/user/user.router.js";
 import userFile from "./core/userfile/userfile.router.js";
+import invoiceRouter from "./core/invoice/invoice.router.js";
 
 const r = Router();
 
@@ -38,6 +39,7 @@ r.use("/bank-account", bankaccountRouter);
 r.use("/schedule", scheduleRouter);
 r.use("/service-recommendation", serviceRecommendation);
 r.use("/user-file", userFile);
+r.use("/invoice", invoiceRouter);
 
 const appRouter = r;
 export default appRouter;

@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 
@@ -8,7 +9,23 @@ class InvoiceService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.invoice.findMany({ ...q });
+    const data = await this.db.invoice.findMany({
+      ...q,
+      include: {
+        user: {
+          select: {
+            avatar: true,
+            full_name: true,
+            email: true,
+          },
+        },
+        _count: {
+          select: {
+            bookings: true,
+          },
+        },
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.invoice.count({ where: q.where });
@@ -18,7 +35,48 @@ class InvoiceService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.invoice.findUnique({ where: { id } });
+    const data = await this.db.invoice.findUnique({
+      where: { id },
+      include: {
+        bookings: {
+          include: {
+            schedules: true,
+          },
+        },
+        payment: {
+          include: {
+            bank_account: true,
+          },
+        },
+      },
+    });
+
+    data["items"] = data.bookings
+      .map((b, _, arr) => {
+        return b.schedules.reduce((a, c) => {
+          const date = moment(c.start_date).format("YYYY-MM-DD");
+          const found = a.find((item) => item.date == date);
+
+          if (found) {
+            found.quantity += 1;
+            found.total_price = found.quantity * b.price;
+          } else
+            a.push({
+              date,
+              service: b.title,
+              quantity: 1,
+              price: b.price,
+              total_price: b.price,
+              note: "",
+            });
+
+          return a;
+        }, []);
+      })
+      .flat();
+
+    delete data.bookings;
+
     return data;
   };
 
@@ -38,4 +96,4 @@ class InvoiceService extends BaseService {
   };
 }
 
-export default InvoiceService;  
+export default InvoiceService;

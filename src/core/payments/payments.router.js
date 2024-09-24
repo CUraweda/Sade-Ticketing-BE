@@ -44,7 +44,15 @@ r.put(
 
 r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
-r.get("/download/:id", controller.downloadPaymentProof);
+r.get("/download/:id", authMiddleware(), controller.downloadPaymentProof);
+
+r.post(
+  "/manual-transfer",
+  authMiddleware(["USR"]),
+  uploader("/payment-proofs", "image", 3000000).single("proof_file"),
+  validatorMiddleware({ body: validator.payManualTransfer }),
+  controller.payManualTransfer
+);
 
 const paymentsRouter = r;
 export default paymentsRouter;
