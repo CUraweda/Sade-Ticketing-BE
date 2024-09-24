@@ -93,6 +93,7 @@ class PaymentsService extends BaseService {
               in: payload.invoice_ids,
             },
             user_id: payload.user_id,
+            payment_id: null,
           },
           _sum: {
             total: true,
