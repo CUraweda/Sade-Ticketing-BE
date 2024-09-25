@@ -17,6 +17,12 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
+r.get(
+  "/invoice-simulation/:ids",
+  authMiddleware(),
+  controller.invoiceSimulation
+);
+
 r.post(
   "/create",
   authMiddleware(["USR"]),

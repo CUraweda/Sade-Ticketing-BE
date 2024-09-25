@@ -1,13 +1,16 @@
 import BaseController from "../../base/controller.base.js";
 import { Forbidden, NotFound } from "../../lib/response/catch.js";
+import InvoiceService from "../invoice/invoice.service.js";
 import BookingService from "./booking.service.js";
 
 class BookingController extends BaseController {
   #service;
+  #invoiceService;
 
   constructor() {
     super();
     this.#service = new BookingService();
+    this.#invoiceService = new InvoiceService();
   }
 
   findAll = this.wrapper(async (req, res) => {
@@ -84,6 +87,17 @@ class BookingController extends BaseController {
     await this.#service.userConfirm([req.params.ids], payload);
 
     return this.ok(res, null, "Booking berhasil dikonfirmasi");
+  });
+
+  invoiceSimulation = this.wrapper(async (req, res) => {
+    const ids = req.params.ids.split(",");
+    let data = {};
+
+    const items = await this.#invoiceService.getItems(null, ids);
+    data["items"] = items.items;
+    data["items_total"] = items.total;
+
+    return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
 }
 

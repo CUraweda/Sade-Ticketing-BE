@@ -69,8 +69,8 @@ class InvoiceService extends BaseService {
     return data;
   };
 
-  getItems = async (invoice_id, booking_id) => {
-    let bookingIds = booking_id ? [booking_id] : [];
+  getItems = async (invoice_id, booking_ids) => {
+    let bookingIds = booking_ids ? [...booking_ids] : [];
 
     if (invoice_id) {
       const invoiceBookings = await this.db.invoice.findUnique({
