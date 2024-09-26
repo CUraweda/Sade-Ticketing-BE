@@ -18,7 +18,7 @@ class FeeService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.fee.findUnique({ where: { id } });
+    const data = await this.db.fee.findUnique({ where: { id: +id } });
     return data;
   };
 
@@ -28,14 +28,17 @@ class FeeService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.fee.update({ where: { id }, data: payload });
+    const data = await this.db.fee.update({
+      where: { id: +id },
+      data: payload,
+    });
     return data;
   };
 
   delete = async (id) => {
-    const data = await this.db.fee.delete({ where: { id } });
+    const data = await this.db.fee.delete({ where: { id: +id } });
     return data;
   };
 }
 
-export default FeeService;  
+export default FeeService;
