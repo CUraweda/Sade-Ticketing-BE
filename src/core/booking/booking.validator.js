@@ -41,11 +41,6 @@ export const BookingValidator = {
       .items(Joi.string().external(relationExist("schedule")).required())
       .length(Joi.ref("quantity")),
   }),
-  confirm: Joi.object({
-    bank_account_id: Joi.number()
-      .external(relationExist("bankAccount"))
-      .required(),
-  }),
 };
 
 export default BookingValidator;

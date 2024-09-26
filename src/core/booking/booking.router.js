@@ -37,12 +37,7 @@ r.put(
   controller.setSchedules
 );
 
-r.put(
-  "/confirm/:ids",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.confirm }),
-  controller.userConfirm
-);
+r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 
 r.put(
   "/update/:id",
