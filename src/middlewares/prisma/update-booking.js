@@ -2,7 +2,7 @@ import { prism } from "../../config/db.js";
 import { BookingStatus } from "../../core/booking/booking.validator.js";
 import { InvoiceStatus } from "../../core/invoice/invoice.validator.js";
 
-const upBookingStatusOnUpdateManyInvoice = async ({ args, query }) => {
+const upBookingStatusOnUpdateInvoice = async ({ args, query }) => {
   const result = await query(args);
 
   // update booking
@@ -13,7 +13,7 @@ const upBookingStatusOnUpdateManyInvoice = async ({ args, query }) => {
         invoices: {
           some: {
             id: {
-              in: args.where.id.in ?? args.where.id ?? [],
+              in: (args.where.id.in ?? args.where.id) ? [args.where.id] : [],
             },
           },
           every: {
@@ -25,9 +25,24 @@ const upBookingStatusOnUpdateManyInvoice = async ({ args, query }) => {
         status: BookingStatus.NEED_APPROVAL,
       },
     });
+    await prism.booking.updateMany({
+      where: {
+        invoices: {
+          some: {
+            id: {
+              in: (args.where.id.in ?? args.where.id) ? [args.where.id] : [],
+            },
+            status: InvoiceStatus.ISSUED,
+          },
+        },
+      },
+      data: {
+        status: BookingStatus.NEED_PAYMENT,
+      },
+    });
   } catch {}
 
   return result;
 };
 
-export { upBookingStatusOnUpdateManyInvoice };
+export { upBookingStatusOnUpdateInvoice };

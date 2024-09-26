@@ -44,6 +44,7 @@ class BookingService extends BaseService {
             },
           },
         },
+        invoices: true,
       },
     });
     return data;

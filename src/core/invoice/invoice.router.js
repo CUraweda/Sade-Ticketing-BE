@@ -25,6 +25,7 @@ r.post(
 
 r.put(
   "/update/:id",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
