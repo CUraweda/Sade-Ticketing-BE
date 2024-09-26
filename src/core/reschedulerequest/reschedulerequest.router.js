@@ -3,7 +3,7 @@ import validatorMiddleware from "../../middlewares/validator.middleware.js";
 import RescheduleRequestController from "./reschedulerequest.controller.js";
 import RescheduleRequestValidator from "./reschedulerequest.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
-import authMiddleware from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 const r = Router(),
   validator = RescheduleRequestValidator,

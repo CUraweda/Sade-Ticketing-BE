@@ -1,16 +1,16 @@
 import { Router } from "express";
 import validatorMiddleware from "../../middlewares/validator.middleware.js";
-import InvoiceController from "./invoice.controller.js";
-import InvoiceValidator from "./invoice.validator.js";
+import FeeController from "./fee.controller.js";
+import FeeValidator from "./fee.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+
 const r = Router(),
-  validator = InvoiceValidator,
-  controller = new InvoiceController();
+  validator = FeeValidator,
+  controller = new FeeController();
 
 r.get(
   "/show-all",
-  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
@@ -19,6 +19,7 @@ r.get("/show-one/:id", controller.findById);
 
 r.post(
   "/create",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
@@ -30,7 +31,7 @@ r.put(
   controller.update
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
-const invoiceRouter = r;
-export default invoiceRouter;
+const feeRouter = r;
+export default feeRouter;

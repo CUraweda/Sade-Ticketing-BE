@@ -38,11 +38,6 @@ class InvoiceService extends BaseService {
     const data = await this.db.invoice.findUnique({
       where: { id },
       include: {
-        bookings: {
-          include: {
-            schedules: true,
-          },
-        },
         payment: {
           include: {
             bank_account: true,
@@ -51,31 +46,10 @@ class InvoiceService extends BaseService {
       },
     });
 
-    data["items"] = data.bookings
-      .map((b, _, arr) => {
-        return b.schedules.reduce((a, c) => {
-          const date = moment(c.start_date).format("YYYY-MM-DD");
-          const found = a.find((item) => item.date == date);
-
-          if (found) {
-            found.quantity += 1;
-            found.total_price = found.quantity * b.price;
-          } else
-            a.push({
-              date,
-              service: b.title,
-              quantity: 1,
-              price: b.price,
-              total_price: b.price,
-              note: "",
-            });
-
-          return a;
-        }, []);
-      })
-      .flat();
-
-    delete data.bookings;
+    // invoice main items
+    const items = await this.getItems(id);
+    data["items"] = items.items;
+    data["items_total"] = items.total;
 
     return data;
   };
@@ -93,6 +67,42 @@ class InvoiceService extends BaseService {
   delete = async (id) => {
     const data = await this.db.invoice.delete({ where: { id } });
     return data;
+  };
+
+  getItems = async (invoice_id, booking_ids) => {
+    let bookingIds = booking_ids ? [...booking_ids] : [];
+
+    if (invoice_id) {
+      const invoiceBookings = await this.db.invoice.findUnique({
+        where: { id: invoice_id },
+        select: this.select(["bookings.id"]),
+      });
+      bookingIds = [...bookingIds, invoiceBookings.bookings.map((b) => b.id)];
+    }
+
+    const items = await this.db.$queryRaw`
+      SELECT 
+        DATE(s.start_date) AS start_date,
+        b.title,
+        CAST(COUNT(b.id) AS CHAR(32)) AS quantity,
+        b.price,
+        (b.price * COUNT(b.id)) AS total_price
+      FROM 
+        Schedule s
+      JOIN 
+        Booking b ON s.booking_id = b.id
+      WHERE
+        b.id IN (${bookingIds.join(", ")})
+      GROUP BY 
+        DATE(s.start_date);
+    `;
+
+    const total = {
+      quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
+      price: items.reduce((a, c) => (a += c.total_price), 0),
+    };
+
+    return { items, total };
   };
 }
 

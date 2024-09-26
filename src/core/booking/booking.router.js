@@ -17,6 +17,12 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
+r.get(
+  "/invoice-simulation/:ids",
+  authMiddleware(),
+  controller.invoiceSimulation
+);
+
 r.post(
   "/create",
   authMiddleware(["USR"]),
@@ -31,12 +37,7 @@ r.put(
   controller.setSchedules
 );
 
-r.put(
-  "/confirm/:ids",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.confirm }),
-  controller.userConfirm
-);
+r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 
 r.put(
   "/update/:id",
