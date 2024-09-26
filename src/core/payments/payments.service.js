@@ -104,13 +104,19 @@ class PaymentsService extends BaseService {
     const data = await this.db.payments.update({
       where: { id },
       data: payload,
+      include: this.select(["invoices.id"]),
     });
 
+    // update related invoice status
     await this.db.invoice.updateMany({
-      where: { payment_id: id },
+      where: {
+        id: {
+          in: data.invoices.map((inv) => inv.id),
+        },
+      },
       data: {
         status: [PaymentStatus.COMPLETED, PaymentStatus.SETTLED].includes(
-          payload.status
+          data.status
         )
           ? InvoiceStatus.PAID
           : InvoiceStatus.ISSUED,

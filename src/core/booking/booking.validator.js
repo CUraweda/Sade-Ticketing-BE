@@ -3,7 +3,6 @@ import { relationExist } from "../../base/validator.base.js";
 
 export const BookingStatus = {
   DRAFT: "draft",
-  NEED_CONFIRM: "need_confirm",
   NEED_PAYMENT: "need_payment",
   NEED_APPROVAL: "need_approval",
   ONGOING: "ongoing",
