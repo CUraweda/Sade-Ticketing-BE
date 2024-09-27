@@ -17,22 +17,8 @@ export const BookingValidator = {
     quantity: Joi.number().precision(0).min(1).required(),
   }),
   update: Joi.object({
-    // no-data
-  }),
-  book: Joi.object({
-    profile_id: Joi.string()
-      .external(relationExist("clientProfile"))
-      .required(),
-    compliant: Joi.string().max(100).required(),
-    services: Joi.array()
-      .items(
-        Joi.object({
-          quantity: Joi.number().min(1).required(),
-          id: Joi.string().external(relationExist("service")).required(),
-        })
-      )
-      .min(1)
-      .required(),
+    compliant: Joi.string().max(100).optional(),
+    status: Joi.valid(...Object.values(BookingStatus)).optional(),
   }),
   setSchedules: Joi.object({
     quantity: Joi.number().min(1).required(),

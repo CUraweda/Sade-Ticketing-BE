@@ -13,9 +13,16 @@ class BookingService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
+
     const data = (
       await this.db.booking.findMany({
         ...q,
+        include: this.select([
+          "client.first_name",
+          "client.last_name",
+          "client.category",
+          "client.dob",
+        ]),
       })
     ).map((dat) => ({
       ...dat,
