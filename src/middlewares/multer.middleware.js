@@ -10,7 +10,7 @@ import Setting from "../config/multer.js";
 const createStorage = (uploadPath) => {
   return multer.diskStorage({
     destination: function (req, file, cb) {
-      const fullPath = uploadPath;
+      const fullPath = "./uploads" + uploadPath;
       if (!fs.existsSync(fullPath)) {
         fs.mkdirSync(fullPath, { recursive: true });
       }
@@ -72,7 +72,7 @@ const createFilter = (mime) => {
  * @returns {multer.Multer}
  */
 const uploader = (
-  uploadPath = "../../uploads/other/",
+  uploadPath = "/others",
   fileType = "image",
   limitSize = Setting.defaultLimitSize
 ) => {

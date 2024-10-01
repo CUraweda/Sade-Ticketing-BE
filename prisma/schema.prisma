@@ -146,7 +146,7 @@ model Service {
   id                   String   @id @default(uuid())
   category_id          Int?
   location_id          Int?
-  title                String
+  title                String   @unique
   description          String?  @db.LongText
   duration             Int? // in minute
   duration_description String?
@@ -309,10 +309,33 @@ model Booking {
 }
 
 // INVOICE AND PAYMENT
+model Fee {
+  id          Int     @id @default(autoincrement())
+  title       String  @unique
+  description String?
+  price       Float
+
+  invoices InvoiceFee[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model InvoiceFee {
+  id         Int    @id @default(autoincrement())
+  quantity   Int    @default(1)
+  fee_id     Int
+  invoice_id String
+
+  fee     Fee     @relation(fields: [fee_id], references: [id], onDelete: Cascade)
+  invoice Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+}
+
 model Invoice {
-  id              String @id @default(uuid())
+  id              String  @id @default(uuid())
   bank_account_id Int?
-  user_id         String
+  user_id         String?
+  payment_id      String?
 
   title       String
   total       Float
@@ -322,9 +345,10 @@ model Invoice {
   note        String?
 
   bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
-  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  payment      Payments?    @relation(fields: [payment_id], references: [id], onDelete: SetNull)
   bookings     Booking[]
-  payments     Payments[]
+  fees         InvoiceFee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

@@ -47,11 +47,22 @@ class BaseService {
       const ors = [];
       query.search.split("+").forEach((q) => {
         const [col, val] = q.split(":");
-        ors.push({
-          [col]: {
-            startsWith: val,
-          },
+        const keys = col.split(".");
+        let current = {},
+          temp = current;
+
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            temp[key] = {
+              startsWith: val,
+            };
+          } else {
+            temp[key] = {};
+            temp = temp[key];
+          }
         });
+
+        ors.push(current);
       });
 
       likes["OR"] = ors;

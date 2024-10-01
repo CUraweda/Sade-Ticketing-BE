@@ -44,6 +44,7 @@ class BookingService extends BaseService {
             },
           },
         },
+        invoices: true,
       },
     });
     return data;
@@ -182,7 +183,6 @@ class BookingService extends BaseService {
     await this.db.$transaction(async (db) => {
       await db.invoice.create({
         data: {
-          bank_account_id: payload.bank_account_id,
           user_id: payload.user_id,
           title: "Tagihan layanan",
           total: bookings.reduce((a, c) => (a += c.quantity * c.price), 0),

@@ -3,7 +3,6 @@ import { relationExist } from "../../base/validator.base.js";
 
 export const BookingStatus = {
   DRAFT: "draft",
-  NEED_CONFIRM: "need_confirm",
   NEED_PAYMENT: "need_payment",
   NEED_APPROVAL: "need_approval",
   ONGOING: "ongoing",
@@ -41,11 +40,6 @@ export const BookingValidator = {
     schedule_ids: Joi.array()
       .items(Joi.string().external(relationExist("schedule")).required())
       .length(Joi.ref("quantity")),
-  }),
-  confirm: Joi.object({
-    bank_account_id: Joi.number()
-      .external(relationExist("bankAccount"))
-      .required(),
   }),
 };
 
