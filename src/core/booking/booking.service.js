@@ -214,6 +214,46 @@ class BookingService extends BaseService {
       });
     });
   };
+
+  adminConfirm = async (id) => {
+    await this.db.$transaction(async (db) => {
+      const upBooking = await db.booking.update({
+        where: {
+          id,
+          is_locked: true,
+        },
+        include: {
+          schedules: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        data: {
+          status: BookingStatus.ONGOING,
+        },
+      });
+
+      if (!upBooking) return;
+
+      for (let schId of upBooking.schedules.map((sc) => sc.id)) {
+        await db.schedule.update({
+          where: {
+            id: schId,
+            booking_id: upBooking.id,
+            is_locked: true,
+          },
+          data: {
+            clients: {
+              connect: {
+                id: upBooking.client_id,
+              },
+            },
+          },
+        });
+      }
+    });
+  };
 }
 
 export default BookingService;

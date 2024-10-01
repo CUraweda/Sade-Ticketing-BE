@@ -39,6 +39,8 @@ r.put(
 
 r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 
+r.put("/admin-confirm/:id", authMiddleware(["ADM"]), controller.adminConfirm);
+
 r.put(
   "/update/:id",
   authMiddleware(["ADM", "SDM"]),
