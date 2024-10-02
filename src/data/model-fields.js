@@ -105,38 +105,6 @@ export const serviceFields = {
   },
 };
 
-export const doctorSessionFields = {
-  fields: {
-    id: [],
-    doctor_id: [],
-    service_id: [],
-    date: [],
-    time_start: [],
-    time_end: [],
-    note: [],
-    booking_service_id: [],
-    is_locked: [],
-    created_at: [],
-    updated_at: [],
-  },
-  relations: {
-    doctor: [],
-    service: [],
-    booking_service: [],
-  },
-  getFields(role = "") {
-    return Object.keys(this.fields).filter((k) =>
-      role ? !this.fields[k].includes(role) : true
-    );
-  },
-  withRelation(role = "") {
-    const join = { ...this.fields, ...this.relations };
-    return Object.keys(join).filter((k) =>
-      role ? !join[k].includes(role) : true
-    );
-  },
-};
-
 export const questionFields = [
   "id",
   "questionnaire_id",
