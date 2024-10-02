@@ -21,6 +21,8 @@ class BaseService {
       query.where.split("+").forEach((q) => {
         let [col, val] = q.split(":");
 
+        if (val == "") return;
+
         if (isInteger(val)) {
           val = parseInt(val);
         } else if (isBoolean(val)) {
