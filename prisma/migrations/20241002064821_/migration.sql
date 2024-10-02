@@ -94,23 +94,6 @@ CREATE TABLE `DoctorProfile` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `DoctorSession` (
-    `id` VARCHAR(191) NOT NULL,
-    `doctor_id` VARCHAR(191) NULL,
-    `service_id` VARCHAR(191) NULL,
-    `date` DATETIME(3) NOT NULL,
-    `time_start` VARCHAR(191) NOT NULL,
-    `time_end` VARCHAR(191) NOT NULL,
-    `note` VARCHAR(191) NULL,
-    `booking_service_id` VARCHAR(191) NULL,
-    `is_locked` BOOLEAN NOT NULL DEFAULT false,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
 CREATE TABLE `ServiceCategory` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
@@ -126,7 +109,7 @@ CREATE TABLE `Service` (
     `category_id` INTEGER NULL,
     `location_id` INTEGER NULL,
     `title` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NULL,
+    `description` LONGTEXT NULL,
     `duration` INTEGER NULL,
     `duration_description` VARCHAR(191) NULL,
     `price` DOUBLE NOT NULL,
@@ -137,6 +120,7 @@ CREATE TABLE `Service` (
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `Service_title_key`(`title`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -181,11 +165,11 @@ CREATE TABLE `Questionnaire` (
 -- CreateTable
 CREATE TABLE `QuestionnaireResponse` (
     `id` VARCHAR(191) NOT NULL,
-    `note` VARCHAR(191) NULL,
     `user_id` VARCHAR(191) NULL,
     `client_id` VARCHAR(191) NULL,
     `questionnaire_id` VARCHAR(191) NULL,
-    `booking_service_id` VARCHAR(191) NULL,
+    `booking_id` VARCHAR(191) NULL,
+    `note` VARCHAR(191) NULL,
     `is_locked` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -242,11 +226,18 @@ CREATE TABLE `QuestionAnswer` (
 -- CreateTable
 CREATE TABLE `Booking` (
     `id` VARCHAR(191) NOT NULL,
-    `profile_id` VARCHAR(191) NULL,
+    `client_id` VARCHAR(191) NULL,
     `user_id` VARCHAR(191) NULL,
+    `service_id` VARCHAR(191) NULL,
+    `compliant` VARCHAR(191) NULL,
+    `quantity` INTEGER NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `service_data` LONGTEXT NULL,
     `status` VARCHAR(191) NOT NULL,
-    `total` DOUBLE NOT NULL,
+    `title` VARCHAR(191) NULL,
+    `group_label` VARCHAR(191) NULL,
     `is_locked` BOOLEAN NOT NULL DEFAULT false,
+    `is_approved` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -254,16 +245,40 @@ CREATE TABLE `Booking` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `BookingService` (
+CREATE TABLE `Fee` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `price` DOUBLE NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Fee_title_key`(`title`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `InvoiceFee` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `quantity` INTEGER NOT NULL DEFAULT 1,
+    `fee_id` INTEGER NOT NULL,
+    `invoice_id` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Invoice` (
     `id` VARCHAR(191) NOT NULL,
-    `booking_id` VARCHAR(191) NULL,
-    `service_id` VARCHAR(191) NULL,
-    `category_id` INTEGER NULL,
-    `location_id` INTEGER NULL,
-    `compliant` VARCHAR(191) NULL,
-    `quantity` INTEGER NOT NULL,
-    `service_data` LONGTEXT NULL,
-    `is_locked` BOOLEAN NOT NULL DEFAULT false,
+    `bank_account_id` INTEGER NULL,
+    `user_id` VARCHAR(191) NULL,
+    `payment_id` VARCHAR(191) NULL,
+    `title` VARCHAR(191) NOT NULL,
+    `total` DOUBLE NOT NULL,
+    `status` VARCHAR(191) NOT NULL,
+    `expiry_date` DATETIME(3) NULL,
+    `paid_date` DATETIME(3) NULL,
+    `note` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -315,11 +330,29 @@ CREATE TABLE `ServiceRecommendationItem` (
 CREATE TABLE `Schedule` (
     `id` VARCHAR(191) NOT NULL,
     `start_date` DATETIME(3) NOT NULL,
-    `end_date` DATETIME(3) NOT NULL,
+    `end_date` DATETIME(3) NULL,
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NULL,
     `is_locked` BOOLEAN NOT NULL DEFAULT false,
     `creator_id` VARCHAR(191) NULL,
+    `service_id` VARCHAR(191) NULL,
+    `booking_id` VARCHAR(191) NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RescheduleRequest` (
+    `id` VARCHAR(191) NOT NULL,
+    `reason` VARCHAR(191) NOT NULL,
+    `schedule_id` VARCHAR(191) NOT NULL,
+    `start_date` DATETIME(3) NULL,
+    `end_date` DATETIME(3) NULL,
+    `new_schedule_id` VARCHAR(191) NULL,
+    `user_id` VARCHAR(191) NOT NULL,
+    `is_approved` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -395,12 +428,12 @@ CREATE TABLE `_QuestionnaireToService` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_BookingToPayments` (
+CREATE TABLE `_BookingToInvoice` (
     `A` VARCHAR(191) NOT NULL,
     `B` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `_BookingToPayments_AB_unique`(`A`, `B`),
-    INDEX `_BookingToPayments_B_index`(`B`)
+    UNIQUE INDEX `_BookingToInvoice_AB_unique`(`A`, `B`),
+    INDEX `_BookingToInvoice_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -414,15 +447,6 @@ ALTER TABLE `DoctorProfile` ADD CONSTRAINT `DoctorProfile_location_id_fkey` FORE
 
 -- AddForeignKey
 ALTER TABLE `DoctorProfile` ADD CONSTRAINT `DoctorProfile_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `DoctorSession` ADD CONSTRAINT `DoctorSession_doctor_id_fkey` FOREIGN KEY (`doctor_id`) REFERENCES `DoctorProfile`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `DoctorSession` ADD CONSTRAINT `DoctorSession_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `DoctorSession` ADD CONSTRAINT `DoctorSession_booking_service_id_fkey` FOREIGN KEY (`booking_service_id`) REFERENCES `BookingService`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Service` ADD CONSTRAINT `Service_category_id_fkey` FOREIGN KEY (`category_id`) REFERENCES `ServiceCategory`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -443,7 +467,7 @@ ALTER TABLE `QuestionnaireResponse` ADD CONSTRAINT `QuestionnaireResponse_client
 ALTER TABLE `QuestionnaireResponse` ADD CONSTRAINT `QuestionnaireResponse_questionnaire_id_fkey` FOREIGN KEY (`questionnaire_id`) REFERENCES `Questionnaire`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `QuestionnaireResponse` ADD CONSTRAINT `QuestionnaireResponse_booking_service_id_fkey` FOREIGN KEY (`booking_service_id`) REFERENCES `BookingService`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `QuestionnaireResponse` ADD CONSTRAINT `QuestionnaireResponse_booking_id_fkey` FOREIGN KEY (`booking_id`) REFERENCES `Booking`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Question` ADD CONSTRAINT `Question_questionnaire_id_fkey` FOREIGN KEY (`questionnaire_id`) REFERENCES `Questionnaire`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -458,16 +482,28 @@ ALTER TABLE `QuestionAnswer` ADD CONSTRAINT `QuestionAnswer_response_id_fkey` FO
 ALTER TABLE `QuestionAnswer` ADD CONSTRAINT `QuestionAnswer_question_id_fkey` FOREIGN KEY (`question_id`) REFERENCES `Question`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Booking` ADD CONSTRAINT `Booking_profile_id_fkey` FOREIGN KEY (`profile_id`) REFERENCES `ClientProfile`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Booking` ADD CONSTRAINT `Booking_client_id_fkey` FOREIGN KEY (`client_id`) REFERENCES `ClientProfile`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Booking` ADD CONSTRAINT `Booking_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_booking_id_fkey` FOREIGN KEY (`booking_id`) REFERENCES `Booking`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Booking` ADD CONSTRAINT `Booking_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `BookingService` ADD CONSTRAINT `BookingService_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `InvoiceFee` ADD CONSTRAINT `InvoiceFee_fee_id_fkey` FOREIGN KEY (`fee_id`) REFERENCES `Fee`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `InvoiceFee` ADD CONSTRAINT `InvoiceFee_invoice_id_fkey` FOREIGN KEY (`invoice_id`) REFERENCES `Invoice`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Invoice` ADD CONSTRAINT `Invoice_bank_account_id_fkey` FOREIGN KEY (`bank_account_id`) REFERENCES `BankAccount`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Invoice` ADD CONSTRAINT `Invoice_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Invoice` ADD CONSTRAINT `Invoice_payment_id_fkey` FOREIGN KEY (`payment_id`) REFERENCES `Payments`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Payments` ADD CONSTRAINT `Payments_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -489,6 +525,21 @@ ALTER TABLE `ServiceRecommendationItem` ADD CONSTRAINT `ServiceRecommendationIte
 
 -- AddForeignKey
 ALTER TABLE `Schedule` ADD CONSTRAINT `Schedule_creator_id_fkey` FOREIGN KEY (`creator_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Schedule` ADD CONSTRAINT `Schedule_service_id_fkey` FOREIGN KEY (`service_id`) REFERENCES `Service`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Schedule` ADD CONSTRAINT `Schedule_booking_id_fkey` FOREIGN KEY (`booking_id`) REFERENCES `Booking`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RescheduleRequest` ADD CONSTRAINT `RescheduleRequest_schedule_id_fkey` FOREIGN KEY (`schedule_id`) REFERENCES `Schedule`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RescheduleRequest` ADD CONSTRAINT `RescheduleRequest_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `RescheduleRequest` ADD CONSTRAINT `RescheduleRequest_new_schedule_id_fkey` FOREIGN KEY (`new_schedule_id`) REFERENCES `Schedule`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `UserFile` ADD CONSTRAINT `UserFile_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -530,7 +581,7 @@ ALTER TABLE `_QuestionnaireToService` ADD CONSTRAINT `_QuestionnaireToService_A_
 ALTER TABLE `_QuestionnaireToService` ADD CONSTRAINT `_QuestionnaireToService_B_fkey` FOREIGN KEY (`B`) REFERENCES `Service`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_BookingToPayments` ADD CONSTRAINT `_BookingToPayments_A_fkey` FOREIGN KEY (`A`) REFERENCES `Booking`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_BookingToInvoice` ADD CONSTRAINT `_BookingToInvoice_A_fkey` FOREIGN KEY (`A`) REFERENCES `Booking`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_BookingToPayments` ADD CONSTRAINT `_BookingToPayments_B_fkey` FOREIGN KEY (`B`) REFERENCES `Payments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_BookingToInvoice` ADD CONSTRAINT `_BookingToInvoice_B_fkey` FOREIGN KEY (`B`) REFERENCES `Invoice`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
