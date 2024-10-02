@@ -13,9 +13,16 @@ class BookingService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
+
     const data = (
       await this.db.booking.findMany({
         ...q,
+        include: this.select([
+          "client.first_name",
+          "client.last_name",
+          "client.category",
+          "client.dob",
+        ]),
       })
     ).map((dat) => ({
       ...dat,
@@ -205,6 +212,46 @@ class BookingService extends BaseService {
           is_locked: true,
         },
       });
+    });
+  };
+
+  adminConfirm = async (id) => {
+    await this.db.$transaction(async (db) => {
+      const upBooking = await db.booking.update({
+        where: {
+          id,
+          is_locked: true,
+        },
+        include: {
+          schedules: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        data: {
+          status: BookingStatus.ONGOING,
+        },
+      });
+
+      if (!upBooking) return;
+
+      for (let schId of upBooking.schedules.map((sc) => sc.id)) {
+        await db.schedule.update({
+          where: {
+            id: schId,
+            booking_id: upBooking.id,
+            is_locked: true,
+          },
+          data: {
+            clients: {
+              connect: {
+                id: upBooking.client_id,
+              },
+            },
+          },
+        });
+      }
     });
   };
 }

@@ -13,7 +13,11 @@ const upBookingStatusOnUpdateInvoice = async ({ args, query }) => {
         invoices: {
           some: {
             id: {
-              in: (args.where.id.in ?? args.where.id) ? [args.where.id] : [],
+              in: args.where.id.in
+                ? args.where.id.in
+                : args.where.id
+                  ? [args.where.id]
+                  : [],
             },
           },
           every: {
@@ -30,7 +34,11 @@ const upBookingStatusOnUpdateInvoice = async ({ args, query }) => {
         invoices: {
           some: {
             id: {
-              in: (args.where.id.in ?? args.where.id) ? [args.where.id] : [],
+              in: args.where.id.in
+                ? args.where.id.in
+                : args.where.id
+                  ? [args.where.id]
+                  : [],
             },
             status: InvoiceStatus.ISSUED,
           },
@@ -40,7 +48,9 @@ const upBookingStatusOnUpdateInvoice = async ({ args, query }) => {
         status: BookingStatus.NEED_PAYMENT,
       },
     });
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
 
   return result;
 };

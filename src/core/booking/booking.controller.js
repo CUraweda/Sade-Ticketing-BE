@@ -89,6 +89,11 @@ class BookingController extends BaseController {
     return this.ok(res, null, "Booking berhasil dikonfirmasi");
   });
 
+  adminConfirm = this.wrapper(async (req, res) => {
+    await this.#service.adminConfirm(req.params.id);
+    return this.ok(res, null, "Booking berhasil dikonfirmasi admin");
+  });
+
   invoiceSimulation = this.wrapper(async (req, res) => {
     const ids = req.params.ids.split(",");
     let data = {};
