@@ -43,6 +43,9 @@ class InvoiceService extends BaseService {
             bank_account: true,
           },
         },
+        fees: {
+          include: { fee: true },
+        },
       },
     });
 
