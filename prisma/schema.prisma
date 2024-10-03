@@ -464,15 +464,20 @@ model UserChat {
   
   sender        User           @relation("SenderUser", fields: [sender_id], references: [id])
   receiver      User           @relation("ReceiverUser", fields: [receiver_id], references: [id])
+  chatMessages  ChatMessage[]
 }
 
 model ChatMessage {
-  id          String   @id @default(uuid())
-  sender_id   String
-  receiver_id String
-  message     String
-  is_read     Boolean  @default(false)
-  unique_id   String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  id            String   @id @default(uuid())
+  sender_id     String
+  receiver_id   String
+  message       String
+  is_read       Boolean  @default(false)
+  unique_id     String?
+  user_chat_id  String?
+  
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+
+  userChat    UserChat? @relation(fields: [user_chat_id], references: [id])
 }

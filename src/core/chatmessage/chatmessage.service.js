@@ -23,7 +23,9 @@ class ChatMessageService extends BaseService {
   };
 
   findByUniqueId = async (id) => {
-    const data = await this.db.chatMessage.findMany({ where: { unique_id: id } });
+    const data = await this.db.chatMessage.findMany({ where: { unique_id: id },orderBy: {
+      created_at: 'desc',
+    }, });
     return data;
   };
 

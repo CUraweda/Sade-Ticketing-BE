@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 
@@ -21,6 +22,17 @@ class UserChatService extends BaseService {
     const data = await this.db.userChat.findUnique({ where: { id } });
     return data;
   };
+  
+  findByUser = async (id) => {
+    const userChats = await this.db.userChat.findMany({
+      where: {
+        sender_id: id
+      }
+    });
+    
+    return userChats;
+  };
+  
 
   create = async (payload) => {
     const sender = await this.db.userRole.findFirst({where: {user_id: payload.sender_id}})

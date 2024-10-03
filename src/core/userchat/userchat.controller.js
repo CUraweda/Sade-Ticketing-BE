@@ -22,6 +22,13 @@ class UserChatController extends BaseController {
     return this.ok(res, data, "UserChat berhasil didapatkan");
   });
 
+  findByUser = this.wrapper(async (req, res) => {
+    const data = await this.#service.findByUser(req.params.id);
+    if (!data) throw new NotFound("UserChat tidak ditemukan");
+
+    return this.ok(res, data, "UserChat berhasil didapatkan");
+  });
+
   create = this.wrapper(async (req, res) => {
     const data = await this.#service.create(req.body);
     return this.created(res, data, "UserChat berhasil dibuat");
