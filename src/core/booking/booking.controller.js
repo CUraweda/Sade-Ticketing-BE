@@ -102,6 +102,10 @@ class BookingController extends BaseController {
     data["items"] = items.items;
     data["items_total"] = items.total;
 
+    const fees = await this.#invoiceService.getFees(null, ids);
+    data["fees"] = fees.items;
+    data["fees_total"] = fees.total;
+
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
 }
