@@ -117,9 +117,6 @@ class InvoiceService extends BaseService {
     if (bookingIds) {
       const checkBookingTherapy = await this.db.booking.groupBy({
         where: {
-          id: {
-            in: bookingIds,
-          },
           service: {
             category_id: 2,
           },
