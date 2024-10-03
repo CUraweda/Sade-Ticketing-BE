@@ -94,12 +94,57 @@ class InvoiceService extends BaseService {
       WHERE
         b.id IN (${bookingIds.join(", ")})
       GROUP BY 
-        DATE(s.start_date);
+        DATE(s.start_date), b.title;
     `;
 
     const total = {
       quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
       price: items.reduce((a, c) => (a += c.total_price), 0),
+    };
+
+    return { items, total };
+  };
+
+  getFees = async (invoice_id, booking_ids) => {
+    const bookingIds = booking_ids ? [...booking_ids] : [];
+    // list of fee
+    const items = [];
+
+    // add fee Uang pangkal terapi if had a first therapy sevice booking
+    if (bookingIds) {
+      const checkBookingTherapy = await this.db.booking.groupBy({
+        where: {
+          id: {
+            in: bookingIds,
+          },
+          service: {
+            category_id: 2,
+          },
+          is_locked: true,
+        },
+        by: ["client_id"],
+        _count: {
+          id: true,
+        },
+      });
+
+      if (!checkBookingTherapy.length) {
+        const pangkalFee = await this.db.fee.findFirst({
+          where: {
+            title: "Uang pangkal terapi",
+          },
+        });
+
+        items.push({
+          ...pangkalFee,
+          quantity: 1,
+        });
+      }
+    }
+
+    const total = {
+      quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
+      price: items.reduce((a, c) => (a += c.price), 0),
     };
 
     return { items, total };
