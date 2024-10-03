@@ -44,12 +44,16 @@ export const DoctorValidator = {
       .optional(),
     is_active: Joi.bool().default(true),
   }),
-  assignSpecialisms: Joi.array().items(
-    Joi.number().external(relationExist("specialism")).required()
-  ),
-  assignServices: Joi.array().items(
-    Joi.string().external(relationExist("service")).required()
-  ),
+  setSpecialism: Joi.object({
+    specialism_id: Joi.string()
+      .external(relationExist("specialism"))
+      .required(),
+    set: Joi.string().valid("add", "remove").required(),
+  }),
+  setService: Joi.object({
+    service_id: Joi.string().external(relationExist("service")).required(),
+    set: Joi.string().valid("add", "remove").required(),
+  }),
 };
 
 export default DoctorValidator;

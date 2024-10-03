@@ -34,15 +34,15 @@ r.put(
 );
 
 r.put(
-  "/assign-specialisms/:id",
-  validatorMiddleware({ body: validator.assignSpecialisms }),
-  controller.assignSpecialism
+  "/set-specialism/:id",
+  validatorMiddleware({ body: validator.setSpecialism }),
+  controller.setSpecialism
 );
 
 r.put(
-  "/assign-services/:id",
-  validatorMiddleware({ body: validator.assignServices }),
-  controller.assignServices
+  "/set-service/:id",
+  validatorMiddleware({ body: validator.setService }),
+  controller.setService
 );
 
 r.delete("/delete/:id", controller.delete);
