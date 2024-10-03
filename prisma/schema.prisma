@@ -107,27 +107,9 @@ model DoctorProfile {
   location                Location?               @relation(fields: [location_id], references: [id], onDelete: SetNull)
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   specialisms             Specialism[]
-  sessions                DoctorSession[]
   services                Service[]
   service_recommendations ServiceRecommendation[]
   schedules               Schedule[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-}
-
-model DoctorSession {
-  id         String   @id @default(uuid())
-  doctor_id  String?
-  service_id String?
-  date       DateTime
-  time_start String
-  time_end   String
-  note       String?
-  is_locked  Boolean  @default(false)
-
-  doctor  DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
-  service Service?       @relation(fields: [service_id], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -159,7 +141,6 @@ model Service {
   category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
   location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
   doctors                      DoctorProfile[]
-  sessions                     DoctorSession[]
   required_services            Service[]                   @relation("RequiredServices")
   prerequisite_For             Service[]                   @relation("RequiredServices")
   questionnaires               Questionnaire[]

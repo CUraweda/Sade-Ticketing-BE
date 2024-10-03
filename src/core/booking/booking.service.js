@@ -5,17 +5,28 @@ import { doctorFields } from "../../data/model-fields.js";
 import { BadRequest, Forbidden } from "../../lib/response/catch.js";
 import { BookingStatus } from "./booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
+import InvoiceService from "../invoice/invoice.service.js";
 
 class BookingService extends BaseService {
+  #invoiceService;
+
   constructor() {
     super(prism);
+    this.#invoiceService = new InvoiceService();
   }
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
+
     const data = (
       await this.db.booking.findMany({
         ...q,
+        include: this.select([
+          "client.first_name",
+          "client.last_name",
+          "client.category",
+          "client.dob",
+        ]),
       })
     ).map((dat) => ({
       ...dat,
@@ -180,16 +191,33 @@ class BookingService extends BaseService {
       },
     });
 
+    const fees = await this.#invoiceService.getFees(null, ids);
+
     await this.db.$transaction(async (db) => {
+      const feesPrice = fees.items.reduce(
+        (a, c) => (a += c.quantity * c.price),
+        0
+      );
+
       await db.invoice.create({
         data: {
           user_id: payload.user_id,
           title: "Tagihan layanan",
-          total: bookings.reduce((a, c) => (a += c.quantity * c.price), 0),
+          total:
+            bookings.reduce((a, c) => (a += c.quantity * c.price), 0) +
+            feesPrice,
           status: InvoiceStatus.ISSUED,
           expiry_date: moment().add({ day: 1 }).toDate(),
           bookings: {
             connect: ids.map((id) => ({ id })),
+          },
+          fees: {
+            createMany: {
+              data: fees.items.map((f) => ({
+                fee_id: f.id,
+                quantity: f.quantity,
+              })),
+            },
           },
         },
       });
@@ -201,10 +229,53 @@ class BookingService extends BaseService {
           },
         },
         data: {
+          price: {
+            increment: feesPrice,
+          },
           status: BookingStatus.NEED_PAYMENT,
           is_locked: true,
         },
       });
+    });
+  };
+
+  adminConfirm = async (id) => {
+    await this.db.$transaction(async (db) => {
+      const upBooking = await db.booking.update({
+        where: {
+          id,
+          is_locked: true,
+        },
+        include: {
+          schedules: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        data: {
+          status: BookingStatus.ONGOING,
+        },
+      });
+
+      if (!upBooking) return;
+
+      for (let schId of upBooking.schedules.map((sc) => sc.id)) {
+        await db.schedule.update({
+          where: {
+            id: schId,
+            booking_id: upBooking.id,
+            is_locked: true,
+          },
+          data: {
+            clients: {
+              connect: {
+                id: upBooking.client_id,
+              },
+            },
+          },
+        });
+      }
     });
   };
 }
