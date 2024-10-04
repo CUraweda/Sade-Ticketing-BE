@@ -451,6 +451,7 @@ model Label {
   user_file UserFile @relation(fields: [user_file_id], references: [id])
 
   @@id([schedule_id, user_file_id])
+  //relation
 }
 
 model UserChat {
