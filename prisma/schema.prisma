@@ -147,6 +147,7 @@ model Service {
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
+  //relasi many to many dari service ke field report-quetionaires
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -394,6 +395,7 @@ model Schedule {
   service_id String?
   booking_id String?
 
+  label Label[]
   clients               ClientProfile[]
   doctors               DoctorProfile[]
   creator               User?               @relation(fields: [creator_id], references: [id], onDelete: Cascade)
@@ -425,7 +427,7 @@ model RescheduleRequest {
 }
 
 // USER FILE / ATTACHMENT
-model UserFile {
+model UserFile { //Rename Document
   id         String   @id @default(uuid())
   filename   String
   mimetype   String
@@ -435,6 +437,20 @@ model UserFile {
   updated_at DateTime @default(now())
   user_id    String
   user       User     @relation(fields: [user_id], references: [id])
+
+  label Label[]
+}
+
+model Label {
+  schedule_id String
+  user_file_id String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  schedule Schedule @relation(fields: [schedule_id], references: [id])
+  user_file UserFile @relation(fields: [user_file_id], references: [id])
+
+  @@id([schedule_id, user_file_id])
 }
 
 model UserChat {
