@@ -45,7 +45,7 @@ export const DoctorValidator = {
     is_active: Joi.bool().default(true),
   }),
   setSpecialism: Joi.object({
-    specialism_id: Joi.string()
+    specialism_id: Joi.number()
       .external(relationExist("specialism"))
       .required(),
     set: Joi.string().valid("add", "remove").required(),
