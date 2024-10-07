@@ -2,12 +2,16 @@ import { Router } from "express";
 import authRouter from "./core/auth/auth.router.js";
 import bankaccountRouter from "./core/bankaccount/bankaccount.router.js";
 import bookingRouter from "./core/booking/booking.router.js";
+import chatMessage from "./core/chatmessage/chatmessage.router.js";
 import clientRouter from "./core/client/client.router.js";
 import doctorRouter from "./core/doctor/doctor.router.js";
+import feeRouter from "./core/fee/fee.router.js";
+import invoiceRouter from "./core/invoice/invoice.router.js";
 import locationRouter from "./core/location/location.router.js";
 import paymentsRouter from "./core/payments/payments.router.js";
 import questionRouter from "./core/question/question.router.js";
 import questionnaireRouter from "./core/questionnaire/questionnaire.router.js";
+import rescheduleRouter from "./core/reschedulerequest/reschedulerequest.router.js";
 import roleRouter from "./core/role/role.router.js";
 import scheduleRouter from "./core/schedule/schedule.router.js";
 import serviceRouter from "./core/service/service.router.js";
@@ -15,10 +19,8 @@ import servicecategoryRouter from "./core/servicecategory/servicecategory.router
 import serviceRecommendation from "./core/servicerecommendation/servicerecommendation.router.js";
 import specialismRouter from "./core/specialism/specialism.router.js";
 import userRouter from "./core/user/user.router.js";
+import userChat from "./core/userchat/userchat.router.js";
 import userFile from "./core/userfile/userfile.router.js";
-import rescheduleRouter from "./core/reschedulerequest/reschedulerequest.router.js";
-import invoiceRouter from "./core/invoice/invoice.router.js";
-import feeRouter from "./core/fee/fee.router.js";
 
 const r = Router();
 
@@ -39,6 +41,8 @@ r.use("/bank-account", bankaccountRouter);
 r.use("/schedule", scheduleRouter);
 r.use("/service-recommendation", serviceRecommendation);
 r.use("/user-file", userFile);
+r.use("/user-chat", userChat);
+r.use("/chat-message", chatMessage);
 r.use("/reschedule", rescheduleRouter);
 r.use("/invoice", invoiceRouter);
 r.use("/fee", feeRouter);
