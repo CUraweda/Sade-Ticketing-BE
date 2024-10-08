@@ -75,18 +75,28 @@ class ScheduleController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
+    if (!this.isAdmin(req)) {
       await this.#service.checkCreator(req.params.id, req.user.id);
+
+      const data = await this.#service.findById(req.params.id);
+      if (!data) throw new NotFound();
+      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
+    }
 
     const data = await this.#service.update(req.params.id, req.body);
     return this.ok(res, data, "Jadwal berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
+    if (!this.isAdmin(req)) {
       await this.#service.checkCreator(req.params.id, req.user.id);
 
-    const data = await this.#service.delete(req.params.id);
+      const data = await this.#service.findById(req.params.id);
+      if (!data) throw new NotFound();
+      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
+    }
+
+    await this.#service.delete(req.params.id);
     return this.noContent(res, "Jadwal berhasil dihapus");
   });
 
