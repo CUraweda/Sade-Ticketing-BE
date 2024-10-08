@@ -20,8 +20,8 @@ model User {
   created_at      DateTime  @default(now())
   updated_at      DateTime  @default(now()) @updatedAt
 
+  doctor                  DoctorProfile?
   user_roles              UserRole[]
-  doctors                 DoctorProfile[]
   clients                 ClientProfile[]
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
@@ -88,7 +88,7 @@ model Specialism {
 
 model DoctorProfile {
   id           String    @id @default(uuid())
-  user_id      String?
+  user_id      String?   @unique
   location_id  Int?
   category     String
   title        String?
