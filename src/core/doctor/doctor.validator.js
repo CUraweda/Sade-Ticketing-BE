@@ -7,7 +7,7 @@ export const doctorSexes = ["P", "L"];
 
 export const DoctorValidator = {
   create: Joi.object({
-    user_id: Joi.number().external(relationExist("user")).optional(),
+    user_id: Joi.string().external(relationExist("user")).optional(),
     location_id: Joi.number().external(relationExist("location")).optional(),
     category: Joi.string()
       .valid(...doctorCategory)
@@ -26,7 +26,7 @@ export const DoctorValidator = {
     is_active: Joi.bool().default(true),
   }),
   update: Joi.object({
-    user_id: Joi.number().external(relationExist("user")).optional(),
+    user_id: Joi.string().external(relationExist("user")).optional(),
     location_id: Joi.number().external(relationExist("location")).optional(),
     category: Joi.string()
       .valid(...doctorCategory)
@@ -44,12 +44,16 @@ export const DoctorValidator = {
       .optional(),
     is_active: Joi.bool().default(true),
   }),
-  assignSpecialisms: Joi.array().items(
-    Joi.number().external(relationExist("specialism")).required()
-  ),
-  assignServices: Joi.array().items(
-    Joi.string().external(relationExist("service")).required()
-  ),
+  setSpecialism: Joi.object({
+    specialism_id: Joi.number()
+      .external(relationExist("specialism"))
+      .required(),
+    set: Joi.string().valid("add", "remove").required(),
+  }),
+  setService: Joi.object({
+    service_id: Joi.string().external(relationExist("service")).required(),
+    set: Joi.string().valid("add", "remove").required(),
+  }),
 };
 
 export default DoctorValidator;

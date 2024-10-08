@@ -35,7 +35,15 @@ class DoctorService extends BaseService {
   findById = async (id) => {
     const data = await this.db.doctorProfile.findUnique({
       where: { id },
-      include: this.select(["location.id", "location.title", "specialisms"]),
+      include: this.select([
+        "location.id",
+        "location.title",
+        "specialisms",
+        "user.id",
+        "user.full_name",
+        "user.email",
+        "user.avatar",
+      ]),
     });
     return data;
   };
@@ -87,31 +95,25 @@ class DoctorService extends BaseService {
       .map((s) => ({ service: s }));
   };
 
-  assignSpecialisms = async (id, payload) => {
-    await this.db.doctorProfile.update({
-      where: { id },
-      data: {
-        specialisms: {
-          set: payload.map((id) => ({ id })),
-        },
-      },
-    });
-
-    return null;
-  };
-
-  assignServices = async (id, payload) => {
-    await this.db.doctorProfile.update({
+  setService = (id, service_id, set) =>
+    this.db.doctorProfile.update({
       where: { id },
       data: {
         services: {
-          set: payload.map((id) => ({ id })),
+          [set == "add" ? "connect" : "disconnect"]: { id: service_id },
         },
       },
     });
 
-    return null;
-  };
+  setSpecialism = (id, specialism_id, set) =>
+    this.db.doctorProfile.update({
+      where: { id },
+      data: {
+        specialisms: {
+          [set == "add" ? "connect" : "disconnect"]: { id: specialism_id },
+        },
+      },
+    });
 }
 
 export default DoctorService;
