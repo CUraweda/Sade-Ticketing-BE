@@ -32,6 +32,16 @@ class DoctorService extends BaseService {
     return data;
   };
 
+  findByUser = async (user_id) => {
+    const data = await this.db.doctorProfile.findUnique({
+      where: {
+        user_id,
+      },
+      include: this.select(["location.id", "location.title", "specialisms"]),
+    });
+    return data;
+  };
+
   findById = async (id) => {
     const data = await this.db.doctorProfile.findUnique({
       where: { id },
