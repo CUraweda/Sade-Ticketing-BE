@@ -1,5 +1,6 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
+import { RoleCode } from "../role/role.validator.js";
 import ScheduleService from "./schedule.service.js";
 
 class ScheduleController extends BaseController {
@@ -11,12 +12,33 @@ class ScheduleController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const q =
-      req.user.role_code != "SDM" && req.user.role_code != "ADM"
-        ? this.joinBrowseQuery(req.query, "where", `is_locked:false`)
-        : req.query;
+    let q = req.query;
+
+    if (!this.isAdmin(req)) {
+      q = this.joinBrowseQuery(q, "where", `is_locked:false`);
+    }
+
     const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Schedule berhasil didapatkan");
+  });
+
+  mine = this.wrapper(async (req, res) => {
+    let q = req.query,
+      role = req.user.role_code,
+      uid = req.user.id;
+
+    if (
+      role == RoleCode.PSIKOLOG ||
+      role == RoleCode.ASESOR ||
+      role == RoleCode.TERAPIS
+    ) {
+      q = this.joinBrowseQuery(q, "in_", `doctors.user_id:${uid}`);
+    } else if (role == RoleCode.USER) {
+      q = this.joinBrowseQuery(q, "in_", `clients.user_id:${uid}`);
+    }
+
+    const data = await this.#service.findAll(q);
+    return this.ok(res, data, "Jadwal anda berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {

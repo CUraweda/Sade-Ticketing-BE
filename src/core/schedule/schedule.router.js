@@ -15,6 +15,13 @@ r.get(
   controller.findAll
 );
 
+r.get(
+  "/show-mine",
+  authMiddleware(),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.mine
+);
+
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
