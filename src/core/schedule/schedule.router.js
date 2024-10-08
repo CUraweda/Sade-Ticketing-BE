@@ -26,9 +26,16 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
-  authMiddleware(),
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
+);
+
+r.post(
+  "/create-by-doctor",
+  authMiddleware(["ASR", "PSI", "TRS"]),
+  validatorMiddleware({ body: validator.createByDoctor }),
+  controller.createByDoctor
 );
 
 r.put(

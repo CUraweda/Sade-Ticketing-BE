@@ -1,14 +1,17 @@
 import BaseController from "../../base/controller.base.js";
-import { NotFound } from "../../lib/response/catch.js";
+import { BadRequest, NotFound } from "../../lib/response/catch.js";
+import DoctorService from "../doctor/doctor.service.js";
 import { RoleCode } from "../role/role.validator.js";
 import ScheduleService from "./schedule.service.js";
 
 class ScheduleController extends BaseController {
   #service;
+  #doctorService;
 
   constructor() {
     super();
     this.#service = new ScheduleService();
+    this.#doctorService = new DoctorService();
   }
 
   findAll = this.wrapper(async (req, res) => {
@@ -54,6 +57,19 @@ class ScheduleController extends BaseController {
   create = this.wrapper(async (req, res) => {
     let payload = req.body;
     payload["creator_id"] = req.user.id;
+    const data = await this.#service.create(payload);
+    return this.created(res, data, "Jadwal berhasil dibuat");
+  });
+
+  createByDoctor = this.wrapper(async (req, res) => {
+    const doctor = await this.#doctorService.findByUser(req.user.id);
+    if (!doctor)
+      throw new BadRequest("Akun anda belum ditautkan dengan profil spesialis");
+
+    let payload = req.body;
+    payload["creator_id"] = req.user.id;
+    payload["doctors"] = [doctor.id];
+
     const data = await this.#service.create(payload);
     return this.created(res, data, "Jadwal berhasil dibuat");
   });
