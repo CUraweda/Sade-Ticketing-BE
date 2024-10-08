@@ -7,7 +7,7 @@ export const doctorSexes = ["P", "L"];
 
 export const DoctorValidator = {
   create: Joi.object({
-    user_id: Joi.number().external(relationExist("user")).optional(),
+    user_id: Joi.string().external(relationExist("user")).optional(),
     location_id: Joi.number().external(relationExist("location")).optional(),
     category: Joi.string()
       .valid(...doctorCategory)
@@ -26,7 +26,7 @@ export const DoctorValidator = {
     is_active: Joi.bool().default(true),
   }),
   update: Joi.object({
-    user_id: Joi.number().external(relationExist("user")).optional(),
+    user_id: Joi.string().external(relationExist("user")).optional(),
     location_id: Joi.number().external(relationExist("location")).optional(),
     category: Joi.string()
       .valid(...doctorCategory)

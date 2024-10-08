@@ -23,29 +23,33 @@ r.get("/services/:id", controller.findServices);
 
 r.post(
   "/create",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
 r.put(
   "/set-specialism/:id",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.setSpecialism }),
   controller.setSpecialism
 );
 
 r.put(
   "/set-service/:id",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.setService }),
   controller.setService
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
 const doctorRouter = r;
 export default doctorRouter;
