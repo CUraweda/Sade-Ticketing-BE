@@ -22,6 +22,13 @@ class DoctorController extends BaseController {
     return this.ok(res, data, "Banyak Doctor berhasil didapatkan");
   });
 
+  findMine = this.wrapper(async (req, res) => {
+    const data = await this.#service.findByUser(req.user.id);
+    if (!data) throw new NotFound("Doctor tidak ditemukan");
+
+    return this.ok(res, data, "Doctor berhasil didapatkan");
+  });
+
   findById = this.wrapper(async (req, res) => {
     let data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound("Doctor tidak ditemukan");

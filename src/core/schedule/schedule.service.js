@@ -39,6 +39,9 @@ class ScheduleService extends BaseService {
         "service.id",
         "service.title",
         "service.category.name",
+        "booking.id",
+        "booking.title",
+        "booking.status",
       ]),
     });
     return data;
@@ -76,6 +79,34 @@ class ScheduleService extends BaseService {
   checkCreator = async (id, user_id) => {
     const data = await this.db.schedule.count({
       where: { id, creator_id: user_id },
+    });
+    if (!data) throw new Forbidden();
+  };
+
+  checkAuthorized = async (id, user_id) => {
+    const data = await this.db.schedule.count({
+      where: {
+        id,
+        OR: [
+          {
+            creator_id: user_id,
+          },
+          {
+            doctors: {
+              some: {
+                user_id,
+              },
+            },
+          },
+          {
+            clients: {
+              some: {
+                user_id,
+              },
+            },
+          },
+        ],
+      },
     });
     if (!data) throw new Forbidden();
   };

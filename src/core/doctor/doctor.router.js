@@ -15,6 +15,8 @@ r.get(
   controller.findAll
 );
 
+r.get("/show-mine", authMiddleware(), controller.findMine);
+
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.get("/specialisms/:id", controller.findSpecialisms);

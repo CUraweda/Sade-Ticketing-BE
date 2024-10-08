@@ -15,6 +15,13 @@ export const ScheduleValidator = {
       .items(Joi.string().external(relationExist("clientProfile")).required())
       .optional(),
   }),
+  createByDoctor: Joi.object({
+    service_id: Joi.string().external(relationExist("service")).optional(),
+    start_date: Joi.date().required(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
+    title: Joi.string().max(50).required(),
+    description: Joi.string().max(230).optional(),
+  }),
   update: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().optional(),

@@ -1,14 +1,17 @@
 import BaseController from "../../base/controller.base.js";
-import { NotFound } from "../../lib/response/catch.js";
+import { BadRequest, NotFound } from "../../lib/response/catch.js";
+import DoctorService from "../doctor/doctor.service.js";
 import { RoleCode } from "../role/role.validator.js";
 import ScheduleService from "./schedule.service.js";
 
 class ScheduleController extends BaseController {
   #service;
+  #doctorService;
 
   constructor() {
     super();
     this.#service = new ScheduleService();
+    this.#doctorService = new DoctorService();
   }
 
   findAll = this.wrapper(async (req, res) => {
@@ -42,8 +45,8 @@ class ScheduleController extends BaseController {
   });
 
   findById = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
-      await this.#service.checkCreator(req.params.id, req.user.id);
+    if (!this.isAdmin(req))
+      await this.#service.checkAuthorized(req.params.id, req.user.id);
 
     const data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound("Jadwal tidak ditemukan");
@@ -58,19 +61,42 @@ class ScheduleController extends BaseController {
     return this.created(res, data, "Jadwal berhasil dibuat");
   });
 
+  createByDoctor = this.wrapper(async (req, res) => {
+    const doctor = await this.#doctorService.findByUser(req.user.id);
+    if (!doctor)
+      throw new BadRequest("Akun anda belum ditautkan dengan profil spesialis");
+
+    let payload = req.body;
+    payload["creator_id"] = req.user.id;
+    payload["doctors"] = [doctor.id];
+
+    const data = await this.#service.create(payload);
+    return this.created(res, data, "Jadwal berhasil dibuat");
+  });
+
   update = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
+    if (!this.isAdmin(req)) {
       await this.#service.checkCreator(req.params.id, req.user.id);
+
+      const data = await this.#service.findById(req.params.id);
+      if (!data) throw new NotFound();
+      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
+    }
 
     const data = await this.#service.update(req.params.id, req.body);
     return this.ok(res, data, "Jadwal berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
+    if (!this.isAdmin(req)) {
       await this.#service.checkCreator(req.params.id, req.user.id);
 
-    const data = await this.#service.delete(req.params.id);
+      const data = await this.#service.findById(req.params.id);
+      if (!data) throw new NotFound();
+      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
+    }
+
+    await this.#service.delete(req.params.id);
     return this.noContent(res, "Jadwal berhasil dihapus");
   });
 
