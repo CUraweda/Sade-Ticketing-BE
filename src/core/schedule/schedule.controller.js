@@ -45,8 +45,8 @@ class ScheduleController extends BaseController {
   });
 
   findById = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
-      await this.#service.checkCreator(req.params.id, req.user.id);
+    if (!this.isAdmin(req))
+      await this.#service.checkAuthorized(req.params.id, req.user.id);
 
     const data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound("Jadwal tidak ditemukan");

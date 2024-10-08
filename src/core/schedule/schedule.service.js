@@ -80,6 +80,34 @@ class ScheduleService extends BaseService {
     if (!data) throw new Forbidden();
   };
 
+  checkAuthorized = async (id, user_id) => {
+    const data = await this.db.schedule.count({
+      where: {
+        id,
+        OR: [
+          {
+            creator_id: user_id,
+          },
+          {
+            doctors: {
+              some: {
+                user_id,
+              },
+            },
+          },
+          {
+            clients: {
+              some: {
+                user_id,
+              },
+            },
+          },
+        ],
+      },
+    });
+    if (!data) throw new Forbidden();
+  };
+
   addDoctor = (id, doctor_id) =>
     this.db.schedule.update({
       where: { id },
