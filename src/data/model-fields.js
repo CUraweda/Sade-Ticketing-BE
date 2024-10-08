@@ -51,7 +51,7 @@ export const doctorFields = {
     updated_at: [],
   },
   relations: {
-    user: [],
+    user: ["USR"],
     location: [],
     specialisms: [],
   },
