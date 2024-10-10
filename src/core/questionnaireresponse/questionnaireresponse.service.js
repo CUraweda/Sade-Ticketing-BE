@@ -22,15 +22,23 @@ class QuestionnaireResponseService extends BaseService {
   findById = async (id) => {
     const data = await this.db.questionnaireResponse.findUnique({
       where: { id },
-      include: this.select([
-        "questionnaire.id",
-        "client",
-        "answers.id",
-        "answers.text",
-        "answers.number",
-        "answers.date",
-        "answers.question",
-      ]),
+      include: {
+        ...this.select([
+          "questionnaire.id",
+          "user.avatar",
+          "user.full_name",
+          "client",
+        ]),
+        answers: {
+          include: {
+            question: {
+              include: {
+                options: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     return data;
