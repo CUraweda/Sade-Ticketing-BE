@@ -1,6 +1,7 @@
 import BaseController from "../../base/controller.base.js";
 import { Forbidden, NotFound } from "../../lib/response/catch.js";
 import InvoiceService from "../invoice/invoice.service.js";
+import { RoleCode } from "../role/role.validator.js";
 import BookingService from "./booking.service.js";
 
 class BookingController extends BaseController {
@@ -14,11 +15,25 @@ class BookingController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const q = this.joinBrowseQuery(
-      req.query,
-      "where",
-      req.user.role_code == "USR" ? `user_id:${req.user.id}` : ""
-    );
+    let q = req.query,
+      role = req.user.role_code,
+      uid = req.user.id;
+
+    if (!this.isAdmin(req)) {
+      if (role == RoleCode.USER)
+        q = this.joinBrowseQuery(q, "where", `user_id:${uid}`);
+      else if (
+        role == RoleCode.ASESOR ||
+        role == RoleCode.PSIKOLOG ||
+        role == RoleCode.TERAPIS
+      )
+        q = this.joinBrowseQuery(
+          q,
+          "in_",
+          `schedules.some.doctors.user_id:${uid}`
+        );
+    }
+
     const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Booking berhasil didapatkan");
   });
