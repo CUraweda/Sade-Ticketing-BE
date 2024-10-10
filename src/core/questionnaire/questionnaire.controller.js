@@ -1,5 +1,6 @@
 import BaseController from "../../base/controller.base.js";
 import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
+import { RoleCode } from "../role/role.validator.js";
 import QuestionnaireService from "./questionnaire.service.js";
 
 class QuestionnaireController extends BaseController {
@@ -38,6 +39,15 @@ class QuestionnaireController extends BaseController {
   });
 
   findResponse = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req)) {
+      if (req.user.role_code == RoleCode.USER)
+        await this.#service.checkResponseAuthor(
+          req.params.id,
+          req.params.response_id,
+          req.user.id
+        );
+    }
+
     const data = await this.#service.findResponse(
       req.params.id,
       req.params.response_id
@@ -48,12 +58,11 @@ class QuestionnaireController extends BaseController {
   });
 
   saveResponseDraft = this.wrapper(async (req, res) => {
-    const check = await this.#service.checkResponseAuthor(
+    await this.#service.checkResponseAuthor(
       req.params.id,
       req.params.response_id,
       req.user.id
     );
-    if (!check) throw new Forbidden("Akses terlarang");
 
     const data = await this.#service.saveResponse(
       req.params.response_id,
