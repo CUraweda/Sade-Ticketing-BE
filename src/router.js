@@ -19,6 +19,7 @@ import userFile from "./core/userfile/userfile.router.js";
 import rescheduleRouter from "./core/reschedulerequest/reschedulerequest.router.js";
 import invoiceRouter from "./core/invoice/invoice.router.js";
 import feeRouter from "./core/fee/fee.router.js";
+import questionnaireresponseRouter from "./core/questionnaireresponse/questionnaireresponse.router.js";
 
 const r = Router();
 
@@ -32,6 +33,7 @@ r.use("/service", serviceRouter);
 r.use("/service-category", servicecategoryRouter);
 r.use("/client", clientRouter);
 r.use("/questionnaire", questionnaireRouter);
+r.use("/questionnaire-response", questionnaireresponseRouter);
 r.use("/question", questionRouter);
 r.use("/book", bookingRouter);
 r.use("/payment", paymentsRouter);

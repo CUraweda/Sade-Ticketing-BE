@@ -278,6 +278,27 @@ class BookingService extends BaseService {
       }
     });
   };
+
+  findAllQueResponse = async (booking_id, query) => {
+    const q = this.transformBrowseQuery(query);
+
+    const data = await this.db.questionnaireResponse.findMany({
+      ...q,
+      where: {
+        ...q.where,
+        booking_id,
+      },
+      include: this.select(["questionnaire.title"]),
+    });
+
+    if (query.paginate) {
+      const countData = await this.db.questionnaireResponse.count({
+        where: { ...q.where, booking_id },
+      });
+      return this.paginate(data, countData, q);
+    }
+    return data;
+  };
 }
 
 export default BookingService;

@@ -123,6 +123,23 @@ class BookingController extends BaseController {
 
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
+
+  findAllQueResponses = this.wrapper(async (req, res) => {
+    let q = req.query,
+      role = req.user.role_code;
+
+    if (!this.isAdmin(req)) {
+      if (role == RoleCode.USER)
+        this.#service.checkBookingOwner(req.params.id, req.user.id);
+    }
+
+    const data = await this.#service.findAllQueResponse(req.params.id, q);
+    return this.ok(
+      res,
+      data,
+      "Banyak response kuesioner booking berhasil didapatkan"
+    );
+  });
 }
 
 export default BookingController;

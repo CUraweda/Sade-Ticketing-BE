@@ -18,6 +18,13 @@ r.get(
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.get(
+  "/show-one/:id/que-responses",
+  authMiddleware(),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.findAllQueResponses
+);
+
+r.get(
   "/invoice-simulation/:ids",
   authMiddleware(),
   controller.invoiceSimulation
