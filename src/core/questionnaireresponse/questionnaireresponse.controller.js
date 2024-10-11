@@ -12,7 +12,13 @@ class QuestionnaireResponseController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    let q = req.query;
+    if (!this.isAdmin(req)) {
+      if (req.user.role_code == RoleCode.USER)
+        q = this.joinBrowseQuery(q, "where", `user_id:${req.user.id}`);
+    }
+
+    const data = await this.#service.findAll(q);
     return this.ok(
       res,
       data,
