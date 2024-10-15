@@ -84,28 +84,34 @@ class ScheduleService extends BaseService {
   };
 
   checkAuthorized = async (id, user_id, client = true, doctor = true) => {
+    const ors = [
+      {
+        creator_id: user_id,
+      },
+    ];
+
+    if (doctor)
+      ors.push({
+        doctors: {
+          some: {
+            user_id,
+          },
+        },
+      });
+
+    if (client)
+      ors.push({
+        clients: {
+          some: {
+            user_id,
+          },
+        },
+      });
+
     const data = await this.db.schedule.count({
       where: {
         id,
-        OR: [
-          {
-            creator_id: user_id,
-          },
-          ...(doctor && {
-            doctors: {
-              some: {
-                user_id,
-              },
-            },
-          }),
-          ...(client && {
-            clients: {
-              some: {
-                user_id,
-              },
-            },
-          }),
-        ],
+        OR: ors,
       },
     });
     if (!data) throw new Forbidden();
