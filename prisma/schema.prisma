@@ -30,6 +30,7 @@ model User {
   payments                Payments[]
   reschedule_requests     RescheduleRequest[]
   invoices                Invoice[]
+  notifications           NotificationUser[]
 }
 
 model UserRole {
@@ -48,10 +49,40 @@ model Role {
   name      String
   is_active Boolean? @default(true)
 
-  user_roles UserRole[]
+  user_roles    UserRole[]
+  notifications Notification[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+// NOTIFICATION
+model Notification {
+  id           String  @id @default(uuid())
+  title        String
+  message      String
+  type         String
+  reference_id String?
+
+  roles Role[]
+  users NotificationUser[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model NotificationUser {
+  notification_id String
+  user_id         String
+  is_read         Boolean @default(false)
+
+  notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@id([notification_id, user_id])
 }
 
 // LOCATION -> set service location, doctors location
