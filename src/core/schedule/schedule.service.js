@@ -83,7 +83,7 @@ class ScheduleService extends BaseService {
     if (!data) throw new Forbidden();
   };
 
-  checkAuthorized = async (id, user_id) => {
+  checkAuthorized = async (id, user_id, client = true, doctor = true) => {
     const data = await this.db.schedule.count({
       where: {
         id,
@@ -91,20 +91,20 @@ class ScheduleService extends BaseService {
           {
             creator_id: user_id,
           },
-          {
+          ...(doctor && {
             doctors: {
               some: {
                 user_id,
               },
             },
-          },
-          {
+          }),
+          ...(client && {
             clients: {
               some: {
                 user_id,
               },
             },
-          },
+          }),
         ],
       },
     });

@@ -22,6 +22,9 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
   }),
+  setOvertime: Joi.object({
+    minutes: Joi.number().min(1).required(),
+  }),
   update: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().optional(),

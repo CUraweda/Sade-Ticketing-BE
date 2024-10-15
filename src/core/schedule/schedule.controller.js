@@ -135,6 +135,22 @@ class ScheduleController extends BaseController {
     const data = await this.#service.setLock(req.params.id, lock);
     return this.ok(res, data, `Jadwal berhasil di${lock ? "kunci" : "buka"}`);
   });
+
+  setOvertime = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req))
+      await this.#service.checkAuthorized(
+        req.params.id,
+        req.user.id,
+        false,
+        true
+      );
+
+    const payload = {};
+    payload["overtime_minutes"] = req.body.minutes;
+
+    const data = await this.#service.update(req.params.id, payload);
+    return this.ok(res, data, "Overtime jadwal berhasil diperbarui");
+  });
 }
 
 export default ScheduleController;
