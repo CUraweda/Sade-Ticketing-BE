@@ -67,5 +67,12 @@ r.put(
   controller.setDoctor
 );
 
+r.put(
+  "/set-overtime/:id",
+  authMiddleware(["PSI", "ADM", "SDM"]),
+  validatorMiddleware({ body: validator.setOvertime }),
+  controller.setOvertime
+);
+
 const scheduleRouter = r;
 export default scheduleRouter;

@@ -412,12 +412,13 @@ model ServiceRecommendationItem {
 
 // SCHEDULE
 model Schedule {
-  id          String    @id @default(uuid())
-  start_date  DateTime
-  end_date    DateTime?
-  title       String
-  description String?
-  is_locked   Boolean   @default(false)
+  id               String    @id @default(uuid())
+  start_date       DateTime
+  end_date         DateTime?
+  title            String
+  description      String?
+  is_locked        Boolean   @default(false)
+  overtime_minutes Int?      @default(0)
 
   creator_id String?
   service_id String?
