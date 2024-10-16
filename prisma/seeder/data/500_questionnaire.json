@@ -3432,5 +3432,2235 @@
         }
       ]
     }
+  },
+  {
+    "title": "Psychological Examination",
+    "description": "<strong>IQ Explanation:</strong><br> ≤ 90: Below average<br> 91.5 to 110: Average<br> 111 to 119: Above average<br> 120 to 127: Superior (Intelligent)<br> ≥ 128: Very Superior (Highly Intelligent)",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-4-1",
+          "section": "Personal Info",
+          "label": "Nama",
+          "name": "name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-2",
+          "section": "Personal Info",
+          "label": "Tgl. Lahir",
+          "name": "birth_date",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-3",
+          "section": "Medical Info",
+          "label": "Tgl. Pemeriksaan",
+          "name": "exam_date",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-4",
+          "section": "Medical Info",
+          "label": "Usia",
+          "name": "age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-5",
+          "section": "Personal Info",
+          "label": "Pendidikan",
+          "name": "education",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-6",
+          "section": "Medical Info",
+          "label": "Tujuan Pemeriksaan",
+          "name": "exam_purpose",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-7",
+          "section": "Kemampuan Dasar",
+          "label": "Kecerdasan Umum",
+          "name": "general_intelligence",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-8",
+          "section": "Kemampuan Dasar",
+          "label": "Daya Tangkap",
+          "name": "perception_ability",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-9",
+          "section": "Kemampuan Dasar",
+          "label": "Daya Ingat",
+          "name": "memory_ability",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-10",
+          "section": "Kemampuan Dasar",
+          "label": "Penalaran Verbal",
+          "name": "verbal_reasoning",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-11",
+          "section": "Kemampuan Dasar",
+          "label": "Penalaran Nonverbal",
+          "name": "nonverbal_reasoning",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-12",
+          "section": "Kemampuan Dasar",
+          "label": "Kemampuan Numerik",
+          "name": "numeric_ability",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-13",
+          "section": "Kemampuan Dasar",
+          "label": "Pengetahuan Umum",
+          "name": "general_knowledge",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-14",
+          "section": "Kemampuan Dasar",
+          "label": "Pemahaman Situasi Sosial",
+          "name": "social_situation_understanding",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-15",
+          "section": "Kemampuan Dasar",
+          "label": "Koordinasi Visual Motorik",
+          "name": "visual_motor_coordination",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-16",
+          "section": "Sikap dan Cara Kerja",
+          "label": "Konsentrasi",
+          "name": "concentration",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-17",
+          "section": "Sikap dan Cara Kerja",
+          "label": "Ketelitian",
+          "name": "accuracy",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-18",
+          "section": "Sikap dan Cara Kerja",
+          "label": "Sistematika Kerja",
+          "name": "work_systematic",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-19",
+          "section": "Sikap dan Cara Kerja",
+          "label": "Daya Tahan",
+          "name": "endurance",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-20",
+          "section": "Sikap dan Cara Kerja",
+          "label": "Kecepatan",
+          "name": "speed",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-21",
+          "section": "Kepribadian",
+          "label": "Penyesuaian Diri",
+          "name": "self_adjustment",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-22",
+          "section": "Kepribadian",
+          "label": "Kepercayaan Diri",
+          "name": "self_confidence",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-23",
+          "section": "Kepribadian",
+          "label": "Kematangan Emosi",
+          "name": "emotional_maturity",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "1", "value": "1" },
+              { "label": "2", "value": "2" },
+              { "label": "3", "value": "3" },
+              { "label": "4", "value": "4" },
+              { "label": "5", "value": "5" },
+              { "label": "6", "value": "6" },
+              { "label": "7", "value": "7" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-4-24",
+          "section": "IQ",
+          "label": "IQ Level",
+          "name": "iq_level",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-25",
+          "section": "IQ",
+          "label": "Verbal IQ",
+          "name": "verbal_iq",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-26",
+          "section": "IQ",
+          "label": "Performance IQ",
+          "name": "performance_iq",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-27",
+          "section": "URAIAN",
+          "label": "URAIAN",
+          "name": "description",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-28",
+          "section": "KESIMPULAN",
+          "label": "KESIMPULAN",
+          "name": "conclusion",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-29",
+          "section": "SARAN PENGEMBANGAN",
+          "label": "Bagi Orang tua",
+          "name": "parental_advice",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-4-30",
+          "section": "SARAN PENGEMBANGAN",
+          "label": "Bagi Guru",
+          "name": "teacher_advice",
+          "typ": "textarea",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "title": "Informal Test",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-5-1",
+          "section": "Personal Info",
+          "label": "Nama",
+          "name": "name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-2",
+          "section": "Personal Info",
+          "label": "Tanggal Lahir",
+          "name": "birth_date",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-3",
+          "section": "Info",
+          "label": "Tanggal Assesmen / Evaluasi",
+          "name": "evaluation",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-4",
+          "section": "Aspek",
+          "label": "Konsep dasar berhitung",
+          "name": "basic_counting_concepts",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-5",
+          "section": "Aspek",
+          "label": "Pemahaman bahasa (nama benda, fungsi, preposisi, pengecualian, pengelompokan)",
+          "name": "language_comprehension",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-6",
+          "section": "Aspek",
+          "label": "Membuat kalimat",
+          "name": "sentence_construction",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-7",
+          "section": "Aspek",
+          "label": "Daya ingat",
+          "name": "memory",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-8",
+          "section": "Aspek",
+          "label": "Motorik halus (pola pegang, mengkopi bentuk, menulis)",
+          "name": "fine_motor_skills",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-9",
+          "section": "Aspek",
+          "label": "Motorik kasar",
+          "name": "gross_motor_skills",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-10",
+          "section": "Aspek",
+          "label": "Konsep perbandingan dan urutan",
+          "name": "comparison_concepts",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-11",
+          "section": "Aspek",
+          "label": "Membaca (pengenalan alfabet, kemampuan membaca serta membangkai bunyinya)",
+          "name": "reading_skills",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-12",
+          "section": "Aspek",
+          "label": "Ketelitian",
+          "name": "attention_to_detail",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-13",
+          "section": "Aspek",
+          "label": "Ketekunan",
+          "name": "perseverance",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-14",
+          "section": "Evaluation",
+          "label": "Tanggal",
+          "name": "date",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-15",
+          "section": "Evaluation",
+          "label": "Tanggal",
+          "name": "date",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-5-16",
+          "section": "Evaluation",
+          "label": "Catatan",
+          "name": "note",
+          "typ": "textarea",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "title": "FORMULIR PENDAFTARAN BINAR DAYCARE",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-6-1",
+          "section": "DATA ANAK",
+          "label": "Nama lengkap anak",
+          "name": "full_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-2",
+          "section": "DATA ANAK",
+          "label": "Nama Panggilan",
+          "name": "nickname",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-3",
+          "section": "DATA ANAK",
+          "label": "Tempat Tanggal Lahir",
+          "name": "birth_date",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-4",
+          "section": "DATA ANAK",
+          "label": "Alamat/Rumah",
+          "name": "address",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-5",
+          "section": "DATA ANAK",
+          "label": "Usia",
+          "name": "age",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-6",
+          "section": "DATA ANAK",
+          "label": "Jenis Kelamin",
+          "name": "gender",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-7",
+          "section": "DATA ANAK",
+          "label": "Golongan Darah",
+          "name": "blood_type",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-8",
+          "section": "DATA ANAK",
+          "label": "Anak Ke",
+          "name": "birth_order",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-9",
+          "section": "DATA ANAK",
+          "label": "Jumlah Saudara Kandung",
+          "name": "sibling_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-10",
+          "section": "DATA ANAK",
+          "label": "Tinggi Badan (cm)",
+          "name": "height",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-11",
+          "section": "DATA ANAK",
+          "label": "Berat Badan (kg)",
+          "name": "weight",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-12",
+          "section": "DATA ANAK",
+          "label": "Penyakit Khusus Yang Di Derita",
+          "name": "medical_conditions",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-13",
+          "section": "DATA ANAK",
+          "label": "Ciri Fisik",
+          "name": "physical_characteristics",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-14",
+          "section": "DATA ANAK",
+          "label": "Kebiasaan Anak",
+          "name": "child_habits",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-15",
+          "section": "DATA ANAK",
+          "label": "Catatan Khusus (Alergi, dsb)",
+          "name": "special_notes",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-16",
+          "section": "DATA ANAK",
+          "label": "ASI/Susu Formula/UHT",
+          "name": "feeding_type",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-17",
+          "section": "DATA ANAK",
+          "label": "Catatan Tambahan",
+          "name": "additional_notes",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-18",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Nama Ayah",
+          "name": "father_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-19",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Tempat Tanggal Lahir",
+          "name": "father_birthplace",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-20",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Pendidikan terakhir/Jurusan/Jenjang",
+          "name": "father_education",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-21",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Alamat Rumah",
+          "name": "father_address",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-22",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "No. Telepon Rumah",
+          "name": "father_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-23",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "No. Telepon Seluler",
+          "name": "father_mobile_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-24",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Pekerjaan",
+          "name": "father_occupation",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-25",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Alamat Kantor",
+          "name": "father_office_address",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-26",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "No. Tempat Kantor",
+          "name": "father_office_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-27",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Waktu bekerja",
+          "name": "father_work_schedule",
+          "typ": "checkbox",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Penuh Waktu (Senin-Jumat)",
+                "value": "full_time"
+              },
+              {
+                "label": "Paruh waktu (2 atau 3 hari dalam sepekan)",
+                "value": "part_time"
+              },
+              {
+                "label": "Tidak menentu",
+                "value": "irregular"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-28",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Email",
+          "name": "father_email",
+          "typ": "email",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-29",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Nama Ibu",
+          "name": "mother_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-30",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Tempat Tanggal Lahir",
+          "name": "mother_birthplace",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-31",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Pendidikan terakhir/Jurusan/Jenjang",
+          "name": "mother_education",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-32",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Alamat Rumah",
+          "name": "mother_address",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-33",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "No. Telepon Rumah",
+          "name": "mother_home_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-34",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "No. Telepon Seluler",
+          "name": "mother_mobile_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-35",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Pekerjaan",
+          "name": "mother_occupation",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-36",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Alamat Kantor",
+          "name": "mother_office_address",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-37",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "No. Telepon Kantor",
+          "name": "mother_office_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-38",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Waktu bekerja",
+          "name": "mother_work_schedule",
+          "typ": "checkbox",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Penuh Waktu (Senin-Jumat)",
+                "value": "full_time"
+              },
+              {
+                "label": "Paruh waktu (2 atau 3 hari dalam sepekan)",
+                "value": "part_time"
+              },
+              {
+                "label": "Tidak menentu",
+                "value": "irregular"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-39",
+          "section": "DATA ORANG TUA/WALI",
+          "label": "Email",
+          "name": "mother_email",
+          "typ": "email",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-40",
+          "section": "Orang Tambahan",
+          "label": "Nama",
+          "name": "additional_person_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-41",
+          "section": "Orang Tambahan",
+          "label": "Nomor telepon / hp",
+          "name": "additional_person_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-42",
+          "section": "Orang Tambahan",
+          "label": "Hubungan",
+          "name": "additional_person_relationship",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-43",
+          "section": "Kontak Darurat",
+          "label": "Nama",
+          "name": "emergency_contact_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-44",
+          "section": "Kontak Darurat",
+          "label": "Nomor telepon / hp",
+          "name": "emergency_contact_phone",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-45",
+          "section": "Kontak Darurat",
+          "label": "Hubungan",
+          "name": "emergency_contact_relationship",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-46",
+          "section": "MASA KEHAMILAN",
+          "label": "Kesulitan pada tiga bulan pertama",
+          "name": "pregnancy_first_trimester_difficulty",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Tidak ada",
+                "value": "no"
+              },
+              {
+                "label": "Ada",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-47",
+          "section": "MASA KEHAMILAN",
+          "label": "Jika jawaban Anda ADA kesulitan, jelaskan di bawah ini",
+          "name": "pregnancy_first_trimester_difficulty_description",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-48",
+          "section": "MASA KEHAMILAN",
+          "label": "Kesulitan pada tiga bulan kedua",
+          "name": "pregnancy_second_trimester_difficulty",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Tidak ada",
+                "value": "no"
+              },
+              {
+                "label": "Ada",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-49",
+          "section": "MASA KEHAMILAN",
+          "label": "Jika jawaban Anda ADA kesulitan, jelaskan di bawah ini",
+          "name": "pregnancy_second_trimester_difficulty_description",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-50",
+          "section": "MASA KEHAMILAN",
+          "label": "Kesulitan pada tiga bulan ketiga",
+          "name": "pregnancy_third_trimester_difficulty",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Tidak ada",
+                "value": "no"
+              },
+              {
+                "label": "Ada",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-51",
+          "section": "MASA KELAHIRAN",
+          "label": "Jika jawaban Anda ADA kesulitan, jelaskan di bawah ini",
+          "name": "pregnancy_third_trimester_difficulty_description",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-52",
+          "section": "MASA KELAHIRAN",
+          "label": "Usia kandungan",
+          "name": "pregnancy_duration",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "9 bulan",
+                "value": "9_months"
+              },
+              {
+                "label": "Kurang dari 9 bulan",
+                "value": "less_than_9_months"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-53",
+          "section": "MASA KELAHIRAN",
+          "label": "Jika kurang dari usia 9 bulan, di bulan dan pekan berapa",
+          "name": "pregnancy_duration_details",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-54",
+          "section": "MASA KELAHIRAN",
+          "label": "Cara lahir",
+          "name": "birth_method",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Spontan",
+                "value": "spontaneous"
+              },
+              {
+                "label": "Lainnya, jelaskan...",
+                "value": "other"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-55",
+          "section": "MASA KELAHIRAN",
+          "label": "Berat badan lahir",
+          "name": "birth_weight",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-56",
+          "section": "MASA KELAHIRAN",
+          "label": "Langsung menangis",
+          "name": "baby_cry_immediately",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-57",
+          "section": "MASA KELAHIRAN",
+          "label": "Jika jawaban pertanyaan di atas TIDAK, jelaskan di bawah ini",
+          "name": "baby_cry_reason",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-58",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Bayi menderita kuning (kadar bilirubin darah tinggi)",
+          "name": "jaundice",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-59",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Bila Ya, apakah bayi",
+          "name": "jaundice_treatment",
+          "typ": "radio",
+          "required": false,
+          "options": {
+            "create": [
+              {
+                "label": "Hanya dijemur saja",
+                "value": "sunbathe"
+              },
+              {
+                "label": "Disinar ultraviolet selama...hari",
+                "value": "uv_light"
+              },
+              {
+                "label": "Harus dilakukan transfusi darah",
+                "value": "blood_transfusion"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-60",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Bayi dapat mengisap ASI dengan kuat",
+          "name": "breastfeeding_ability",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-61",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Lama pemberian ASI, berapa bulan?",
+          "name": "breastfeeding_duration",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-62",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Jelaskan jika lama pemberian ASI kurang atau lebih dari 2 tahun?",
+          "name": "breastfeeding_duration_reason",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-63",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Kejang/Stuip",
+          "name": "infant_problems_first_month",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Tidak ada",
+                "value": "no"
+              },
+              {
+                "label": "Ada",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-64",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Jika jawaban ADA, Jelaskan di bawah ini",
+          "name": "infant_problems_first_month_seizure_description",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-65",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Diare",
+          "name": "infant_problems_first_month",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "Tidak ada",
+                "value": "no"
+              },
+              {
+                "label": "Ada",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-66",
+          "section": "MASA SETELAH KELAHIRAN",
+          "label": "Jika jawaban ADA, Jelaskan di bawah ini",
+          "name": "infant_problems_first_month_diarrhea_description",
+          "typ": "text",
+          "required": false
+        },
+        {
+          "code": "q-lk-6-67",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Anak saya mampu duduk sesuai usianya (6-8 bulan)",
+          "name": "can_sit_at_6_8_months",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-68",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia mampu merangkak sesuai usianya (9-11 bulan)",
+          "name": "can_crawl_at_9_11_months",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-69",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia mampu berjalan sendiri sesuai usia (11-16 bulan)",
+          "name": "can_walk_alone_at_11_16_months",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-70",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia senang bermain ayunan, seluncuran, dan melompat-lompat",
+          "name": "enjoys_playing",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-71",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia cukup aktif dan berani, konsentrasinya baik",
+          "name": "is_active_and_brave",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-72",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia suka bermain pasir, malam/playdough, butiran-butiran berbentuk kerikil (beras, kacang-kacangan)",
+          "name": "likes_sensory_play",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-73",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Dulu ia suka mencoret-coret dengan pensil atau alat-alat tulis yang ditemukannya",
+          "name": "used_to_scribble",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-74",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Sekarang ia suka menggambar dan mewarnai",
+          "name": "likes_drawing_and_coloring",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-75",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Hasil gambaran yang ia buat tampak rapi",
+          "name": "drawing_neatness",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-76",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Cara pegang alat tulisnya tampak baik",
+          "name": "pencil_grip",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-77",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Saya mengizinkan anak saya bermain dengan teman sebayanya",
+          "name": "allow_play_with_peers",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-78",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia tampak suka bermain dengan teman sebaya",
+          "name": "enjoys_playing_with_peers",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Lebih suka bermain sendiri",
+                "value": "prefers_solitary_play"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-79",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Setiap hari ia bermain dengan temannya",
+          "name": "plays_with_friends_daily",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-80",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Saya menyediakan mainan edukatif dan konstruktif untuk sarana anak bermain",
+          "name": "provides_educational_toys",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-81",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia akan meminjamkan mainan atau memberikan makanan bila teman memintanya",
+          "name": "shares_with_friends",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              },
+              {
+                "label": "Lainnya, Jelaskan...",
+                "value": "other"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-82",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Saya membiasakan kepada anak untuk memiliki pola hidup teratur (makan/minum/mandi/sholat/berdoa/belajar)",
+          "name": "has_routine",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-83",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia dapat mengerti bila keinginannya tidak langsung saya penuhi",
+          "name": "understands_delayed_gratification",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-84",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia menyimpan barang dan mainannya dengan rapi",
+          "name": "keeps_toys_organized",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-85",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia mampu makan, berpakaian, membereskan buku-bukunya sendiri",
+          "name": "self_care_skills",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-86",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Bila saya sakit ia mampu memperhatikan saya dan menolong saya",
+          "name": "cares_for_others",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-87",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Pada usia 6-8 bulan badan anak saya masih lemas untuk duduk",
+          "name": "weak_to_sit_at_6_8_months",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-88",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Waktu merangkaknya sangat singkat, gerakannya kurang terkoordinasi",
+          "name": "poor_coordination_when_crawling",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-89",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia sulit untuk berjalan dengan tertib, tampak tergesa-gesa dan sering jatuh",
+          "name": "difficulty_walking_steadily",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-90",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Dulu ia takut main ayunan, seluncuran dan main lompat-lompat",
+          "name": "fear_of_playground_equipment",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-91",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia sangat banyak bergerak dan sulit diatur, kecuali menjelang tidur",
+          "name": "hyperactive",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-92",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia suka merasa jijik dan tidak nyaman bila memegangi benda kenyal atau terkena benda basah ataupun kotor",
+          "name": "sensory_sensitivity",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-93",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia kurang menyukai mencoret-coret atau menggambar",
+          "name": "dislikes_drawing",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-94",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Coretannya kurang rapi, kurang terkendali & bila mewarnai sulit bisa \"penuh\" dan tidak keluar garis",
+          "name": "poor_drawing_control",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-95",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Cara memegang alat tulisnya kurang tepat (misal digenggam)",
+          "name": "poor_pencil_grip",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-96",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Dulu ia suka sekali mendorong benda-benda berat (meja-kursi)",
+          "name": "likes_pushing_heavy_objects",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              },
+              {
+                "label": "Lainnya, Jelaskan...",
+                "value": "other"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-97",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Saya kurang setuju bila ia bermain dengan teman-temannya",
+          "name": "disapproves_of_playing_with_peers",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-98",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia lebih suka bermain dengan anak yang lebih kecil dibanding dengan teman sebayanya",
+          "name": "prefers_younger_playmates",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-99",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Di rumah kami tetangga berjauhan, sehingga anak kurang kesempatan untuk main",
+          "name": "limited_play_opportunities",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-100",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia sangat suka permainan playstation atau tv atau games",
+          "name": "enjoys_screen_time",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-101",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia tampak \"pelit\" dan \"galak\" pada temannya",
+          "name": "aggressive_with_peers",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-102",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia sulit diatur untuk mengikuti jadwal sehari-hari",
+          "name": "difficulty_following_routine",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-103",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia sering \"Ngambek\" dan \"marah\" bila keinginannya tidak dikuti",
+          "name": "frequent_tantrums",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-104",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia cenderung membeli mainan yang sudah dimiliki karena tercecer di beberapa ruangan rumah kami",
+          "name": "repeats_toy_purchases",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-105",
+          "section": "RIWAYAT PERKEMBANGAN ANAK",
+          "label": "Ia masih diingatkan/dibantu untuk menolong diri dan mengurus barang-barangnya",
+          "name": "needs_assistance_with_self_care",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              {
+                "label": "Ya",
+                "value": "yes"
+              },
+              {
+                "label": "Tidak",
+                "value": "no"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-106",
+          "section": "DATA LAINNYA",
+          "label": "Apakah anak Ibu/bapak sudah cukup mandiri?",
+          "name": "child_independence",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {"label": "Selalu", "value": "always"},
+              {"label": "Kadang-kadang", "value": "sometimes"},
+              {"label": "Tidak", "value": "never"}
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-107",
+          "section": "DATA LAINNYA",
+          "label": "Sebutkan bentuk kemandiriannya: (mandi-berpakaian-memasang sepatu-makan sendiri- cebok setelah BAK-cebok setelah BAB)",
+          "name": "child_independence_examples",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-108",
+          "section": "DATA LAINNYA",
+          "label": "Apakah konsentrasi anak Ibu/Bapak baik?",
+          "name": "child_concentration",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {"label": "Selalu", "value": "always"},
+              {"label": "Kadang-kadang", "value": "sometimes"},
+              {"label": "Tidak", "value": "never"}
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-109",
+          "section": "DATA LAINNYA",
+          "label": "Berapa lama ia dapat bertahan dalam suatu aktifitas yang bermanfaat? (misal: membaca atau bermain sendiri)",
+          "name": "child_activity_duration",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-110",
+          "section": "DATA LAINNYA",
+          "label": "Apakah anak bermain dengan teman sebayanya di rumah?",
+          "name": "plays_with_peers_at_home",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {"label": "Ya", "value": "yes"},
+              {"label": "Kadang-kadang", "value": "sometimes"},
+              {"label": "Tidak", "value": "no"}
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-111",
+          "section": "DATA LAINNYA",
+          "label": "Jelaskan frekuensi bermainnya (berapa jam setiap hari/pekan)",
+          "name": "play_frequency",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-6-112",
+          "section": "DATA LAINNYA",
+          "label": "Siapa yang mengajak bermain",
+          "name": "play_initiator",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {"label": "Ibu/Bapak", "value": "parents"},
+              {"label": "Temannya", "value": "friends"}
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-113",
+          "section": "DATA LAINNYA",
+          "label": "Apakah anak cepat akrab dengan anak sebayanya yang baru dikenalnya?",
+          "name": "quick_to_befriend_peers",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {"label": "Ya", "value": "yes"},
+              {"label": "Tidak", "value": "no"}
+            ]
+          }
+        },
+        {
+          "code": "q-lk-6-114",
+          "section": "DATA LAINNYA",
+          "label": "Apakah anak cepat akrab dengan orang dewasa yang baru dikenalnya?",
+          "name": "quick_to_befriend_adults",
+          "typ": "radio",
+          "required": true,
+          "options": {
+            "create": [
+              {"label": "Ya", "value": "yes"},
+              {"label": "Tidak", "value": "no"}
+            ]
+          }
+        }
+      ]
+    }
   }
 ]
