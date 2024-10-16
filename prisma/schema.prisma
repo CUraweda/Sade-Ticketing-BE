@@ -172,7 +172,8 @@ model Service {
   doctors                      DoctorProfile[]
   required_services            Service[]                   @relation("RequiredServices")
   prerequisite_For             Service[]                   @relation("RequiredServices")
-  questionnaires               Questionnaire[]
+  questionnaires               Questionnaire[]             @relation("ServiceQuestionnaires")
+  reports                      Questionnaire[]             @relation("ServiceReports")
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
@@ -217,9 +218,10 @@ model Questionnaire {
   title       String  @unique
   description String?
 
-  questions Question[]
-  responses QuestionnaireResponse[]
-  services  Service[]
+  questions        Question[]
+  responses        QuestionnaireResponse[]
+  services         Service[]               @relation("ServiceQuestionnaires")
+  services_reports Service[]               @relation("ServiceReports")
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
