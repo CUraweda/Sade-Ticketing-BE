@@ -216,7 +216,7 @@ model ClientProfile {
 model Questionnaire {
   id          String  @id @default(uuid())
   title       String  @unique
-  description String?
+  description String? @db.LongText
 
   questions        Question[]
   responses        QuestionnaireResponse[]
