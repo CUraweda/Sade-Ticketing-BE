@@ -36,6 +36,9 @@ class ServiceService extends BaseService {
         "questionnaires.id",
         "questionnaires.title",
         "questionnaires._count.questions",
+        "reports.id",
+        "reports.title",
+        "reports._count.questions",
       ]),
     });
     return data;
