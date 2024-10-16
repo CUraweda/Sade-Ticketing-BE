@@ -42,5 +42,11 @@ r.put(
   controller.setQuestionnaire
 );
 
+r.put(
+  "/set-report/:id",
+  validatorMiddleware({ body: validator.setReport }),
+  controller.setReport
+);
+
 const serviceRouter = r;
 export default serviceRouter;

@@ -71,6 +71,21 @@ class ServiceService extends BaseService {
     });
   };
 
+  setReport = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        reports: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.que_id,
+          },
+        },
+      },
+    });
+  };
+
   findAvailableDoctors = async (id) => {
     const data = await this.db.doctorProfile.findMany({
       where: {
