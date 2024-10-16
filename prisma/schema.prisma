@@ -228,19 +228,22 @@ model Questionnaire {
 }
 
 model QuestionnaireResponse {
-  id               String  @id @default(uuid())
-  user_id          String?
-  client_id        String?
-  questionnaire_id String?
-  booking_id       String?
-  note             String?
-  is_locked        Boolean @default(false)
+  id                String  @id @default(uuid())
+  user_id           String?
+  client_id         String?
+  questionnaire_id  String?
+  booking_id        String?
+  booking_report_id String?
 
-  user          User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  client        ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  questionnaire Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
-  booking       Booking?         @relation(fields: [booking_id], references: [id], onDelete: Cascade)
-  answers       QuestionAnswer[]
+  note      String?
+  is_locked Boolean @default(false)
+
+  user           User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client         ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire  Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking        Booking?         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
+  booking_report Booking?         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
+  answers        QuestionAnswer[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -313,7 +316,8 @@ model Booking {
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   service                 Service?                @relation(fields: [service_id], references: [id], onDelete: SetNull)
   schedules               Schedule[]
-  questionnaire_responses QuestionnaireResponse[]
+  questionnaire_responses QuestionnaireResponse[] @relation("BookingQuestionnaires")
+  reports                 QuestionnaireResponse[] @relation("BookingReports")
   invoices                Invoice[]
 
   created_at DateTime @default(now())
