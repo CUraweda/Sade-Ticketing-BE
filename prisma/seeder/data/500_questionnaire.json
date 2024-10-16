@@ -3435,22 +3435,30 @@
   },
   {
     "title": "Psychological Examination",
-    "description": "<strong>IQ Explanation:</strong><br> ≤ 90: Below average<br> 91.5 to 110: Average<br> 111 to 119: Above average<br> 120 to 127: Superior (Intelligent)<br> ≥ 128: Very Superior (Highly Intelligent)",
+    "description": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)",
     "questions": {
       "create": [
         {
+          "code": "q-lk-4-0",
+          "section": "Personal Info",
+          "label": "Nama depan",
+          "name": "first_name",
+          "typ": "text",
+          "required": true
+        },
+        {
           "code": "q-lk-4-1",
           "section": "Personal Info",
-          "label": "Nama",
-          "name": "name",
+          "label": "Nama belakang",
+          "name": "last_name",
           "typ": "text",
           "required": true
         },
         {
           "code": "q-lk-4-2",
           "section": "Personal Info",
-          "label": "Tgl. Lahir",
-          "name": "birth_date",
+          "label": "Tanggal Lahir",
+          "name": "dob",
           "typ": "date",
           "required": true
         },
@@ -3890,10 +3898,18 @@
     "questions": {
       "create": [
         {
+          "code": "q-lk-5-0",
+          "section": "Personal Info",
+          "label": "Nama depan",
+          "name": "first_name",
+          "typ": "text",
+          "required": true
+        },
+        {
           "code": "q-lk-5-1",
           "section": "Personal Info",
-          "label": "Nama",
-          "name": "name",
+          "label": "Nama belakang",
+          "name": "last_name",
           "typ": "text",
           "required": true
         },
@@ -3901,7 +3917,7 @@
           "code": "q-lk-5-2",
           "section": "Personal Info",
           "label": "Tanggal Lahir",
-          "name": "birth_date",
+          "name": "dob",
           "typ": "date",
           "required": true
         },
@@ -4027,24 +4043,24 @@
         {
           "code": "q-lk-6-1",
           "section": "DATA ANAK",
-          "label": "Nama lengkap anak",
-          "name": "full_name",
+          "label": "Nama depan",
+          "name": "first_name",
           "typ": "text",
           "required": true
         },
         {
           "code": "q-lk-6-2",
           "section": "DATA ANAK",
-          "label": "Nama Panggilan",
-          "name": "nickname",
+          "label": "Nama belakang",
+          "name": "last_name",
           "typ": "text",
           "required": true
         },
         {
           "code": "q-lk-6-3",
           "section": "DATA ANAK",
-          "label": "Tempat Tanggal Lahir",
-          "name": "birth_date",
+          "label": "Tanggal Lahir",
+          "name": "dob",
           "typ": "date",
           "required": true
         },
@@ -5558,9 +5574,9 @@
           "required": true,
           "options": {
             "create": [
-              {"label": "Selalu", "value": "always"},
-              {"label": "Kadang-kadang", "value": "sometimes"},
-              {"label": "Tidak", "value": "never"}
+              { "label": "Selalu", "value": "always" },
+              { "label": "Kadang-kadang", "value": "sometimes" },
+              { "label": "Tidak", "value": "never" }
             ]
           }
         },
@@ -5581,9 +5597,9 @@
           "required": true,
           "options": {
             "create": [
-              {"label": "Selalu", "value": "always"},
-              {"label": "Kadang-kadang", "value": "sometimes"},
-              {"label": "Tidak", "value": "never"}
+              { "label": "Selalu", "value": "always" },
+              { "label": "Kadang-kadang", "value": "sometimes" },
+              { "label": "Tidak", "value": "never" }
             ]
           }
         },
@@ -5604,9 +5620,9 @@
           "required": true,
           "options": {
             "create": [
-              {"label": "Ya", "value": "yes"},
-              {"label": "Kadang-kadang", "value": "sometimes"},
-              {"label": "Tidak", "value": "no"}
+              { "label": "Ya", "value": "yes" },
+              { "label": "Kadang-kadang", "value": "sometimes" },
+              { "label": "Tidak", "value": "no" }
             ]
           }
         },
@@ -5627,8 +5643,8 @@
           "required": true,
           "options": {
             "create": [
-              {"label": "Ibu/Bapak", "value": "parents"},
-              {"label": "Temannya", "value": "friends"}
+              { "label": "Ibu/Bapak", "value": "parents" },
+              { "label": "Temannya", "value": "friends" }
             ]
           }
         },
@@ -5641,8 +5657,8 @@
           "required": true,
           "options": {
             "create": [
-              {"label": "Ya", "value": "yes"},
-              {"label": "Tidak", "value": "no"}
+              { "label": "Ya", "value": "yes" },
+              { "label": "Tidak", "value": "no" }
             ]
           }
         },
@@ -5655,8 +5671,8 @@
           "required": true,
           "options": {
             "create": [
-              {"label": "Ya", "value": "yes"},
-              {"label": "Tidak", "value": "no"}
+              { "label": "Ya", "value": "yes" },
+              { "label": "Tidak", "value": "no" }
             ]
           }
         }
