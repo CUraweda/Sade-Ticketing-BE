@@ -89,6 +89,7 @@ class BaseController {
         );
   };
 
+  isAdmin = (req) => ["ADM", "SDM"].includes(req.user.role_code);
   /**
    * @param {any} data
    * @param {string[]} selects

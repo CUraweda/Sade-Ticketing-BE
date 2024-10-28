@@ -14,9 +14,11 @@ r.get(
   controller.findAll
 );
 
-r.get("/questionnaires/:id", controller.findQuestionnaires);
-
-r.get("/doctors/:id", authMiddleware(), controller.findDoctors);
+r.get(
+  "/available-doctors/:id",
+  authMiddleware(),
+  controller.findAvailableDoctors
+);
 
 r.get("/show-one/:id", controller.findById);
 
@@ -34,7 +36,11 @@ r.put(
 
 r.delete("/delete/:id", controller.delete);
 
-r.put("/set-questionnaires/:id", controller.setQuestionnaires);
+r.put(
+  "/set-questionnaire/:id",
+  validatorMiddleware({ body: validator.setQuestionnaire }),
+  controller.setQuestionnaire
+);
 
 const serviceRouter = r;
 export default serviceRouter;

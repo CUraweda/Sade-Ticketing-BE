@@ -18,38 +18,44 @@ r.get(
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.get(
-  "/questionnaires/:id",
-  authMiddleware(["USR"]),
-  controller.findQuestionnaires
+  "/show-one/:id/que-responses",
+  authMiddleware(),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.findAllQueResponses
+);
+
+r.get(
+  "/invoice-simulation/:ids",
+  authMiddleware(),
+  controller.invoiceSimulation
 );
 
 r.post(
   "/create",
+  authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
-r.post(
-  "/book",
+r.put(
+  "/set-schedules/:id",
   authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.book }),
-  controller.book
+  validatorMiddleware({ body: validator.setSchedules }),
+  controller.setSchedules
 );
 
-r.post(
-  "/book-schedule/:id",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.bookSchedule }),
-  controller.bookSchedule
-);
+r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
+
+r.put("/admin-confirm/:id", authMiddleware(["ADM"]), controller.adminConfirm);
 
 r.put(
   "/update/:id",
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const bookingRouter = r;
 export default bookingRouter;

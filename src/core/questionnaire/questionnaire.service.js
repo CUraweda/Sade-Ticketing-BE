@@ -1,9 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import {
-  questionAnswerFields,
-  questionFields,
-} from "../../data/model-fields.js";
+import { Forbidden } from "../../lib/response/catch.js";
 
 class QuestionnaireService extends BaseService {
   constructor() {
@@ -24,13 +21,13 @@ class QuestionnaireService extends BaseService {
   findById = async (id) => {
     const data = await this.db.questionnaire.findUnique({
       where: { id },
-      select: this.include([
-        "id",
-        "title",
-        "description",
-        ...questionFields.map((f) => "questions." + f),
-        "questions.options",
-      ]),
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+      },
     });
     return data;
   };
@@ -56,28 +53,28 @@ class QuestionnaireService extends BaseService {
   findResponse = async (id, response_id) => {
     const data = await this.db.questionnaireResponse.findFirst({
       where: { id: response_id, questionnaire_id: id },
-      select: this.include([
-        "id",
-        "note",
-        "user_id",
-        "client_id",
-        "is_locked",
-        "client",
-        ...questionAnswerFields.map((f) => "answers." + f),
-        "answers.question",
-      ]),
+      include: {
+        client: true,
+        answers: {
+          include: {
+            question: true,
+          },
+        },
+      },
     });
     return data;
   };
 
   checkResponseAuthor = async (id, response_id, user_id) => {
-    return await this.db.questionnaireResponse.count({
+    const check = this.db.questionnaireResponse.count({
       where: {
         id: response_id,
         questionnaire_id: id,
         user_id,
       },
     });
+    if (!check) throw new Forbidden();
+    return check;
   };
 
   saveResponse = async (response_id, payload = [], lock = false) => {

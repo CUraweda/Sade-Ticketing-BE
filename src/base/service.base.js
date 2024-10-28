@@ -1,6 +1,7 @@
 import fs from "fs";
-import { isBoolean, isInteger } from "../utils/type.js";
+import { isBoolean, isDateAble, isInteger } from "../utils/type.js";
 import { PrismaClient } from "@prisma/client";
+import moment from "moment";
 
 class BaseService {
   /**
@@ -19,6 +20,8 @@ class BaseService {
     if (query && query.where) {
       query.where.split("+").forEach((q) => {
         let [col, val] = q.split(":");
+
+        if (val == "") return;
 
         if (isInteger(val)) {
           val = parseInt(val);
@@ -46,11 +49,22 @@ class BaseService {
       const ors = [];
       query.search.split("+").forEach((q) => {
         const [col, val] = q.split(":");
-        ors.push({
-          [col]: {
-            startsWith: val,
-          },
+        const keys = col.split(".");
+        let current = {},
+          temp = current;
+
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            temp[key] = {
+              startsWith: val,
+            };
+          } else {
+            temp[key] = {};
+            temp = temp[key];
+          }
         });
+
+        ors.push(current);
       });
 
       likes["OR"] = ors;
@@ -60,10 +74,28 @@ class BaseService {
     let in_ = {};
     if (query && query.in_) {
       query.in_.split("+").forEach((q) => {
-        const [col, val] = q.split(":");
-        in_[col] = {
-          in: val.split(","),
-        };
+        let [col, val] = q.split(":");
+
+        const keys = col.split(".");
+        let current = in_;
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            if (keys[keys.length - 2]?.endsWith("s")) {
+              current["some"] = {
+                [key]: {
+                  in: val.split(","),
+                },
+              };
+            } else {
+              current[key] = {
+                in: val.split(","),
+              };
+            }
+          } else {
+            current[key] = current[key] || {};
+            current = current[key];
+          }
+        });
       });
     }
 
@@ -83,6 +115,28 @@ class BaseService {
     if (query && query.isnull) {
       query.isnull.split("+").forEach((q) => {
         isnull[q] = null;
+      });
+    }
+
+    // gte
+    let gte = {};
+    if (query && query.gte) {
+      query.gte.split("+").forEach((q) => {
+        const [col, val] = q.split(":");
+        gte[col] = {
+          gte: isDateAble(val) ? moment(val).toDate() : val,
+        };
+      });
+    }
+
+    // lte
+    let lte = {};
+    if (query && query.lte) {
+      query.lte.split("+").forEach((q) => {
+        const [col, val] = q.split(":");
+        lte[col] = {
+          lte: isDateAble(val) ? moment(val).toDate() : val,
+        };
       });
     }
 
@@ -111,7 +165,7 @@ class BaseService {
 
     return {
       where: {
-        AND: [wheres, likes, in_, not_, isnull],
+        AND: [wheres, likes, in_, not_, isnull, gte, lte],
       },
       take: pagination["take"],
       skip: pagination["skip"],
@@ -149,7 +203,7 @@ class BaseService {
   /**
    * @param {string[]} selects
    */
-  include = (selects = []) => {
+  select = (selects = []) => {
     if (!selects.length) return undefined;
 
     const select = {};

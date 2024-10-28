@@ -52,6 +52,8 @@ const catchResponse = (err, req, res) => {
     data = undefined,
     stack = env.NODE_ENV == "development" ? err?.stack?.split("\n") : undefined;
 
+  if (env.NODE_ENV == "development") console.log(err);
+
   if (err.code == "P2003") {
     httpCode = httpStatus.UNPROCESSABLE_ENTITY;
     message = "Tidak dapat mengubah data karena terkait dengan data lain";

@@ -1,6 +1,6 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { serviceFields } from "../../data/model-fields.js";
 
 class ServiceService extends BaseService {
   constructor() {
@@ -11,8 +11,7 @@ class ServiceService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.service.findMany({
       ...q,
-      select: this.include([
-        ...serviceFields,
+      include: this.select([
         "category.id",
         "category.name",
         "location.id",
@@ -29,7 +28,16 @@ class ServiceService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.service.findUnique({ where: { id } });
+    const data = await this.db.service.findUnique({
+      where: { id },
+      include: this.select([
+        "category.name",
+        "location.title",
+        "questionnaires.id",
+        "questionnaires.title",
+        "questionnaires._count.questions",
+      ]),
+    });
     return data;
   };
 
@@ -48,42 +56,34 @@ class ServiceService extends BaseService {
     return data;
   };
 
-  findQuestionnaires = async (id) => {
-    const data = await this.db.serviceQuestionnaire.findMany({
-      where: { service_id: id },
-      select: this.include([
-        "id",
-        "questionnaire.id",
-        "questionnaire.title",
-        "questionnaire.description",
-      ]),
-    });
-    return data;
-  };
-
-  setQuestionnaires = async (id, payload) => {
-    await this.db.serviceQuestionnaire.deleteMany({
+  setQuestionnaire = async (id, payload) => {
+    await this.db.service.update({
       where: {
-        service_id: id,
+        id,
+      },
+      data: {
+        questionnaires: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.que_id,
+          },
+        },
       },
     });
-
-    const data = await this.db.serviceQuestionnaire.createMany({
-      data: payload.map((dat) => ({
-        service_id: id,
-        questionnaire_id: dat,
-      })),
-    });
-
-    return data;
   };
 
-  findDoctors = async (id) => {
-    const data = await this.db.doctorService.findMany({
+  findAvailableDoctors = async (id) => {
+    const data = await this.db.doctorProfile.findMany({
       where: {
-        service_id: id,
+        schedules: {
+          some: {
+            is_locked: false,
+            service_id: id,
+            start_date: {
+              gte: moment(),
+            },
+          },
+        },
       },
-      select: this.include(["doctor"]),
     });
     return data;
   };

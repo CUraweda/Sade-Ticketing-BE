@@ -1,6 +1,5 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { doctorProfileFields } from "../../data/model-fields.js";
 
 class DoctorService extends BaseService {
   constructor() {
@@ -22,17 +21,7 @@ class DoctorService extends BaseService {
             title: true,
           },
         },
-        specialisms: {
-          select: {
-            id: true,
-            specialism: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
+        specialisms: true,
       },
     });
 
@@ -43,14 +32,27 @@ class DoctorService extends BaseService {
     return data;
   };
 
+  findByUser = async (user_id) => {
+    const data = await this.db.doctorProfile.findUnique({
+      where: {
+        user_id,
+      },
+      include: this.select(["location.id", "location.title", "specialisms"]),
+    });
+    return data;
+  };
+
   findById = async (id) => {
     const data = await this.db.doctorProfile.findUnique({
       where: { id },
-      select: this.include([
-        ...doctorProfileFields,
+      include: this.select([
         "location.id",
         "location.title",
-        "specialisms.specialism.name",
+        "specialisms",
+        "user.id",
+        "user.full_name",
+        "user.email",
+        "user.avatar",
       ]),
     });
     return data;
@@ -75,59 +77,53 @@ class DoctorService extends BaseService {
   };
 
   findDoctorSpecialisms = async (id) => {
-    const data = await this.db.doctorSpecialism.findMany({
-      where: { doctor_id: id },
-      select: this.include(["id", "specialism"]),
+    const data = await this.db.doctorProfile.findMany({
+      where: { id },
+      select: {
+        specialisms: true,
+      },
     });
-    return data;
+
+    return data
+      .map((d) => d.specialisms)
+      .flat()
+      .map((s) => ({ specialism: s }));
   };
 
   findDoctorServices = async (id) => {
-    const data = await this.db.doctorService.findMany({
-      where: { doctor_id: id },
-      select: this.include([
-        "id",
-        "service.id",
-        "service.title",
-        "service.category.name",
+    const data = await this.db.doctorProfile.findMany({
+      where: { id },
+      include: this.select([
+        "services.id",
+        "services.title",
+        "services.category.name",
       ]),
     });
-    return data;
+    return data
+      .map((d) => d.services)
+      .flat()
+      .map((s) => ({ service: s }));
   };
 
-  assignSpecialisms = async (id, payload) => {
-    await this.db.doctorSpecialism.deleteMany({
-      where: {
-        doctor_id: id,
+  setService = (id, service_id, set) =>
+    this.db.doctorProfile.update({
+      where: { id },
+      data: {
+        services: {
+          [set == "add" ? "connect" : "disconnect"]: { id: service_id },
+        },
       },
     });
 
-    const data = await this.db.doctorSpecialism.createMany({
-      data: payload.map((dat) => ({
-        doctor_id: id,
-        specialism_id: dat,
-      })),
-    });
-
-    return data;
-  };
-
-  assignServices = async (id, payload) => {
-    await this.db.doctorService.deleteMany({
-      where: {
-        doctor_id: id,
+  setSpecialism = (id, specialism_id, set) =>
+    this.db.doctorProfile.update({
+      where: { id },
+      data: {
+        specialisms: {
+          [set == "add" ? "connect" : "disconnect"]: { id: specialism_id },
+        },
       },
     });
-
-    const data = await this.db.doctorService.createMany({
-      data: payload.map((dat) => ({
-        doctor_id: id,
-        service_id: dat,
-      })),
-    });
-
-    return data;
-  };
 }
 
 export default DoctorService;

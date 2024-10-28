@@ -22,6 +22,13 @@ class DoctorController extends BaseController {
     return this.ok(res, data, "Banyak Doctor berhasil didapatkan");
   });
 
+  findMine = this.wrapper(async (req, res) => {
+    const data = await this.#service.findByUser(req.user.id);
+    if (!data) throw new NotFound("Doctor tidak ditemukan");
+
+    return this.ok(res, data, "Doctor berhasil didapatkan");
+  });
+
   findById = this.wrapper(async (req, res) => {
     let data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound("Doctor tidak ditemukan");
@@ -59,14 +66,32 @@ class DoctorController extends BaseController {
     return this.ok(res, data, "Banyak layanan Doctor berhasil didapatkan ");
   });
 
-  assignSpecialism = this.wrapper(async (req, res) => {
-    const data = await this.#service.assignSpecialisms(req.params.id, req.body);
-    return this.ok(res, data, "Berhasil menetapkan spesialisasi Doctor");
+  setService = this.wrapper(async (req, res) => {
+    await this.#service.setService(
+      req.params.id,
+      req.body.service_id,
+      req.body.set
+    );
+
+    return this.ok(
+      res,
+      null,
+      `Berhasil ${req.body.set == "add" ? "menambahkan" : "menghapus"} layanan`
+    );
   });
 
-  assignServices = this.wrapper(async (req, res) => {
-    const data = await this.#service.assignServices(req.params.id, req.body);
-    return this.ok(res, data, "Berhasil menetapkan layanan-layanan Doctor");
+  setSpecialism = this.wrapper(async (req, res) => {
+    await this.#service.setSpecialism(
+      req.params.id,
+      req.body.specialism_id,
+      req.body.set
+    );
+
+    return this.ok(
+      res,
+      null,
+      `Berhasil ${req.body.set == "add" ? "menambahkan" : "menghapus"} spesialisasi`
+    );
   });
 }
 

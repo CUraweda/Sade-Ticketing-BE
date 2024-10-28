@@ -1,38 +1,32 @@
 import Joi from "joi";
 import { relationExist } from "../../base/validator.base.js";
 
+export const BookingStatus = {
+  DRAFT: "draft",
+  NEED_PAYMENT: "need_payment",
+  NEED_APPROVAL: "need_approval",
+  ONGOING: "ongoing",
+  COMPLETED: "completed",
+};
+
 export const BookingValidator = {
   create: Joi.object({
-    // no-data
+    client_id: Joi.string().external(relationExist("clientProfile")).required(),
+    service_id: Joi.string().external(relationExist("service")).required(),
+    compliant: Joi.string().max(100).required(),
+    quantity: Joi.number().precision(0).min(1).required(),
   }),
   update: Joi.object({
-    // no-data
+    compliant: Joi.string().max(100).optional(),
+    status: Joi.valid(...Object.values(BookingStatus)).optional(),
   }),
-  book: Joi.object({
-    profile_id: Joi.string()
-      .external(relationExist("clientProfile"))
-      .required(),
+  setSchedules: Joi.object({
+    quantity: Joi.number().min(1).required(),
     compliant: Joi.string().max(100).required(),
-    services: Joi.array()
-      .items(
-        Joi.object({
-          quantity: Joi.number().min(1).required(),
-          id: Joi.string().external(relationExist("service")).required(),
-        })
-      )
-      .min(1)
-      .required(),
+    schedule_ids: Joi.array()
+      .items(Joi.string().external(relationExist("schedule")).required())
+      .length(Joi.ref("quantity")),
   }),
-  bookSchedule: Joi.array().items(
-    Joi.object({
-      id: Joi.string().required(),
-      quantity: Joi.number().min(1).required(),
-      compliant: Joi.string().max(100).required(),
-      sessions: Joi.array().items(
-        Joi.string().external(relationExist("doctorSession")).required()
-      ),
-    })
-  ),
 };
 
 export default BookingValidator;

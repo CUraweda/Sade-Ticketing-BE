@@ -1,5 +1,14 @@
 import Joi from "joi";
 
+export const RoleCode = {
+  SUPERADMIN: "SDM",
+  ADMIN: "ADM",
+  USER: "USR",
+  PSIKOLOG: "PSI",
+  ASESOR: "ASR",
+  TERAPIS: "TRS",
+};
+
 export const RoleValidator = {
   create: Joi.object({
     code: Joi.string().max(4).required(),

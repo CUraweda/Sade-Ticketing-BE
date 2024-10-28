@@ -1,0 +1,87 @@
+[
+  {
+    "category_id": 1,
+    "location_id": 1,
+    "title": "Konseling",
+    "description": "deskripsi sementara",
+    "duration": 60,
+    "price": 350000,
+    "price_unit": "sesi",
+    "doctor_fee": 78.57
+  },
+  {
+    "category_id": 1,
+    "location_id": 1,
+    "title": "Test IQ",
+    "description": "deskripsi sementara",
+    "duration": 120,
+    "price": 425000,
+    "price_unit": "sesi",
+    "doctor_fee": 82.35
+  },
+  {
+    "category_id": 1,
+    "location_id": 1,
+    "title": "Test IQ + konseling 30 menit",
+    "description": "deskripsi sementara",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi",
+    "doctor_fee": 90
+  },
+  {
+    "category_id": 2,
+    "location_id": 1,
+    "title": "Assesment Terapi",
+    "description": "deskripsi sementara",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi",
+    "doctor_fee": 90
+  },
+  {
+    "category_id": 2,
+    "location_id": 1,
+    "title": "Terapi Wicara TW",
+    "description": "Layanan bagi anak dengan gangguan kemampuan berkomunikasi, mengunyah maupun menelan.",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi"
+  },
+  {
+    "category_id": 2,
+    "location_id": 1,
+    "title": "Okupasi Terapi OT",
+    "description": "Layanan bagi anak dengan gangguan keterampilan motorik, keseimbangan, dan koordinasi fisik yang membatasi kemandiriannya melakukan aktivitas sehari-hari.",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi"
+  },
+  {
+    "category_id": 2,
+    "location_id": 1,
+    "title": "Sensorik Integrasi Terapi SI",
+    "description": "Layanan bagi anak dengan kesulitan memahami input sensorik (sentuhan, gerakan, penglihatan, au, suara, rasa) sehingga ia terlalu atau kurang sensitif terhadap stimulus sensorik di sekitarnya.",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi"
+  },
+  {
+    "category_id": 2,
+    "location_id": 1,
+    "title": "Fisio Terapi FT",
+    "description": "Layanan bagi anak yang belum bisa duduk. berjalan sehingga mengganggu mobilitasnya.",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi"
+  },
+  {
+    "category_id": 2,
+    "location_id": 1,
+    "title": "Orthopaedagog Terapi OP",
+    "description": "Layanan bagi anak yang mengalami kesulitan belajar.",
+    "duration": 120,
+    "price": 500000,
+    "price_unit": "sesi"
+  }
+]
