@@ -304,10 +304,17 @@ class BookingService extends BaseService {
   };
 
   createReportResponse = async (uid, booking_id, questionnaire_id) => {
+    const booking = await this.db.booking.findUnique({
+      where: {
+        id: booking_id,
+      },
+    });
+
     await this.db.questionnaireResponse.create({
       data: {
         user_id: uid,
         booking_report_id: booking_id,
+        client_id: booking.client_id,
         questionnaire_id,
       },
     });

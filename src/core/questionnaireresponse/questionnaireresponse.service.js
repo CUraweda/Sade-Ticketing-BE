@@ -74,6 +74,21 @@ class QuestionnaireResponseService extends BaseService {
     });
     return check;
   };
+
+  checkAccess = async (id, uid) =>
+    await this.db.questionnaireResponse.count({
+      where: {
+        id,
+        OR: [
+          { user_id: uid },
+          {
+            client: {
+              user_id: uid,
+            },
+          },
+        ],
+      },
+    });
 }
 
 export default QuestionnaireResponseService;
