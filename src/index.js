@@ -9,9 +9,11 @@ import app from "./app.js";
 //   cert: cert,
 // };
 
+const port = env.PORT || 5001;
+
 const server = http.createServer(app);
 // const server = https.createServer(app, options);
 
-server.listen(env.PORT, () => {
-  console.log(`Listening to port ${env.PORT}`);
+server.listen(port, () => {
+  console.log(`Listening to port ${port}`);
 });
