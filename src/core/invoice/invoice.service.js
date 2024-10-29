@@ -128,7 +128,7 @@ class InvoiceService extends BaseService {
         },
       });
 
-      if (!checkBookingTherapy.length) {
+      if (checkBookingTherapy.length && checkBookingTherapy[0]._count == 1) {
         const pangkalFee = await this.db.fee.findFirst({
           where: {
             title: "Uang pangkal terapi",
