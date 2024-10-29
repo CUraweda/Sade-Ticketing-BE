@@ -3894,7 +3894,7 @@
     }
   },
   {
-    "title": "Informal Test",
+    "title": "Lembar Jawaban Tes Informal",
     "questions": {
       "create": [
         {
@@ -3925,7 +3925,7 @@
           "code": "q-lk-5-3",
           "section": "Info",
           "label": "Tanggal Assesmen / Evaluasi",
-          "name": "evaluation",
+          "name": "evaluation_date",
           "typ": "date",
           "required": true
         },
@@ -4010,26 +4010,10 @@
           "required": true
         },
         {
-          "code": "q-lk-5-14",
-          "section": "Evaluation",
-          "label": "Tanggal",
-          "name": "date",
-          "typ": "textarea",
-          "required": true
-        },
-        {
-          "code": "q-lk-5-15",
-          "section": "Evaluation",
-          "label": "Tanggal",
-          "name": "date",
-          "typ": "textarea",
-          "required": true
-        },
-        {
           "code": "q-lk-5-16",
-          "section": "Evaluation",
+          "section": "Evaluasi",
           "label": "Catatan",
-          "name": "note",
+          "name": "evaluation_note",
           "typ": "textarea",
           "required": true
         }

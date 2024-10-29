@@ -13,6 +13,7 @@ export const QuestionnaireValidator = {
   saveAnswers: Joi.array().items({
     question_id: Joi.number().external(relationExist("question")).optional(),
     text: Joi.string().optional(),
+    long_text: Joi.string().optional(),
     number: Joi.number().optional(),
     date: Joi.date().optional(),
   }),
