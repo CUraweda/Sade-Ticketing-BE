@@ -37,6 +37,13 @@ r.post(
   controller.create
 );
 
+r.post(
+  "/create-report-response",
+  authMiddleware(["ASR", "PSI", "TRS"]),
+  validatorMiddleware({ body: validator.createReportResponse }),
+  controller.createReportResponse
+);
+
 r.put(
   "/set-schedules/:id",
   authMiddleware(["USR"]),

@@ -27,6 +27,12 @@ export const BookingValidator = {
       .items(Joi.string().external(relationExist("schedule")).required())
       .length(Joi.ref("quantity")),
   }),
+  createReportResponse: Joi.object({
+    booking_id: Joi.string().external(relationExist("booking")).required(),
+    questionnaire_id: Joi.string()
+      .external(relationExist("questionnaire"))
+      .required(),
+  }),
 };
 
 export default BookingValidator;

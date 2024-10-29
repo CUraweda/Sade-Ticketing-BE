@@ -140,6 +140,16 @@ class BookingController extends BaseController {
       "Banyak response kuesioner booking berhasil didapatkan"
     );
   });
+
+  createReportResponse = this.wrapper(async (req, res) => {
+    const payload = req.body;
+    await this.#service.createReportResponse(
+      req.user.id,
+      payload.booking_id,
+      payload.questionnaire_id
+    );
+    return this.ok(res, null, "Respon laporan berhasil dibuat");
+  });
 }
 
 export default BookingController;

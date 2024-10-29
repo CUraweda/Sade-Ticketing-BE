@@ -125,7 +125,7 @@ model DoctorProfile {
   title        String?
   first_name   String
   last_name    String?
-  email        String
+  email        String    @unique
   phone_number String?
   pob          String?
   dob          DateTime?
@@ -172,7 +172,8 @@ model Service {
   doctors                      DoctorProfile[]
   required_services            Service[]                   @relation("RequiredServices")
   prerequisite_For             Service[]                   @relation("RequiredServices")
-  questionnaires               Questionnaire[]
+  questionnaires               Questionnaire[]             @relation("ServiceQuestionnaires")
+  reports                      Questionnaire[]             @relation("ServiceReports")
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
@@ -215,30 +216,34 @@ model ClientProfile {
 model Questionnaire {
   id          String  @id @default(uuid())
   title       String  @unique
-  description String?
+  description String? @db.LongText
 
-  questions Question[]
-  responses QuestionnaireResponse[]
-  services  Service[]
+  questions        Question[]
+  responses        QuestionnaireResponse[]
+  services         Service[]               @relation("ServiceQuestionnaires")
+  services_reports Service[]               @relation("ServiceReports")
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
 
 model QuestionnaireResponse {
-  id               String  @id @default(uuid())
-  user_id          String?
-  client_id        String?
-  questionnaire_id String?
-  booking_id       String?
-  note             String?
-  is_locked        Boolean @default(false)
+  id                String  @id @default(uuid())
+  user_id           String?
+  client_id         String?
+  questionnaire_id  String?
+  booking_id        String?
+  booking_report_id String?
 
-  user          User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  client        ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  questionnaire Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
-  booking       Booking?         @relation(fields: [booking_id], references: [id], onDelete: Cascade)
-  answers       QuestionAnswer[]
+  note      String?
+  is_locked Boolean @default(false)
+
+  user           User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client         ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire  Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking        Booking?         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
+  booking_report Booking?         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
+  answers        QuestionAnswer[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -282,6 +287,7 @@ model QuestionAnswer {
   text        String?
   number      Float?
   date        DateTime?
+  long_text   String?   @db.LongText
 
   response QuestionnaireResponse @relation(fields: [response_id], references: [id], onDelete: Cascade)
   question Question?             @relation(fields: [question_id], references: [id], onDelete: SetNull)
@@ -311,7 +317,8 @@ model Booking {
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   service                 Service?                @relation(fields: [service_id], references: [id], onDelete: SetNull)
   schedules               Schedule[]
-  questionnaire_responses QuestionnaireResponse[]
+  questionnaire_responses QuestionnaireResponse[] @relation("BookingQuestionnaires")
+  reports                 QuestionnaireResponse[] @relation("BookingReports")
   invoices                Invoice[]
 
   created_at DateTime @default(now())

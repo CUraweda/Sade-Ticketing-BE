@@ -36,6 +36,9 @@ class ServiceService extends BaseService {
         "questionnaires.id",
         "questionnaires.title",
         "questionnaires._count.questions",
+        "reports.id",
+        "reports.title",
+        "reports._count.questions",
       ]),
     });
     return data;
@@ -63,6 +66,21 @@ class ServiceService extends BaseService {
       },
       data: {
         questionnaires: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.que_id,
+          },
+        },
+      },
+    });
+  };
+
+  setReport = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        reports: {
           [payload.set == "add" ? "connect" : "disconnect"]: {
             id: payload.que_id,
           },

@@ -43,6 +43,11 @@ class ServiceController extends BaseController {
     return this.ok(res, data, "Kuesioner Service berhasil diupdate");
   });
 
+  setReport = this.wrapper(async (req, res) => {
+    const data = await this.#service.setReport(req.params.id, req.body);
+    return this.ok(res, data, "Kuesioner laporan layanan berhasil diupdate");
+  });
+
   findAvailableDoctors = this.wrapper(async (req, res) => {
     let data = await this.#service.findAvailableDoctors(req.params.id);
     data = this.include(data, doctorFields.full(req.user?.role_code));

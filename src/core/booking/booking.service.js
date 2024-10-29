@@ -48,6 +48,9 @@ class BookingService extends BaseService {
         questionnaire_responses: {
           include: this.select(["questionnaire.title"]),
         },
+        reports: {
+          include: this.select(["questionnaire.title"]),
+        },
         schedules: {
           include: {
             doctors: {
@@ -298,6 +301,23 @@ class BookingService extends BaseService {
       return this.paginate(data, countData, q);
     }
     return data;
+  };
+
+  createReportResponse = async (uid, booking_id, questionnaire_id) => {
+    const booking = await this.db.booking.findUnique({
+      where: {
+        id: booking_id,
+      },
+    });
+
+    await this.db.questionnaireResponse.create({
+      data: {
+        user_id: uid,
+        booking_report_id: booking_id,
+        client_id: booking.client_id,
+        questionnaire_id,
+      },
+    });
   };
 }
 

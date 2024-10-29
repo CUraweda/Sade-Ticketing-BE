@@ -1,17 +1,20 @@
 import BaseController from "../../base/controller.base.js";
 import { BadRequest, NotFound } from "../../lib/response/catch.js";
 import DoctorService from "../doctor/doctor.service.js";
+import QuestionnaireResponseService from "../questionnaireresponse/questionnaireresponse.service.js";
 import { RoleCode } from "../role/role.validator.js";
 import ScheduleService from "./schedule.service.js";
 
 class ScheduleController extends BaseController {
   #service;
   #doctorService;
+  #questionnaireResponseService;
 
   constructor() {
     super();
     this.#service = new ScheduleService();
     this.#doctorService = new DoctorService();
+    this.#questionnaireResponseService = new QuestionnaireResponseService();
   }
 
   findAll = this.wrapper(async (req, res) => {
@@ -52,6 +55,31 @@ class ScheduleController extends BaseController {
     if (!data) throw new NotFound("Jadwal tidak ditemukan");
 
     return this.ok(res, data, "Jadwal berhasil didapatkan");
+  });
+
+  findQuestionnaires = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req))
+      await this.#service.checkAuthorized(req.params.id, req.user.id);
+
+    const booking_id = (await this.#service.findById(req.params.id)).booking_id;
+
+    const patient = await this.#questionnaireResponseService.findAll({
+      paginate: false,
+      where: `booking_id:${booking_id}`,
+    });
+    const reports = await this.#questionnaireResponseService.findAll({
+      paginate: false,
+      where: `booking_report_id:${booking_id}`,
+    });
+
+    return this.ok(
+      res,
+      {
+        patient,
+        reports,
+      },
+      "Jadwal berhasil didapatkan"
+    );
   });
 
   create = this.wrapper(async (req, res) => {

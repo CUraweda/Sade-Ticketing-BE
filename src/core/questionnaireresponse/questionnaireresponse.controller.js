@@ -29,7 +29,7 @@ class QuestionnaireResponseController extends BaseController {
   findById = this.wrapper(async (req, res) => {
     if (!this.isAdmin(req)) {
       if (req.user.role_code == RoleCode.USER) {
-        const chk = await this.#service.checkOwner(req.params.id, req.user.id);
+        const chk = await this.#service.checkAccess(req.params.id, req.user.id);
         if (!chk) throw new Forbidden();
       }
     }

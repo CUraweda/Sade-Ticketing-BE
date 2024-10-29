@@ -3434,13 +3434,13 @@
     }
   },
   {
-    "title": "Psychological Examination",
+    "title": "Hasil Pemeriksaan Psikologis",
     "description": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)",
     "questions": {
       "create": [
         {
           "code": "q-lk-4-0",
-          "section": "Personal Info",
+          "section": "Info Pasien",
           "label": "Nama depan",
           "name": "first_name",
           "typ": "text",
@@ -3448,7 +3448,7 @@
         },
         {
           "code": "q-lk-4-1",
-          "section": "Personal Info",
+          "section": "Info Pasien",
           "label": "Nama belakang",
           "name": "last_name",
           "typ": "text",
@@ -3456,23 +3456,15 @@
         },
         {
           "code": "q-lk-4-2",
-          "section": "Personal Info",
+          "section": "Info Pasien",
           "label": "Tanggal Lahir",
           "name": "dob",
           "typ": "date",
           "required": true
         },
         {
-          "code": "q-lk-4-3",
-          "section": "Medical Info",
-          "label": "Tgl. Pemeriksaan",
-          "name": "exam_date",
-          "typ": "date",
-          "required": true
-        },
-        {
           "code": "q-lk-4-4",
-          "section": "Medical Info",
+          "section": "Info Pasien",
           "label": "Usia",
           "name": "age",
           "typ": "number",
@@ -3480,15 +3472,23 @@
         },
         {
           "code": "q-lk-4-5",
-          "section": "Personal Info",
+          "section": "Info Pasien",
           "label": "Pendidikan",
           "name": "education",
           "typ": "text",
           "required": true
         },
         {
+          "code": "q-lk-4-3",
+          "section": "Info Pemeriksaan",
+          "label": "Tgl. Pemeriksaan",
+          "name": "exam_date",
+          "typ": "date",
+          "required": true
+        },
+        {
           "code": "q-lk-4-6",
-          "section": "Medical Info",
+          "section": "Info Pemeriksaan",
           "label": "Tujuan Pemeriksaan",
           "name": "exam_purpose",
           "typ": "text",
@@ -3837,7 +3837,7 @@
         {
           "code": "q-lk-4-24",
           "section": "IQ",
-          "label": "IQ Level",
+          "label": "Taraf Kecerdasan (IQ)",
           "name": "iq_level",
           "typ": "text",
           "required": true
@@ -3845,7 +3845,7 @@
         {
           "code": "q-lk-4-25",
           "section": "IQ",
-          "label": "Verbal IQ",
+          "label": "Taraf Kecerdasan Verbal",
           "name": "verbal_iq",
           "typ": "text",
           "required": true
@@ -3853,30 +3853,30 @@
         {
           "code": "q-lk-4-26",
           "section": "IQ",
-          "label": "Performance IQ",
+          "label": "Taraf Kecerdasan Performance",
           "name": "performance_iq",
           "typ": "text",
           "required": true
         },
         {
           "code": "q-lk-4-27",
-          "section": "URAIAN",
-          "label": "URAIAN",
+          "section": "Uraian",
+          "label": "Uraian",
           "name": "description",
           "typ": "textarea",
           "required": true
         },
         {
           "code": "q-lk-4-28",
-          "section": "KESIMPULAN",
-          "label": "KESIMPULAN",
+          "section": "Kesimpulan",
+          "label": "Kesimpulan",
           "name": "conclusion",
           "typ": "textarea",
           "required": true
         },
         {
           "code": "q-lk-4-29",
-          "section": "SARAN PENGEMBANGAN",
+          "section": "Saran Pengembangan",
           "label": "Bagi Orang tua",
           "name": "parental_advice",
           "typ": "textarea",
@@ -3884,7 +3884,7 @@
         },
         {
           "code": "q-lk-4-30",
-          "section": "SARAN PENGEMBANGAN",
+          "section": "Saran Pengembangan",
           "label": "Bagi Guru",
           "name": "teacher_advice",
           "typ": "textarea",
@@ -3894,7 +3894,7 @@
     }
   },
   {
-    "title": "Informal Test",
+    "title": "Lembar Jawaban Tes Informal",
     "questions": {
       "create": [
         {
@@ -3925,7 +3925,7 @@
           "code": "q-lk-5-3",
           "section": "Info",
           "label": "Tanggal Assesmen / Evaluasi",
-          "name": "evaluation",
+          "name": "evaluation_date",
           "typ": "date",
           "required": true
         },
@@ -4010,26 +4010,10 @@
           "required": true
         },
         {
-          "code": "q-lk-5-14",
-          "section": "Evaluation",
-          "label": "Tanggal",
-          "name": "date",
-          "typ": "textarea",
-          "required": true
-        },
-        {
-          "code": "q-lk-5-15",
-          "section": "Evaluation",
-          "label": "Tanggal",
-          "name": "date",
-          "typ": "textarea",
-          "required": true
-        },
-        {
           "code": "q-lk-5-16",
-          "section": "Evaluation",
+          "section": "Evaluasi",
           "label": "Catatan",
-          "name": "note",
+          "name": "evaluation_note",
           "typ": "textarea",
           "required": true
         }
@@ -5673,6 +5657,997 @@
             "create": [
               { "label": "Ya", "value": "yes" },
               { "label": "Tidak", "value": "no" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 0 - 3 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-7-1",
+          "section": "Aspek",
+          "label": "Belajar mengangkat kepala",
+          "name": "learn_lift_head",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-7-2",
+          "section": "Aspek",
+          "label": "Melihat wajah orang lain",
+          "name": "look_at_faces",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-7-3",
+          "section": "Aspek",
+          "label": "Bereaksi terhadap bunyi",
+          "name": "react_to_sounds",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-7-4",
+          "section": "Aspek",
+          "label": "Mengenal ibunya/fasilitator",
+          "name": "recognize_mother",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-7-5",
+          "section": "Aspek",
+          "label": "Menahan barang yang sedang dipegang",
+          "name": "hold_objects",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-7-6",
+          "section": "Aspek",
+          "label": "Mengoceh spontan",
+          "name": "babble_spontaneously",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 3 - 6 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-8-1",
+          "section": "Aspek",
+          "label": "Mengangkat kepala 90 derajat",
+          "name": "lift_head_90_deg",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-8-2",
+          "section": "Aspek",
+          "label": "Berusaha meraih benda di jangkauannya",
+          "name": "reach_for_objects",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-8-3",
+          "section": "Aspek",
+          "label": "Memasukkan tangan/benda ke dalam mulutnya",
+          "name": "put_hand_in_mouth",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-8-4",
+          "section": "Aspek",
+          "label": "Mulai berekspresi (tertawa dan menjerit gembira saat merasa happy)",
+          "name": "start_expressing",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-8-5",
+          "section": "Aspek",
+          "label": "Mencari benda yang hilang dari pandangannya",
+          "name": "search_for_missing_object",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 6 - 9 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-9-1",
+          "section": "Aspek",
+          "label": "Bisa duduk sendiri tanpa bantuan orang lain",
+          "name": "sit_unaided",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-2",
+          "section": "Aspek",
+          "label": "Tengkurap dan sudah lancar untuk berbalik sendiri",
+          "name": "roll_over",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-3",
+          "section": "Aspek",
+          "label": "Merangkak untuk meraih benda atau mendekati seseorang",
+          "name": "crawl_to_reach",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-4",
+          "section": "Aspek",
+          "label": "Dapat menggunakan kedua tangan untuk memindahkan benda",
+          "name": "use_both_hands",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-5",
+          "section": "Aspek",
+          "label": "Mengenal orang-orang terdekat di sekitarnya",
+          "name": "recognize_close_people",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-6",
+          "section": "Aspek",
+          "label": "Menirukan gerakan yang diajarkan",
+          "name": "imitate_taught_movements",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-7",
+          "section": "Aspek",
+          "label": "Bertepuk tangan dan bermain ci luk ba",
+          "name": "clap_play_peekaboo",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-9-8",
+          "section": "Aspek",
+          "label": "Dapat makan biskuit sendiri",
+          "name": "eat_biscuit_self",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 9 - 12 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-10-1",
+          "section": "Aspek",
+          "label": "Mampu berdiri sendiri tanpa bantuan orang lain",
+          "name": "stand_alone",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-10-2",
+          "section": "Aspek",
+          "label": "Dapat berjalan dengan dibantu",
+          "name": "walk_with_help",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-10-3",
+          "section": "Aspek",
+          "label": "Dapat menunjukkan ketertarikan terhadap benda disekitarnya",
+          "name": "show_interest_in_objects",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-10-4",
+          "section": "Aspek",
+          "label": "Mengerti perintah sederhana dan larangan",
+          "name": "understand_simple_commands",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-10-5",
+          "section": "Aspek",
+          "label": "Dapat menunjukkan benda yang sudah dikenalnya",
+          "name": "show_familiar_objects",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 12 - 15 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-11-1",
+          "section": "Aspek",
+          "label": "Berdiri tanpa berpegangan",
+          "name": "stand_without_support",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-11-2",
+          "section": "Aspek",
+          "label": "Memasukkan mainan ke dalam cangkir",
+          "name": "put_toy_in_cup",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-11-3",
+          "section": "Aspek",
+          "label": "Bermain dengan orang lain",
+          "name": "play_with_others",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-11-4",
+          "section": "Aspek",
+          "label": "Mampu berjalan",
+          "name": "able_to_walk",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-11-5",
+          "section": "Aspek",
+          "label": "Mampu membuat coretan",
+          "name": "able_to_scribble",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-11-6",
+          "section": "Aspek",
+          "label": "Mampu bicara 2 kata",
+          "name": "speak_two_words",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-11-7",
+          "section": "Aspek",
+          "label": "Minum dengan gelas",
+          "name": "drink_with_cup",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 15 - 18 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-12-1",
+          "section": "Aspek",
+          "label": "Mampu berlari",
+          "name": "able_to_run",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-12-2",
+          "section": "Aspek",
+          "label": "Mampu naik tangga",
+          "name": "able_to_climb_stairs",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-12-3",
+          "section": "Aspek",
+          "label": "Mampu berbicara beberapa kata",
+          "name": "able_to_speak_words",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-12-4",
+          "section": "Aspek",
+          "label": "Mampu menggunakan sendok",
+          "name": "able_to_use_spoon",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-12-5",
+          "section": "Aspek",
+          "label": "Mampu menyuapi boneka",
+          "name": "able_to_feed_doll",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-12-6",
+          "section": "Aspek",
+          "label": "Menumpuk 2 mainan",
+          "name": "stack_two_toys",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 18 - 24 bulan",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-13-1",
+          "section": "Aspek",
+          "label": "Mampu menendang bola",
+          "name": "able_to_kick_ball",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-13-2",
+          "section": "Aspek",
+          "label": "Menumpuk 4 mainan",
+          "name": "stack_four_toys",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-13-3",
+          "section": "Aspek",
+          "label": "Mampu menunjuk gambar",
+          "name": "able_to_point_picture",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-13-4",
+          "section": "Aspek",
+          "label": "Mampu memakai dan melepas pakaian",
+          "name": "able_to_put_on_off_clothes",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-13-5",
+          "section": "Aspek",
+          "label": "Mampu menyikat gigi",
+          "name": "able_to_brush_teeth",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 2 - 3 tahun",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-14-1",
+          "section": "Aspek",
+          "label": "Mampu melompat",
+          "name": "able_to_jump",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-14-2",
+          "section": "Aspek",
+          "label": "Mampu menunjuk bagian tubuh",
+          "name": "able_to_point_body_part",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-14-3",
+          "section": "Aspek",
+          "label": "Mampu mencuci/mengeringkan tangan",
+          "name": "able_to_wash_dry_hands",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-14-4",
+          "section": "Aspek",
+          "label": "Mampu menggambar garis tegak",
+          "name": "able_to_draw_vertical_line",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-14-5",
+          "section": "Aspek",
+          "label": "Mampu menyebutkan warna benda",
+          "name": "able_to_name_object_colors",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-14-6",
+          "section": "Aspek",
+          "label": "Mampu menyebutkan nama teman",
+          "name": "able_to_name_friends",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Perkembangan Anak 3 - 5 tahun",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-15-7",
+          "section": "Aspek",
+          "label": "Mampu naik sepeda roda tiga",
+          "name": "able_to_ride_tricycle",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-8",
+          "section": "Aspek",
+          "label": "Mampu menggambar lingkaran",
+          "name": "able_to_draw_circle",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-9",
+          "section": "Aspek",
+          "label": "Mampu bercerita singkat menyebutkan penggunaan benda",
+          "name": "able_to_tell_short_story",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-10",
+          "section": "Aspek",
+          "label": "Mampu memakai baju kaos/tanpa kancing",
+          "name": "able_to_wear_tshirt",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-11",
+          "section": "Aspek",
+          "label": "Mampu menggambar tanda tambah",
+          "name": "able_to_draw_plus_sign",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-12",
+          "section": "Aspek",
+          "label": "Mampu memakai baju tanpa dibantu",
+          "name": "able_to_dress_independently",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-13",
+          "section": "Aspek",
+          "label": "Mampu menggambar manusia (kepala, badan, kaki)",
+          "name": "able_to_draw_person",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-14",
+          "section": "Aspek",
+          "label": "Bermain kartu, menyikat gigi tanpa dibantu",
+          "name": "able_to_play_cards_and_brush_teeth",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-15",
+          "section": "Aspek",
+          "label": "Mampu menghitung mainan",
+          "name": "able_to_count_toys",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-15-16",
+          "section": "Aspek",
+          "label": "Mampu mengambil makanan sendiri",
+          "name": "able_to_serve_food",
+          "typ": "radio",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Butuh banyak latihan", "value": "need_practice" },
+              { "label": "Berkembang", "value": "on_develop" },
+              { "label": "Mandiri", "value": "independent" }
             ]
           }
         }

@@ -57,7 +57,11 @@ class QuestionnaireService extends BaseService {
         client: true,
         answers: {
           include: {
-            question: true,
+            question: {
+              include: {
+                options: true,
+              },
+            },
           },
         },
       },
