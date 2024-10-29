@@ -3879,7 +3879,7 @@
           "section": "Saran Pengembangan",
           "label": "Bagi Orang tua",
           "name": "parental_advice",
-          "typ": "textarea",
+          "typ": "wysiwyg",
           "required": true
         },
         {
@@ -3887,7 +3887,7 @@
           "section": "Saran Pengembangan",
           "label": "Bagi Guru",
           "name": "teacher_advice",
-          "typ": "textarea",
+          "typ": "wysiwyg",
           "required": true
         }
       ]
@@ -4014,7 +4014,7 @@
           "section": "Evaluasi",
           "label": "Catatan",
           "name": "evaluation_note",
-          "typ": "textarea",
+          "typ": "wysiwyg",
           "required": true
         }
       ]
