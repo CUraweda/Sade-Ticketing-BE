@@ -24,7 +24,7 @@ app.get("/", async (req, res) => {
 app.use("/api", appRouter);
 app.use((req, res, next) => {
   res.status(httpStatus.NOT_FOUND).json({
-    message: "Path not found",
+    message: "Ticketing - path not found",
   });
 });
 

@@ -30,6 +30,13 @@ const orderPattern = (value, helpers) => {
   return errMsg ? helpers.message(errMsg) : value;
 };
 
+export const isTimeString = (value, helpers) => {
+  const pattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  if (!pattern.test(value))
+    return helpers.message("Time string mustt be in the format HH:mm:ss");
+  return value;
+};
+
 /**
  * @param {string} table table name
  */
@@ -60,6 +67,8 @@ export const baseValidator = {
     in_: Joi.string().optional().custom(containColon),
     not_: Joi.string().optional().custom(containColon),
     isnull: Joi.string().optional(),
+    gte: Joi.string().optional().custom(containColon),
+    lte: Joi.string().optional().custom(containColon),
     paginate: Joi.boolean().optional().default(true),
     limit: Joi.number().optional().default(10),
     page: Joi.number().optional().default(1),

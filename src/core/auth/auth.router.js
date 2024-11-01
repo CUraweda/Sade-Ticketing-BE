@@ -12,19 +12,27 @@ r.post(
   controller.login
 );
 
-r.post(
-  "/refresh-token",
-  validatorMiddleware({body: validator.refreshToken}),
+r.get("/refresh-token",
   controller.refreshToken
+); 
+
+r.post("/register",
+  validatorMiddleware({ body: validator.register }),
+  controller.register
 );
- 
-r.post("/register");
 
-r.post("/verify-email");
+r.put("/verify-email",
+  controller.verifyEmail
+);
 
-r.post("/forgot-password");
+r.post("/forgot-password",
+  controller.forgotPassword
+);
 
-r.post("/reset-pass");
+r.put("/reset-pass",
+  validatorMiddleware({ body: validator.resetPass }),
+  controller.resetPass
+);
 
 const authRouter = r;
 export default authRouter;

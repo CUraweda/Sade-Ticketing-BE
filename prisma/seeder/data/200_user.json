@@ -1,0 +1,73 @@
+[
+  {
+    "full_name": "Superadmin",
+    "email": "superadmin@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 1 }, { "role_id": 2 }]
+    }
+  },
+
+  {
+    "full_name": "Admin",
+    "email": "admin@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 2 }]
+    }
+  },
+  {
+    "full_name": "User Satu",
+    "email": "user1@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 3 }]
+    }
+  },
+  {
+    "full_name": "User Dua",
+    "email": "user2@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 3 }]
+    }
+  },
+  {
+    "full_name": "Psikolog",
+    "email": "psikolog@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 4 }]
+    }
+  },
+  {
+    "full_name": "Asesor",
+    "email": "asesor@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 5 }]
+    }
+  },
+  {
+    "full_name": "Terapis",
+    "email": "terapis@example.com",
+    "password": "1234567",
+    "status": true,
+    "email_verified": true,
+    "user_roles": {
+      "create": [{ "role_id": 6 }]
+    }
+  }
+]

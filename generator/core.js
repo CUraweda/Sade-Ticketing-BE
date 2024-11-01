@@ -94,29 +94,29 @@ class ${name}Controller extends BaseController {
 
   findAll = this.wrapper(async (req, res) => {
     const data = await this.#service.findAll(req.query);
-    return this.ok(res, data, "${name}s retrieved successfully");
+    return this.ok(res, data, "Banyak ${name} berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
-    if (!data) throw NotFound("${name} not found");
+    if (!data) throw new NotFound("${name} tidak ditemukan");
 
-    return this.ok(res, data, "${name} retrieved succesfully");
+    return this.ok(res, data, "${name} berhasil didapatkan");
   });
 
   create = this.wrapper(async (req, res) => {
     const data = await this.#service.create(req.body);
-    return this.created(res, data, "${name} created successfully");
+    return this.created(res, data, "${name} berhasil dibuat");
   });
 
   update = this.wrapper(async (req, res) => {
     const data = await this.#service.update(req.params.id, req.body);
-    return this.ok(res, data, "${name} updated successfully");
+    return this.ok(res, data, "${name} berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
-    this.noContent(res, "${name} deleted successfully");
+    return this.noContent(res, "${name} berhasil dihapus");
   });
 }
 

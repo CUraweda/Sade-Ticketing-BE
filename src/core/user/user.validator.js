@@ -26,10 +26,10 @@ export const UserValidator = {
   update: Joi.object({
     full_name: Joi.string()
       .max(50)
-      .regex(/^[A-Za-z]+$/)
+      .regex(/^[A-Za-z\s]+$/)
       .optional()
       .messages({
-        "string.pattern.base": "Name must contain only letters",
+        "string.pattern.base": "Name must contain only letters and spaces",
       }),
     email: Joi.string().email().optional(),
     password: Joi.string().max(constant.MAX_LEN_PW).optional(),

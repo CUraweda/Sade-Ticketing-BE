@@ -1,0 +1,23 @@
+[
+  {
+    "location_id": 1,
+    "category": "PSIKOLOG",
+    "first_name": "Psikolog",
+    "last_name": "Dummy",
+    "email": "psikolog.dummy@example.com"
+  },
+  {
+    "location_id": 1,
+    "category": "TERAPIS",
+    "first_name": "Terapis",
+    "last_name": "Dummy",
+    "email": "terapis.dummy@example.com"
+  },
+  {
+    "location_id": 1,
+    "category": "ASESOR",
+    "first_name": "Asesor",
+    "last_name": "Dummy",
+    "email": "asesor.dummy@example.com"
+  }
+]

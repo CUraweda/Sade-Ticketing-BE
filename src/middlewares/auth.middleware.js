@@ -6,7 +6,7 @@ import {
 } from "../lib/response/catch.js";
 
 /**
- * @param {("SDM" | "ADM" | "USR")[] | null} roles
+ * @param {("SDM" | "ADM" | "USR" | "TRS" | "PSI" | "ASR")[] | null} roles
  */
 const authMiddleware = (roles = null) => {
   return async (req, res, next, ...args) => {

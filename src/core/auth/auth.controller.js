@@ -12,29 +12,28 @@ class AuthController extends BaseController {
 
   login = this.wrapper(async (req, res) => {
     const data = await this.#service.login(req.body);
-    return this.ok(res, data, "Login successfully");
+    return this.ok(res, data, "Berhasil login!");
   });
-
   refreshToken = this.wrapper(async (req, res) => {
-    const { refresh_token } = req.body;
-    const refreshTokenDoc = await this.#service.verifyToken(
-      refresh_token,
-      TokenTypes.REFRESH
-    );
-
-    if (!refreshTokenDoc) {
-      return this.unauthorized(res, "Invalid refresh token");
-    }
-
-    const user = await this.#service.getUserByUUid(refreshTokenDoc.uid);
-
-    if (!user) {
-      return this.unauthorized(res, "User not found");
-    }
-
-    const tokens = await this.#service.generateTokens(user);
-
-    return this.ok(res, tokens, "Token refreshed successfully");
+    const data = await this.#service.refreshToken(req.body)  
+    return this.ok(res, data, "Token Diperbarui!");
+  });
+  
+  register = this.wrapper(async (req, res) => {
+    const data = await this.#service.register(req.body)
+    return this.ok(res, data, "Berhasil register!")
+  })
+  verifyEmail = this.wrapper(async (req, res) => {
+    const data = await this.#service.verifyEmail(req.body)
+    return this.ok(res, data, "Berhasil verifikasi!")
+  })
+  forgotPassword = this.wrapper(async (req, res) => {
+    const data = await this.#service.forgotPassword(req.body)
+    return this.ok(res, data, "Berhasil!")
+  })
+  resetPass = this.wrapper(async (req, res) => {
+    const data = await this.#service.resetPass(req.body)
+    return this.ok(res, data, "Berhasil!")
   })
 }
 

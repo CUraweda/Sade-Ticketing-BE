@@ -8,35 +8,461 @@ datasource db {
 }
 
 model User {
-  id              String     @id @default(uuid())
+  id              String    @id @default(uuid())
   full_name       String
-  email           String     @unique
+  email           String    @unique
   password        String
-  status          Boolean    @default(false)
-  email_verified  Boolean    @default(false)
+  status          Boolean   @default(false)
+  email_verified  Boolean   @default(false)
   avatar          String?
   reset_token     String?
   reset_token_exp DateTime?
-  created_at      DateTime   @default(now())
-  updated_at      DateTime   @default(now()) @updatedAt
-  UserRole        UserRole[]
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @default(now()) @updatedAt
+
+  doctor                  DoctorProfile?
+  user_roles              UserRole[]
+  clients                 ClientProfile[]
+  questionnaire_responses QuestionnaireResponse[]
+  bookings                Booking[]
+  user_file               UserFile[]
+  schedules               Schedule[]
+  payments                Payments[]
+  reschedule_requests     RescheduleRequest[]
+  invoices                Invoice[]
+  notifications           NotificationUser[]
 }
 
 model UserRole {
-  id        String  @id @default(uuid())
-  role_id   String
+  id        Int     @id @default(autoincrement())
+  role_id   Int
   user_id   String
   is_active Boolean @default(true)
-  role      Role    @relation(fields: [role_id], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  role Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Role {
-  id         String     @id @default(uuid())
-  code       String     @unique
-  name       String
-  is_active  Boolean?   @default(true)
-  user_role  UserRole[]
-  created_at DateTime   @default(now())
-  updated_at DateTime   @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  is_active Boolean? @default(true)
+
+  user_roles    UserRole[]
+  notifications Notification[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// NOTIFICATION
+model Notification {
+  id           String  @id @default(uuid())
+  title        String
+  message      String
+  type         String
+  reference_id String?
+
+  roles Role[]
+  users NotificationUser[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model NotificationUser {
+  notification_id String
+  user_id         String
+  is_read         Boolean @default(false)
+
+  notification Notification @relation(fields: [notification_id], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@id([notification_id, user_id])
+}
+
+// LOCATION -> set service location, doctors location
+model Location {
+  id      Int     @id @default(autoincrement())
+  title   String  @unique
+  address String?
+
+  doctors  DoctorProfile[]
+  services Service[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// BANK ACCOUNT
+model BankAccount {
+  id             Int        @id @default(autoincrement())
+  title          String     @unique
+  in_name        String
+  account_number String
+  provider       String
+  payments       Payments[]
+  invoices       Invoice[]
+}
+
+// DOCTORS
+model Specialism {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  doctors DoctorProfile[]
+}
+
+model DoctorProfile {
+  id           String    @id @default(uuid())
+  user_id      String?   @unique
+  location_id  Int?
+  category     String
+  title        String?
+  first_name   String
+  last_name    String?
+  email        String
+  phone_number String?
+  pob          String?
+  dob          DateTime?
+  address      String?
+  sex          String?
+  is_active    Boolean   @default(true)
+
+  location                Location?               @relation(fields: [location_id], references: [id], onDelete: SetNull)
+  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  specialisms             Specialism[]
+  services                Service[]
+  service_recommendations ServiceRecommendation[]
+  schedules               Schedule[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// SERVICE 
+model ServiceCategory {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+
+  services Service[]
+}
+
+model Service {
+  id                   String   @id @default(uuid())
+  category_id          Int?
+  location_id          Int?
+  title                String   @unique
+  description          String?  @db.LongText
+  duration             Int? // in minute
+  duration_description String?
+  price                Float
+  price_unit           String
+  price_minimum        Float?
+  doctor_fee           Decimal? @db.Decimal(5, 2) // in percentage
+  is_active            Boolean? @default(true)
+
+  category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
+  doctors                      DoctorProfile[]
+  required_services            Service[]                   @relation("RequiredServices")
+  prerequisite_For             Service[]                   @relation("RequiredServices")
+  questionnaires               Questionnaire[]
+  service_recommendation_items ServiceRecommendationItem[]
+  schedules                    Schedule[]
+  bookings                     Booking[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// CLIENT / PATIENT
+model ClientProfile {
+  id           String   @id @default(uuid())
+  code         String?  @unique
+  user_id      String?
+  relation     String
+  category     String
+  first_name   String
+  last_name    String?
+  email        String?
+  phone_number String?
+  pob          String
+  dob          DateTime
+  address      String?
+  sex          String
+  blood_type   String?
+  ethnic       String?
+  nationality  String?
+  is_active    Boolean  @default(true)
+
+  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  questionnaire_responses QuestionnaireResponse[]
+  bookings                Booking[]
+  service_recommendations ServiceRecommendation[]
+  schedules               Schedule[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// QUESTIONNAIRE 
+model Questionnaire {
+  id          String  @id @default(uuid())
+  title       String  @unique
+  description String?
+
+  questions Question[]
+  responses QuestionnaireResponse[]
+  services  Service[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model QuestionnaireResponse {
+  id               String  @id @default(uuid())
+  user_id          String?
+  client_id        String?
+  questionnaire_id String?
+  booking_id       String?
+  note             String?
+  is_locked        Boolean @default(false)
+
+  user          User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client        ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking       Booking?         @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  answers       QuestionAnswer[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model Question {
+  id               Int     @id @default(autoincrement())
+  questionnaire_id String
+  code             String  @unique
+  section          String?
+  label            String
+  name             String
+  hint             String?
+  help             String?
+  typ              String
+  min              Int?
+  max              Int?
+  file_typ         String?
+  file_max_byte    Int?
+  other            Boolean @default(false)
+  required         Boolean @default(false)
+
+  questionnaire Questionnaire    @relation(fields: [questionnaire_id], references: [id], onDelete: Cascade)
+  options       QuestionOption[]
+  answers       QuestionAnswer[]
+}
+
+model QuestionOption {
+  id          Int    @id @default(autoincrement())
+  question_id Int
+  label       String
+  value       String
+
+  question Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+}
+
+model QuestionAnswer {
+  id          Int       @id @default(autoincrement())
+  response_id String
+  question_id Int?
+  text        String?
+  number      Float?
+  date        DateTime?
+
+  response QuestionnaireResponse @relation(fields: [response_id], references: [id], onDelete: Cascade)
+  question Question?             @relation(fields: [question_id], references: [id], onDelete: SetNull)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// BOOKING SERVICE
+model Booking {
+  id         String  @id @default(uuid())
+  client_id  String?
+  user_id    String?
+  service_id String?
+
+  compliant    String?
+  quantity     Int
+  price        Float
+  service_data String? @db.LongText
+  status       String // draft, pending_payment, waiting, ongoing, completed
+  title        String?
+  group_label  String?
+  is_locked    Boolean @default(false)
+  is_approved  Boolean @default(false)
+
+  client                  ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  service                 Service?                @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  schedules               Schedule[]
+  questionnaire_responses QuestionnaireResponse[]
+  invoices                Invoice[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// INVOICE AND PAYMENT
+model Fee {
+  id          Int     @id @default(autoincrement())
+  title       String  @unique
+  description String?
+  price       Float
+
+  invoices InvoiceFee[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model InvoiceFee {
+  id         Int    @id @default(autoincrement())
+  quantity   Int    @default(1)
+  fee_id     Int
+  invoice_id String
+
+  fee     Fee     @relation(fields: [fee_id], references: [id], onDelete: Cascade)
+  invoice Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id              String  @id @default(uuid())
+  bank_account_id Int?
+  user_id         String?
+  payment_id      String?
+
+  title       String
+  total       Float
+  status      String // issued, paid, overdue
+  expiry_date DateTime?
+  paid_date   DateTime?
+  note        String?
+
+  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  payment      Payments?    @relation(fields: [payment_id], references: [id], onDelete: SetNull)
+  bookings     Booking[]
+  fees         InvoiceFee[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model Payments {
+  id                 String    @id @default(uuid())
+  amount_paid        Float
+  payment_method     String
+  payment_proof_path String?
+  status             String
+  transaction_id     String?
+  bank_account_id    Int?
+  user_id            String?
+  payment_date       DateTime?
+  expiry_date        DateTime?
+
+  user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  invoices     Invoice[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// SERVICE RECOMMENDATION
+model ServiceRecommendation {
+  id        String  @id @default(uuid())
+  title     String?
+  doctor_id String?
+  client_id String
+
+  service_recommendation_items ServiceRecommendationItem[]
+  doctor                       DoctorProfile?              @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  client                       ClientProfile               @relation(fields: [client_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServiceRecommendationItem {
+  id                        Int    @id @default(autoincrement())
+  quantity                  Int
+  note                      String
+  service_id                String
+  service_recommendation_id String
+
+  service                Service               @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  service_recommendation ServiceRecommendation @relation(fields: [service_recommendation_id], references: [id], onDelete: Cascade)
+}
+
+// SCHEDULE
+model Schedule {
+  id               String    @id @default(uuid())
+  start_date       DateTime
+  end_date         DateTime?
+  title            String
+  description      String?
+  is_locked        Boolean   @default(false)
+  overtime_minutes Int?      @default(0)
+
+  creator_id String?
+  service_id String?
+  booking_id String?
+
+  clients               ClientProfile[]
+  doctors               DoctorProfile[]
+  creator               User?               @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
+  new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
+  booking               Booking?            @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model RescheduleRequest {
+  id              String    @id @default(uuid())
+  reason          String
+  schedule_id     String
+  start_date      DateTime?
+  end_date        DateTime?
+  new_schedule_id String?
+  user_id         String
+  is_approved     Boolean   @default(false)
+
+  schedule     Schedule  @relation("reschedule_request", fields: [schedule_id], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  new_schedule Schedule? @relation("new_reschedule_request", fields: [new_schedule_id], references: [id], onDelete: SetNull)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// USER FILE / ATTACHMENT
+model UserFile {
+  id         String   @id @default(uuid())
+  filename   String
+  mimetype   String
+  size       Int
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
 }
