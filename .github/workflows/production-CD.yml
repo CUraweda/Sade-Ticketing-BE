@@ -27,4 +27,6 @@ jobs:
             cd production/Sade-Ticketing-BE
             git pull origin main
             npm i
+            yes | npm run mg:push
+            npm run db:seed
             pm2 restart 2
