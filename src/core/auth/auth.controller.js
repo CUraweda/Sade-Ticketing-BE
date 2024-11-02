@@ -1,5 +1,6 @@
 import BaseController from "../../base/controller.base.js";
 import AuthService from "./auth.service.js";
+// const TokenTypes = require("../../config/token.js")
 
 class AuthController extends BaseController {
   #service;

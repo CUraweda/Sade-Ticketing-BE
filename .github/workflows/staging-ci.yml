@@ -1,0 +1,22 @@
+name: Staging CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 21.5.0
+      uses: actions/setup-node@v4
+      with:
+        node-version: 21.5.0
+        cache: 'npm'
+    - run: npm i
+    - run: npm run build --if-present
