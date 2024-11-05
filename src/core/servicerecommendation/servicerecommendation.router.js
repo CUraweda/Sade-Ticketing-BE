@@ -29,5 +29,7 @@ r.put(
 
 r.delete("/delete/:id", controller.delete);
 
+r.get("/recommendation-by-booking/:booking_id", controller.findByBookingId);
+
 const servicerecommendationRouter = r;
 export default servicerecommendationRouter;

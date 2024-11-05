@@ -12,7 +12,11 @@ class ServiceRecommendationController extends BaseController {
 
   findAll = this.wrapper(async (req, res) => {
     const data = await this.#service.findAll(req.query);
-    return this.ok(res, data, "Banyak ServiceRecommendation berhasil didapatkan");
+    return this.ok(
+      res,
+      data,
+      "Banyak ServiceRecommendation berhasil didapatkan"
+    );
   });
 
   findById = this.wrapper(async (req, res) => {
@@ -35,6 +39,13 @@ class ServiceRecommendationController extends BaseController {
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "ServiceRecommendation berhasil dihapus");
+  });
+
+  findByBookingId = this.wrapper(async (req, res) => {
+    const data = await this.#service.findByBookingId(req.params.booking_id);
+    if (!data) throw new NotFound("ServiceRecommendation tidak ditemukan");
+
+    return this.ok(res, data, "ServiceRecommendation berhasil didapatkan");
   });
 }
 

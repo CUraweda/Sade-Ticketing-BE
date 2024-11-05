@@ -101,6 +101,22 @@ class ServiceRecommendationService extends BaseService {
     });
     return data;
   };
+
+  findByBookingId = async (booking_id) => {
+    const data = await this.db.serviceRecommendation.findFirst({
+      where: { booking_id: booking_id },
+      include: {
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
+      },
+    });
+    return data;
+  };
 }
 
 export default ServiceRecommendationService;
