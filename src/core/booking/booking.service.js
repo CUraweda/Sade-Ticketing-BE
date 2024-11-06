@@ -296,8 +296,11 @@ class BookingService extends BaseService {
         await db.schedule.update({
           where: {
             id: schId,
-            booking_id: upBooking.id,
-            is_locked: true,
+            bookings: {
+              some: {
+                id: upBooking.id,
+              },
+            },
           },
           data: {
             clients: {
