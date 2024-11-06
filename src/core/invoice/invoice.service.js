@@ -93,7 +93,9 @@ class InvoiceService extends BaseService {
       FROM 
         Schedule s
       JOIN 
-        Booking b ON s.booking_id = b.id
+        _BookingToSchedule bs ON s.id = bs.b
+      JOIN 
+        Booking b ON bs.a = b.id
       WHERE
         b.id IN (${bookingIds.join(", ")})
       GROUP BY 
