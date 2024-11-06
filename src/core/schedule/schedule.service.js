@@ -44,6 +44,8 @@ class ScheduleService extends BaseService {
         "service.title",
         "service.category.name",
         "bookings.id",
+        "bookings.title",
+        "bookings.user_id",
         "bookings.client.first_name",
         "bookings.client.last_name",
         "bookings.status",
