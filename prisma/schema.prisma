@@ -166,6 +166,7 @@ model Service {
   price_minimum        Float?
   doctor_fee           Decimal? @db.Decimal(5, 2) // in percentage
   is_active            Boolean? @default(true)
+  max_participants     Int      @default(1)
 
   category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
   location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
