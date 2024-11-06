@@ -6653,5 +6653,71 @@
         }
       ]
     }
+  },
+  {
+    "title": "Formulir Pendaftaran Training",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-16-1",
+          "section": "Data",
+          "label": "Email",
+          "name": "email",
+          "typ": "email",
+          "required": true
+        },
+        {
+          "code": "q-lk-16-2",
+          "section": "Data",
+          "label": "Nama lengkap",
+          "name": "full_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-16-3",
+          "section": "Data",
+          "label": "Nomor telepon",
+          "name": "phone",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-16-4",
+          "section": "Data",
+          "label": "Kota tempat tinggal",
+          "name": "city_live",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-16-5",
+          "section": "Data",
+          "label": "Profesi",
+          "name": "profession",
+          "typ": "text",
+          "hint": "Sebutkan pula nama lembaga tempat Bapak/Ibu beraktivitas",
+          "required": true
+        },
+        {
+          "code": "q-lk-16-6",
+          "section": "Data",
+          "label": "Anda mendapatkan informasi ini dari?",
+          "name": "info_source",
+          "typ": "select",
+          "required": true,
+          "other": true,
+          "options": {
+            "create": [
+              { "label": "Whatsapp Sekolah Alam Depok", "value": "sade_wa" },
+              { "label": "Instagram Sekolah Alam Depok", "value": "sade_ig" },
+              { "label": "Facebook Sekolah Alam Depok", "value": "sade_fb" },
+              { "label": "Twitter Sekolah Alam Depok", "value": "sade_tw" },
+              { "label": "Dari teman atau keluarga", "value": "friend_family" }
+            ]
+          }
+        }
+      ]
+    }
   }
 ]
