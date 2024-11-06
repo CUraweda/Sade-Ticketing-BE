@@ -127,37 +127,64 @@ class BookingService extends BaseService {
 
   setSchedules = async (id, payload) => {
     // check schedule availability
-    const lockedSchedules = await this.db.schedule.findMany({
+    const schedules = await this.db.schedule.findMany({
       where: {
         id: {
           in: payload.schedule_ids,
         },
-        booking_id: {
-          not: id,
+        bookings: {
+          none: {
+            id,
+          },
         },
-        is_locked: true,
       },
       select: {
         start_date: true,
+        max_bookings: true,
+        _count: {
+          select: {
+            bookings: true,
+          },
+        },
       },
     });
 
-    if (lockedSchedules.length)
+    if (schedules.filter((s) => s._count.bookings == s.max_bookings).length)
       throw new BadRequest(
-        `Jadwal pada tanggal ${lockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} tidak tersedia saat ini. Silakan pilih jadwal lain yang masih tersedia.`
+        `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
       );
 
     return await this.db.$transaction(async (db) => {
-      // disconnect previous schedule if any
-      await db.schedule.updateMany({
-        where: {
-          booking_id: id,
-        },
-        data: {
-          booking_id: null,
-          is_locked: false,
-        },
-      });
+      // disconnect previous related schedules
+      const prevScheduleIds = (
+        await db.schedule.findMany({
+          where: {
+            bookings: {
+              some: {
+                id,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        })
+      ).map((sc) => sc.id);
+
+      for (let scheduleId of prevScheduleIds) {
+        await db.schedule.update({
+          where: {
+            id: scheduleId,
+          },
+          data: {
+            bookings: {
+              disconnect: {
+                id,
+              },
+            },
+          },
+        });
+      }
 
       // update booking by payload
       await db.booking.update({
@@ -171,17 +198,19 @@ class BookingService extends BaseService {
       });
 
       // update schedules and connect to booking
-      await db.schedule.updateMany({
-        where: {
-          id: {
-            in: payload.schedule_ids,
+      for (let scheduleId of payload.schedule_ids)
+        await db.schedule.update({
+          where: {
+            id: scheduleId,
           },
-        },
-        data: {
-          booking_id: id,
-          is_locked: true,
-        },
-      });
+          data: {
+            bookings: {
+              connect: {
+                id,
+              },
+            },
+          },
+        });
     });
   };
 
