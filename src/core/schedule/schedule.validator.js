@@ -14,6 +14,7 @@ export const ScheduleValidator = {
     clients: Joi.array()
       .items(Joi.string().external(relationExist("clientProfile")).required())
       .optional(),
+    max_bookings: Joi.number().min(1).optional(),
   }),
   createByDoctor: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -21,6 +22,7 @@ export const ScheduleValidator = {
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
+    max_bookings: Joi.number().min(1).optional(),
   }),
   setOvertime: Joi.object({
     minutes: Joi.number().min(1).required(),
@@ -31,6 +33,7 @@ export const ScheduleValidator = {
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
+    max_bookings: Joi.number().min(1).optional(),
   }),
   setClient: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),

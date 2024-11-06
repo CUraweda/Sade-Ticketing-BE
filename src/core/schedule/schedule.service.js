@@ -11,7 +11,11 @@ class ScheduleService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.schedule.findMany({
       ...q,
-      include: this.select(["creator.full_name", "creator.avatar"]),
+      include: this.select([
+        "creator.full_name",
+        "creator.avatar",
+        "_count.bookings",
+      ]),
     });
 
     if (query.paginate) {
@@ -39,9 +43,10 @@ class ScheduleService extends BaseService {
         "service.id",
         "service.title",
         "service.category.name",
-        "booking.id",
-        "booking.title",
-        "booking.status",
+        "bookings.id",
+        "bookings.client.first_name",
+        "bookings.client.last_name",
+        "bookings.status",
       ]),
     });
     return data;

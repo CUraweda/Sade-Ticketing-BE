@@ -149,7 +149,7 @@ class BookingService extends BaseService {
       },
     });
 
-    if (schedules.filter((s) => s._count.bookings == s.max_bookings).length)
+    if (schedules.filter((s) => s._count.bookings >= s.max_bookings).length)
       throw new BadRequest(
         `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
       );
