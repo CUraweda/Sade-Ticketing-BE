@@ -1,7 +1,7 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
 import ServiceRecommendationService from "./servicerecommendation.service.js";
-
+import { RoleCode } from "../role/role.validator.js";
 class ServiceRecommendationController extends BaseController {
   #service;
 
@@ -11,7 +11,15 @@ class ServiceRecommendationController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    let q = req.query,
+      role = req.user.role_code,
+      uid = req.user.id;
+
+    if (role == RoleCode.USER) {
+      q = this.joinBrowseQuery(q, "where", `client.user_id:${uid}`);
+    }
+
+    const data = await this.#service.findAll(q);
     return this.ok(
       res,
       data,

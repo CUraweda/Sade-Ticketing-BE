@@ -5,6 +5,7 @@ export const ServiceRecommendationValidator = {
     title: Joi.string().optional(),
     doctor_id: Joi.string().optional(),
     client_id: Joi.string().required(),
+    booking_id: Joi.string().required(),
     service_recommendation_items: Joi.array()
       .items(
         Joi.object({
@@ -19,6 +20,7 @@ export const ServiceRecommendationValidator = {
     title: Joi.string().optional(),
     doctor_id: Joi.string().optional(),
     client_id: Joi.string().optional(),
+    booking_id: Joi.string().required(),
     service_recommendation_items: Joi.array()
       .items(
         Joi.object({

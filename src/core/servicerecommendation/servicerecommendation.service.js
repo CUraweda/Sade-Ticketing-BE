@@ -16,6 +16,7 @@ class ServiceRecommendationService extends BaseService {
             service: true,
           },
         },
+
         doctor: true,
         client: true,
       },
@@ -103,7 +104,7 @@ class ServiceRecommendationService extends BaseService {
   };
 
   findByBookingId = async (booking_id) => {
-    const data = await this.db.serviceRecommendation.findFirst({
+    const data = await this.db.serviceRecommendation.findMany({
       where: { booking_id: booking_id },
       include: {
         service_recommendation_items: {
