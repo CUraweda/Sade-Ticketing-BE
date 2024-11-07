@@ -166,6 +166,7 @@ model Service {
   price_minimum        Float?
   doctor_fee           Decimal? @db.Decimal(5, 2) // in percentage
   is_active            Boolean? @default(true)
+  max_bookings         Int      @default(1)
 
   category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
   location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
@@ -430,10 +431,10 @@ model Schedule {
   description      String?
   is_locked        Boolean   @default(false)
   overtime_minutes Int?      @default(0)
+  max_bookings     Int?      @default(1)
 
   creator_id String?
   service_id String?
-  booking_id String?
 
   clients               ClientProfile[]
   doctors               DoctorProfile[]
@@ -441,7 +442,7 @@ model Schedule {
   service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
   reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
   new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
-  booking               Booking?            @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  bookings              Booking[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
