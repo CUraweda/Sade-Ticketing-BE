@@ -399,6 +399,7 @@ model ServiceRecommendation {
   doctor_id  String?
   client_id  String
   booking_id String
+  is_read    Boolean @default(false)
 
   service_recommendation_items ServiceRecommendationItem[]
   doctor                       DoctorProfile?              @relation(fields: [doctor_id], references: [id], onDelete: SetNull)

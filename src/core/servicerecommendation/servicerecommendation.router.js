@@ -43,5 +43,7 @@ r.get(
   controller.findByBookingId
 );
 
+r.put("/mark-as-read/:id", authMiddleware(), controller.markAsRead);
+
 const servicerecommendationRouter = r;
 export default servicerecommendationRouter;

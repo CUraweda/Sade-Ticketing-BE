@@ -55,6 +55,11 @@ class ServiceRecommendationController extends BaseController {
 
     return this.ok(res, data, "ServiceRecommendation berhasil didapatkan");
   });
+
+  markAsRead = this.wrapper(async (req, res) => {
+    await this.#service.markAsRead(req.params.id);
+    return this.ok(res, null, "ServiceRecommendation berhasil diperbarui");
+  });
 }
 
 export default ServiceRecommendationController;

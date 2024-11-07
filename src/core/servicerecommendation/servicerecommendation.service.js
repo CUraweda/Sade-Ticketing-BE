@@ -118,6 +118,25 @@ class ServiceRecommendationService extends BaseService {
     });
     return data;
   };
+
+  markAsRead = async (id) => {
+    const data = await this.db.serviceRecommendation.update({
+      where: { id },
+      data: {
+        is_read: true,
+      },
+      include: {
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
+      },
+    });
+    return data;
+  };
 }
 
 export default ServiceRecommendationService;
