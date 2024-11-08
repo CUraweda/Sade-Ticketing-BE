@@ -97,13 +97,28 @@ class ServiceService extends BaseService {
             is_locked: false,
             service_id: id,
             start_date: {
-              gte: moment(),
+              gte: moment().toDate(),
             },
           },
         },
       },
+      include: {
+        schedules: {
+          include: {
+            bookings: true,
+          },
+        },
+      },
     });
-    return data;
+
+    return data
+      .map((profile) => ({
+        ...profile,
+        schedules: profile.schedules.filter(
+          (schedule) => schedule.bookings.length < schedule.max_bookings
+        ),
+      }))
+      .filter((profile) => profile.schedules.length > 0);
   };
 }
 
