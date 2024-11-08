@@ -122,7 +122,6 @@ class InvoiceService extends BaseService {
           service: {
             category_id: 2,
           },
-          is_locked: true,
         },
         by: ["client_id"],
         _count: {
@@ -130,7 +129,7 @@ class InvoiceService extends BaseService {
         },
       });
 
-      if (checkBookingTherapy.length && checkBookingTherapy[0]._count == 1) {
+      if (checkBookingTherapy.length && checkBookingTherapy[0]._count.id == 1) {
         const pangkalFee = await this.db.fee.findFirst({
           where: {
             title: "Uang pangkal terapi",

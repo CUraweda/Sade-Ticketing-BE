@@ -261,9 +261,9 @@ class BookingService extends BaseService {
           },
         },
         data: {
-          price: {
-            increment: feesPrice,
-          },
+          // price: {
+          //   increment: feesPrice,
+          // },
           status: BookingStatus.NEED_PAYMENT,
           is_locked: true,
         },
