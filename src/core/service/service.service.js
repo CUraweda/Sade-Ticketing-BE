@@ -11,20 +11,56 @@ class ServiceService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.service.findMany({
       ...q,
-      include: this.select([
-        "category.id",
-        "category.name",
-        "location.id",
-        "location.title",
-        "_count.doctors",
-      ]),
+      include: {
+        ...this.select([
+          "category.id",
+          "category.name",
+          "location.id",
+          "location.title",
+        ]),
+        schedules: {
+          select: {
+            max_bookings: true,
+            _count: {
+              select: {
+                bookings: true,
+              },
+            },
+          },
+          where: {
+            start_date: {
+              gte: moment().toDate(),
+            },
+          },
+        },
+        _count: {
+          select: {
+            doctors: true,
+            schedules: true,
+          },
+        },
+      },
+    });
+
+    const updatedData = data.map((service) => {
+      const filteredSchedules = service.schedules.filter(
+        (schedule) => schedule._count.bookings.length < schedule.max_bookings
+      );
+
+      return {
+        ...service,
+        _count: {
+          ...service._count,
+          schedules: filteredSchedules.length,
+        },
+      };
     });
 
     if (query.paginate) {
       const countData = await this.db.service.count({ where: q.where });
-      return this.paginate(data, countData, q);
+      return this.paginate(updatedData, countData, q);
     }
-    return data;
+    return updatedData;
   };
 
   findById = async (id) => {
