@@ -61,14 +61,22 @@ class ScheduleController extends BaseController {
     if (!this.isAdmin(req))
       await this.#service.checkAuthorized(req.params.id, req.user.id);
 
+    const role_code = req.user.role_code,
+      uid = req.user.id;
+
     const bookings = (await this.#service.findById(req.params.id)).bookings;
 
     const patient = await this.#questionnaireResponseService.findAll({
       paginate: false,
+      where: role_code == RoleCode.USER ? `booking.user_id:${uid}` : undefined,
       in_: `booking_id:${bookings?.map((b) => b.id)}`,
     });
     const reports = await this.#questionnaireResponseService.findAll({
       paginate: false,
+      where:
+        role_code == RoleCode.USER
+          ? `booking_report.user_id:${uid}`
+          : undefined,
       in_: `booking_report_id:${bookings?.map((b) => b.id)}`,
     });
 
