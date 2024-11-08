@@ -321,6 +321,7 @@ model Booking {
   questionnaire_responses QuestionnaireResponse[] @relation("BookingQuestionnaires")
   reports                 QuestionnaireResponse[] @relation("BookingReports")
   invoices                Invoice[]
+  service_recommendations ServiceRecommendation[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -394,14 +395,17 @@ model Payments {
 
 // SERVICE RECOMMENDATION
 model ServiceRecommendation {
-  id        String  @id @default(uuid())
-  title     String?
-  doctor_id String?
-  client_id String
+  id         String  @id @default(uuid())
+  title      String?
+  doctor_id  String?
+  client_id  String
+  booking_id String
+  is_read    Boolean @default(false)
 
   service_recommendation_items ServiceRecommendationItem[]
   doctor                       DoctorProfile?              @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
   client                       ClientProfile               @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  booking                      Booking                     @relation(fields: [booking_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

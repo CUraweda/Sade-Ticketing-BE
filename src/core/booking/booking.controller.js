@@ -20,21 +20,21 @@ class BookingController extends BaseController {
       uid = req.user.id;
 
     if (!this.isAdmin(req)) {
-      if (role == RoleCode.USER)
+      if (role == RoleCode.USER) {
         q = this.joinBrowseQuery(q, "where", `user_id:${uid}`);
-      else if (
-        role == RoleCode.ASESOR ||
-        role == RoleCode.PSIKOLOG ||
-        role == RoleCode.TERAPIS
-      )
+      } else if (role == RoleCode.PSIKOLOG || role == RoleCode.TERAPIS) {
         q = this.joinBrowseQuery(
           q,
           "in_",
           `schedules.some.doctors.user_id:${uid}`
         );
+      } else if (role == RoleCode.ASESOR) {
+        q = this.joinBrowseQuery(q, "where", `status.not:draft`);
+      }
     }
 
     const data = await this.#service.findAll(q);
+
     return this.ok(res, data, "Banyak Booking berhasil didapatkan");
   });
 

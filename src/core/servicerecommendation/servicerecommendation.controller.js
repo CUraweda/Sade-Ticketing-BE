@@ -1,7 +1,7 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
 import ServiceRecommendationService from "./servicerecommendation.service.js";
-
+import { RoleCode } from "../role/role.validator.js";
 class ServiceRecommendationController extends BaseController {
   #service;
 
@@ -11,8 +11,20 @@ class ServiceRecommendationController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
-    return this.ok(res, data, "Banyak ServiceRecommendation berhasil didapatkan");
+    let q = req.query,
+      role = req.user.role_code,
+      uid = req.user.id;
+
+    if (role == RoleCode.USER) {
+      q = this.joinBrowseQuery(q, "where", `client.user_id:${uid}`);
+    }
+
+    const data = await this.#service.findAll(q);
+    return this.ok(
+      res,
+      data,
+      "Banyak ServiceRecommendation berhasil didapatkan"
+    );
   });
 
   findById = this.wrapper(async (req, res) => {
@@ -35,6 +47,18 @@ class ServiceRecommendationController extends BaseController {
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "ServiceRecommendation berhasil dihapus");
+  });
+
+  findByBookingId = this.wrapper(async (req, res) => {
+    const data = await this.#service.findByBookingId(req.params.booking_id);
+    if (!data) throw new NotFound("ServiceRecommendation tidak ditemukan");
+
+    return this.ok(res, data, "ServiceRecommendation berhasil didapatkan");
+  });
+
+  markAsRead = this.wrapper(async (req, res) => {
+    await this.#service.markAsRead(req.params.id);
+    return this.ok(res, null, "ServiceRecommendation berhasil diperbarui");
   });
 }
 
