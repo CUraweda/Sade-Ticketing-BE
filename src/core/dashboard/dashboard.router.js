@@ -15,5 +15,12 @@ r.get(
   controller.topServices
 );
 
+r.get(
+  "/admin-stats",
+  authMiddleware(["ADM", "SDM"]),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.adminStats
+);
+
 const dashboardRouter = r;
 export default dashboardRouter;

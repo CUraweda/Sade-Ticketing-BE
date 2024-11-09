@@ -1,6 +1,7 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
+import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
 
 class DashboardService extends BaseService {
@@ -73,6 +74,57 @@ class DashboardService extends BaseService {
           0
         ),
       }));
+
+    return data;
+  };
+
+  totalIncome = async (query) => {
+    const q = this.transformBrowseQuery(query);
+
+    const data = await this.db.payments.aggregate({
+      where: {
+        ...q.where,
+        OR: [
+          { status: PaymentStatus.SETTLED },
+          { status: PaymentStatus.COMPLETED },
+        ],
+      },
+      _sum: {
+        amount_paid: true,
+      },
+    });
+
+    return data._sum.amount_paid;
+  };
+
+  totalAmountIssuedInvoice = async (query) => {
+    const q = this.transformBrowseQuery(query);
+
+    const data = await this.db.invoice.aggregate({
+      where: {
+        ...q.where,
+        status: InvoiceStatus.ISSUED,
+      },
+      _sum: {
+        total: true,
+      },
+    });
+
+    return data._sum.total;
+  };
+
+  countActiveBookings = async (query) => {
+    const q = this.transformBrowseQuery(query);
+
+    const data = await this.db.booking.count({
+      where: {
+        ...q.where,
+        OR: [
+          { status: BookingStatus.ONGOING },
+          { status: BookingStatus.COMPLETED },
+        ],
+      },
+    });
 
     return data;
   };
