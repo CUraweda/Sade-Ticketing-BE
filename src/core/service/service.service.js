@@ -44,7 +44,7 @@ class ServiceService extends BaseService {
 
     const updatedData = data.map((service) => {
       const filteredSchedules = service.schedules.filter(
-        (schedule) => schedule._count.bookings.length < schedule.max_bookings
+        (schedule) => schedule._count.bookings < schedule.max_bookings
       );
 
       return {

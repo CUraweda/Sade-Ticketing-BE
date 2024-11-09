@@ -13,7 +13,7 @@ export const BookingValidator = {
   create: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
     service_id: Joi.string().external(relationExist("service")).required(),
-    compliant: Joi.string().max(100).required(),
+    compliant: Joi.string().max(100).optional(),
     quantity: Joi.number().precision(0).min(1).required(),
   }),
   update: Joi.object({
@@ -22,7 +22,7 @@ export const BookingValidator = {
   }),
   setSchedules: Joi.object({
     quantity: Joi.number().min(1).required(),
-    compliant: Joi.string().max(100).required(),
+    compliant: Joi.string().max(100).optional(),
     schedule_ids: Joi.array()
       .items(Joi.string().external(relationExist("schedule")).required())
       .length(Joi.ref("quantity")),
