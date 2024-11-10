@@ -208,6 +208,7 @@ model ClientProfile {
   bookings                Booking[]
   service_recommendations ServiceRecommendation[]
   schedules               Schedule[]
+  daycare_journals        DaycareJournal[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -307,12 +308,13 @@ model Booking {
   compliant    String?
   quantity     Int
   price        Float
-  service_data String? @db.LongText
+  service_data String?   @db.LongText
   status       String // draft, pending_payment, waiting, ongoing, completed
   title        String?
   group_label  String?
-  is_locked    Boolean @default(false)
-  is_approved  Boolean @default(false)
+  is_locked    Boolean   @default(false)
+  is_approved  Boolean   @default(false)
+  expired_at   DateTime?
 
   client                  ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -322,6 +324,7 @@ model Booking {
   reports                 QuestionnaireResponse[] @relation("BookingReports")
   invoices                Invoice[]
   service_recommendations ServiceRecommendation[]
+  daycare_journals        DaycareJournal[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -334,7 +337,8 @@ model Fee {
   description String?
   price       Float
 
-  invoices InvoiceFee[]
+  invoices         InvoiceFee[]
+  daycare_logtimes DaycareLogTime[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -477,4 +481,49 @@ model UserFile {
   updated_at DateTime @default(now())
   user_id    String
   user       User     @relation(fields: [user_id], references: [id])
+}
+
+// DAYCARE
+model DaycareJournal {
+  id         String @id @default(uuid())
+  client_id  String
+  booking_id String
+
+  date            DateTime
+  bed_time        DateTime
+  wakeup_time     DateTime
+  body_temperatur Float
+  breakfast_menu  String
+  is_poop         Boolean
+  parent_note     String?  @db.LongText
+
+  morning_snack         String?
+  noon_snack            String?
+  afternoon_snack       String?
+  is_sleep_soundly      Boolean?
+  poop_count            Int?
+  fav_activity          String?
+  daily_progress_report String?  @db.LongText
+  facilitator_note      String?  @db.LongText
+  today_feeling         String?
+
+  client  ClientProfile    @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  booking Booking          @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  logtime DaycareLogTime[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model DaycareLogTime {
+  id         Int    @id @default(autoincrement())
+  fee_id     Int?
+  journal_id String
+
+  time        DateTime
+  title       String
+  description String?
+
+  fee     Fee?           @relation(fields: [fee_id], references: [id], onDelete: SetNull)
+  journal DaycareJournal @relation(fields: [journal_id], references: [id], onDelete: Cascade)
 }
