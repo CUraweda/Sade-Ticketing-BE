@@ -1,6 +1,7 @@
 import http from "http";
 import { env } from "process";
 import app from "./app.js";
+import "./cron/index.js";
 
 // var key = fs.readFileSync("./certs/sade.key");
 // var cert = fs.readFileSync("./certs/sade.crt");
