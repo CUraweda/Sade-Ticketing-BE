@@ -155,5 +155,23 @@
     "price": 300000,
     "price_unit": "reservasi",
     "max_bookings": 20
+  },
+  {
+    "category_id": 4,
+    "location_id": 1,
+    "title": "Paket Harian",
+    "description": "deskripsi sementara",
+    "price": 300000,
+    "price_unit": "paket",
+    "is_price_entry": true
+  },
+  {
+    "category_id": 4,
+    "location_id": 1,
+    "title": "Paket Bulanan",
+    "description": "deskripsi sementara",
+    "price": 300000,
+    "price_unit": "paket",
+    "is_price_entry": true
   }
 ]
