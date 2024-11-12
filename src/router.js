@@ -21,6 +21,8 @@ import invoiceRouter from "./core/invoice/invoice.router.js";
 import feeRouter from "./core/fee/fee.router.js";
 import questionnaireresponseRouter from "./core/questionnaireresponse/questionnaireresponse.router.js";
 import dashboardRouter from "./core/dashboard/dashboard.router.js";
+import daycarejournalRouter from "./core/daycarejournal/daycarejournal.router.js";
+import daycarelogtimeRouter from "./core/daycarelogtime/daycarelogtime.router.js";
 
 const r = Router();
 
@@ -46,6 +48,8 @@ r.use("/reschedule", rescheduleRouter);
 r.use("/invoice", invoiceRouter);
 r.use("/fee", feeRouter);
 r.use("/dashboard", dashboardRouter);
+r.use("/daycare-journal", daycarejournalRouter);
+r.use("/daycare-log-time", daycarelogtimeRouter);
 
 const appRouter = r;
 export default appRouter;
