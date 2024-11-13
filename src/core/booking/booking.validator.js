@@ -19,6 +19,13 @@ export const BookingValidator = {
   update: Joi.object({
     compliant: Joi.string().max(100).optional(),
     status: Joi.valid(...Object.values(BookingStatus)).optional(),
+    compliant: Joi.string().max(100).optional(),
+    start_date: Joi.date().optional(),
+    end_date: Joi.date().min(Joi.ref("start_date")).when("start_date", {
+      is: Joi.date().required(),
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
   }),
   setSchedules: Joi.object({
     quantity: Joi.number().min(1).required(),

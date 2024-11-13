@@ -99,8 +99,44 @@ class BookingService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.booking.update({ where: { id }, data: payload });
-    return data;
+    const booking = await this.findById(id),
+      serviceData = this.extractServiceData(booking.service_data);
+
+    // daycare booking can create its own schedule
+    if (
+      serviceData.category_id == 4 &&
+      payload.start_date &&
+      payload.end_date
+    ) {
+      const start = payload.start_date,
+        end = payload.end_date;
+
+      delete payload.start_date;
+      delete payload.end_date;
+
+      payload = {
+        ...payload,
+        quantity: 1,
+        schedules: {
+          deleteMany: {},
+          create: [
+            {
+              title: `Daycare - ${booking.client?.first_name ?? ""} ${booking.client?.last_name ?? ""}`,
+              start_date: start,
+              end_date: end,
+              service_id: booking.service_id,
+            },
+          ],
+        },
+      };
+    }
+
+    await this.db.booking.update({
+      where: {
+        id,
+      },
+      data: payload,
+    });
   };
 
   delete = async (id) => {

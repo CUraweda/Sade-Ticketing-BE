@@ -57,7 +57,7 @@ class BookingController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
-    if (req.user.role_code == "USR") {
+    if (!this.isAdmin(req)) {
       const find = await this.#service.checkBookingOwner(
         req.params.id,
         req.user.id
@@ -66,6 +66,9 @@ class BookingController extends BaseController {
         throw new Forbidden(
           "Booking Anda sudah dikunci dan tidak bisa diubah lagi"
         );
+
+      // user cant update status field
+      if (req.body.status) delete req.body.status;
     }
 
     const data = await this.#service.update(req.params.id, req.body);
