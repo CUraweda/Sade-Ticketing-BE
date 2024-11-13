@@ -6,6 +6,7 @@ import { BadRequest, Forbidden } from "../../lib/response/catch.js";
 import { BookingStatus } from "./booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import InvoiceService from "../invoice/invoice.service.js";
+import { ServiceBillingType } from "../service/service.validator.js";
 
 class BookingService extends BaseService {
   #invoiceService;
@@ -74,6 +75,7 @@ class BookingService extends BaseService {
         "category.name",
         "location.title",
         "questionnaires",
+        "entry_fees.id",
       ]),
     });
 
@@ -116,7 +118,6 @@ class BookingService extends BaseService {
 
       payload = {
         ...payload,
-        quantity: 1,
         schedules: {
           deleteMany: {},
           create: [
@@ -129,6 +130,11 @@ class BookingService extends BaseService {
           ],
         },
       };
+
+      if (serviceData.billing_type == ServiceBillingType.DAILY)
+        payload["quantity"] = moment(end).diff(start, "days") + 1;
+      else if (serviceData.billing_type == ServiceBillingType.DAILY)
+        payload["quantity"] = moment(end).diff(start, "months") + 1;
     }
 
     await this.db.booking.update({
