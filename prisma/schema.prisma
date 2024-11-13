@@ -353,6 +353,22 @@ model InvoiceFee {
   invoice Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
 }
 
+model InvoiceItem {
+  id         Int    @id @default(autoincrement())
+  invoice_id String
+  service_id String
+
+  start_date    DateTime?
+  end_date      DateTime?
+  name          String
+  quantity      Int
+  quantity_unit String?
+  price         Float
+  note          String?
+
+  invoice Invoice? @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+}
+
 model Invoice {
   id              String  @id @default(uuid())
   bank_account_id Int?
@@ -366,11 +382,12 @@ model Invoice {
   paid_date   DateTime?
   note        String?
 
-  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
-  user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  payment      Payments?    @relation(fields: [payment_id], references: [id], onDelete: SetNull)
+  bank_account BankAccount?  @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  user         User?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  payment      Payments?     @relation(fields: [payment_id], references: [id], onDelete: SetNull)
   bookings     Booking[]
   fees         InvoiceFee[]
+  items        InvoiceItem[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
