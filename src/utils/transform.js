@@ -1,4 +1,4 @@
-const parseJson = (data, { keep = [] }) => {
+const parseJson = (data, { keep = [] } = {}) => {
   const json = JSON.parse(data);
   return keep.length
     ? Object.fromEntries(
