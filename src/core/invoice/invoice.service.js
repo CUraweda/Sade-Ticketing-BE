@@ -1,6 +1,7 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { BookingStatus } from "../booking/booking.validator.js";
 
 class InvoiceService extends BaseService {
   constructor() {
@@ -119,7 +120,8 @@ class InvoiceService extends BaseService {
     // list of fee
     const items = [];
 
-    const serviceFees = await this.db.fee.findMany({
+    // entry fees
+    const entryFees = await this.db.fee.findMany({
       where: {
         services: {
           some: {
@@ -128,14 +130,14 @@ class InvoiceService extends BaseService {
                 id: {
                   in: bookingIds,
                 },
+                status: BookingStatus.DRAFT,
               },
             },
           },
         },
       },
     });
-
-    serviceFees.forEach((sf) => items.push({ ...sf, quantity: 1 }));
+    entryFees.forEach((sf) => items.push({ ...sf, quantity: 1 }));
 
     // add fee Uang pangkal terapi if had a first therapy sevice booking
     if (bookingIds) {
