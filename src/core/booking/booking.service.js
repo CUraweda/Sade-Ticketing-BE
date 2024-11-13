@@ -272,7 +272,7 @@ class BookingService extends BaseService {
           title: "Tagihan layanan",
           total: items.total.price + feesPrice,
           status: InvoiceStatus.ISSUED,
-          expiry_date: moment().add({ day: 3 }).toDate(),
+          expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
           bookings: {
             connect: ids.map((id) => ({ id })),
           },
