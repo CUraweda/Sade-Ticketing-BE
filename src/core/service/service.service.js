@@ -17,6 +17,7 @@ class ServiceService extends BaseService {
           "category.name",
           "location.id",
           "location.title",
+          "entry_fees",
         ]),
         schedules: {
           select: {

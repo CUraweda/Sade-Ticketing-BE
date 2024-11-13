@@ -155,7 +155,16 @@
     "description": "deskripsi sementara",
     "price": 200000,
     "price_unit": "hari",
-    "billing_type": "daily"
+    "billing_type": "daily",
+    "entry_fees": {
+      "create": [
+        {
+          "title": "Uang pangkal daycare harian depok",
+          "description": "Uang pangkal daycare harian depok",
+          "price": 20000
+        }
+      ]
+    }
   },
   {
     "category_id": 4,
@@ -164,6 +173,15 @@
     "description": "deskripsi sementara",
     "price": 4000000,
     "price_unit": "bulan",
-    "billing_type": "monthly"
+    "billing_type": "monthly",
+    "entry_fees": {
+      "create": [
+        {
+          "title": "Uang pangkal daycare bulanan depok",
+          "description": "Uang pangkal daycare bulanan depok",
+          "price": 400000
+        }
+      ]
+    }
   }
 ]

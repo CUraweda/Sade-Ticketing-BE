@@ -178,6 +178,7 @@ model Service {
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
+  entry_fees                   Fee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -336,6 +337,7 @@ model Fee {
 
   invoices         InvoiceFee[]
   daycare_logtimes DaycareLogTime[]
+  services         Service[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
