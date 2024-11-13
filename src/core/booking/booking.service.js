@@ -6,6 +6,7 @@ import { BadRequest, Forbidden } from "../../lib/response/catch.js";
 import { BookingStatus } from "./booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import InvoiceService from "../invoice/invoice.service.js";
+import { ServiceBillingType } from "../service/service.validator.js";
 
 class BookingService extends BaseService {
   #invoiceService;
@@ -74,6 +75,7 @@ class BookingService extends BaseService {
         "category.name",
         "location.title",
         "questionnaires",
+        "entry_fees.id",
       ]),
     });
 
@@ -99,8 +101,48 @@ class BookingService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.booking.update({ where: { id }, data: payload });
-    return data;
+    const booking = await this.findById(id),
+      serviceData = this.extractServiceData(booking.service_data);
+
+    // daycare booking can create its own schedule
+    if (
+      serviceData.category_id == 4 &&
+      payload.start_date &&
+      payload.end_date
+    ) {
+      const start = payload.start_date,
+        end = payload.end_date;
+
+      delete payload.start_date;
+      delete payload.end_date;
+
+      payload = {
+        ...payload,
+        schedules: {
+          deleteMany: {},
+          create: [
+            {
+              title: `Daycare - ${booking.client?.first_name ?? ""} ${booking.client?.last_name ?? ""}`,
+              start_date: start,
+              end_date: end,
+              service_id: booking.service_id,
+            },
+          ],
+        },
+      };
+
+      if (serviceData.billing_type == ServiceBillingType.DAILY)
+        payload["quantity"] = moment(end).diff(start, "days") + 1;
+      else if (serviceData.billing_type == ServiceBillingType.DAILY)
+        payload["quantity"] = moment(end).diff(start, "months") + 1;
+    }
+
+    await this.db.booking.update({
+      where: {
+        id,
+      },
+      data: payload,
+    });
   };
 
   delete = async (id) => {
@@ -215,14 +257,7 @@ class BookingService extends BaseService {
   };
 
   userConfirm = async (ids, payload) => {
-    const bookings = await this.db.booking.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-    });
-
+    const items = await this.#invoiceService.getItems(null, ids);
     const fees = await this.#invoiceService.getFees(null, ids);
 
     await this.db.$transaction(async (db) => {
@@ -235,11 +270,9 @@ class BookingService extends BaseService {
         data: {
           user_id: payload.user_id,
           title: "Tagihan layanan",
-          total:
-            bookings.reduce((a, c) => (a += c.quantity * c.price), 0) +
-            feesPrice,
+          total: items.total.price + feesPrice,
           status: InvoiceStatus.ISSUED,
-          expiry_date: moment().add({ day: 1 }).toDate(),
+          expiry_date: moment().add({ day: 3 }).toDate(),
           bookings: {
             connect: ids.map((id) => ({ id })),
           },

@@ -57,7 +57,7 @@ r.put("/admin-confirm/:id", authMiddleware(["ADM"]), controller.adminConfirm);
 
 r.put(
   "/update/:id",
-  authMiddleware(["ADM", "SDM"]),
+  authMiddleware(),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );

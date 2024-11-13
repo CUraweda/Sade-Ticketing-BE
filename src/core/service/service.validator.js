@@ -1,6 +1,12 @@
 import Joi from "joi";
 import { relationExist } from "../../base/validator.base.js";
 
+export const ServiceBillingType = {
+  ONE_TIME: "one_time",
+  DAILY: "daily",
+  monthly: "monthly",
+};
+
 export const ServiceValidator = {
   create: Joi.object({
     location_id: Joi.number().external(relationExist("location")).required(),
@@ -16,6 +22,7 @@ export const ServiceValidator = {
     price_minimum: Joi.number().optional(),
     doctor_fee: Joi.number().optional(),
     is_active: Joi.bool().default(false),
+    billing_type: Joi.valid(...Object.values(ServiceBillingType)).optional(),
   }),
   update: Joi.object({
     location_id: Joi.number().external(relationExist("location")).optional(),
@@ -31,6 +38,7 @@ export const ServiceValidator = {
     price_minimum: Joi.number().optional(),
     doctor_fee: Joi.number().optional(),
     is_active: Joi.bool().optional(),
+    billing_type: Joi.valid(...Object.values(ServiceBillingType)).optional(),
   }),
   setQuestionnaire: Joi.object({
     que_id: Joi.string().external(relationExist("questionnaire")).required(),

@@ -1,6 +1,7 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { BookingStatus } from "../booking/booking.validator.js";
 
 class InvoiceService extends BaseService {
   constructor() {
@@ -97,7 +98,10 @@ class InvoiceService extends BaseService {
         _BookingToSchedule bs ON s.id = bs.b
       JOIN 
         Booking b ON bs.a = b.id
+      JOIN
+        Service sr ON b.service_id = sr.id
       WHERE
+        sr.billing_type = 'one_time' AND
         b.id IN (${bookingIds.join(", ")})
       GROUP BY 
         DATE(s.start_date), b.title;
@@ -115,6 +119,25 @@ class InvoiceService extends BaseService {
     const bookingIds = booking_ids ? [...booking_ids] : [];
     // list of fee
     const items = [];
+
+    // entry fees
+    const entryFees = await this.db.fee.findMany({
+      where: {
+        services: {
+          some: {
+            bookings: {
+              some: {
+                id: {
+                  in: bookingIds,
+                },
+                status: BookingStatus.DRAFT,
+              },
+            },
+          },
+        },
+      },
+    });
+    entryFees.forEach((sf) => items.push({ ...sf, quantity: 1 }));
 
     // add fee Uang pangkal terapi if had a first therapy sevice booking
     if (bookingIds) {

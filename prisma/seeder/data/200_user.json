@@ -28,6 +28,19 @@
     "email_verified": true,
     "user_roles": {
       "create": [{ "role_id": 3 }]
+    },
+    "clients": {
+      "create": [
+        {
+          "relation": "ANAK",
+          "category": "ANAK",
+          "first_name": "User Satu",
+          "last_name": "Junior",
+          "pob": "Bandung",
+          "dob": "2016-11-13T00:00:00Z",
+          "sex": "L"
+        }
+      ]
     }
   },
   {

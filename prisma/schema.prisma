@@ -162,11 +162,11 @@ model Service {
   duration             Int? // in minute
   duration_description String?
   price                Float
-  price_unit           String
+  price_unit           String?
   price_minimum        Float?
   doctor_fee           Decimal? @db.Decimal(5, 2) // in percentage
   is_active            Boolean? @default(true)
-  max_bookings         Int      @default(1)
+  billing_type         String   @default("one_time")
 
   category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
   location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
@@ -178,6 +178,7 @@ model Service {
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
+  entry_fees                   Fee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -308,13 +309,10 @@ model Booking {
   compliant    String?
   quantity     Int
   price        Float
-  service_data String?   @db.LongText
+  service_data String? @db.LongText
   status       String // draft, pending_payment, waiting, ongoing, completed
   title        String?
-  group_label  String?
-  is_locked    Boolean   @default(false)
-  is_approved  Boolean   @default(false)
-  expired_at   DateTime?
+  is_locked    Boolean @default(false)
 
   client                  ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -339,6 +337,7 @@ model Fee {
 
   invoices         InvoiceFee[]
   daycare_logtimes DaycareLogTime[]
+  services         Service[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
