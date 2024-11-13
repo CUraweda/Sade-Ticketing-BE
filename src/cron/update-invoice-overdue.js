@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { prism } from "../config/db.js";
 import moment from "moment";
-import { InvoiceStatus } from "../core/invoice/invoice.validator";
+import { InvoiceStatus } from "../core/invoice/invoice.validator.js";
 
 /** @type {PrismaClient} */
 const db = prism;

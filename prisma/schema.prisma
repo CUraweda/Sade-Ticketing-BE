@@ -506,12 +506,12 @@ model DaycareJournal {
   booking_id String
 
   date            DateTime
-  bed_time        DateTime
-  wakeup_time     DateTime
-  body_temperatur Float
-  breakfast_menu  String
-  is_poop         Boolean
-  parent_note     String?  @db.LongText
+  bed_time        DateTime?
+  wakeup_time     DateTime?
+  body_temperatur Float?
+  breakfast_menu  String?
+  is_poop         Boolean?
+  parent_note     String?   @db.LongText
 
   morning_snack         String?
   noon_snack            String?
