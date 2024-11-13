@@ -97,7 +97,10 @@ class InvoiceService extends BaseService {
         _BookingToSchedule bs ON s.id = bs.b
       JOIN 
         Booking b ON bs.a = b.id
+      JOIN
+        Service sr ON b.service_id = sr.id
       WHERE
+        sr.billing_type = 'one_time' AND
         b.id IN (${bookingIds.join(", ")})
       GROUP BY 
         DATE(s.start_date), b.title;
@@ -115,6 +118,24 @@ class InvoiceService extends BaseService {
     const bookingIds = booking_ids ? [...booking_ids] : [];
     // list of fee
     const items = [];
+
+    const serviceFees = await this.db.fee.findMany({
+      where: {
+        services: {
+          some: {
+            bookings: {
+              some: {
+                id: {
+                  in: bookingIds,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    serviceFees.forEach((sf) => items.push({ ...sf, quantity: 1 }));
 
     // add fee Uang pangkal terapi if had a first therapy sevice booking
     if (bookingIds) {
