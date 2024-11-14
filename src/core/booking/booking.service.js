@@ -52,6 +52,12 @@ class BookingService extends BaseService {
         reports: {
           include: this.select(["questionnaire.title"]),
         },
+        agreed_documents: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
         schedules: {
           include: {
             doctors: {
