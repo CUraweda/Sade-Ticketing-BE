@@ -175,6 +175,7 @@ model Service {
   prerequisite_For             Service[]                   @relation("RequiredServices")
   questionnaires               Questionnaire[]             @relation("ServiceQuestionnaires")
   reports                      Questionnaire[]             @relation("ServiceReports")
+  agrement_documents           Document[]
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
@@ -323,6 +324,7 @@ model Booking {
   invoices                Invoice[]
   service_recommendations ServiceRecommendation[]
   daycare_journals        DaycareJournal[]
+  agreed_documents        Document[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -542,4 +544,19 @@ model DaycareLogTime {
 
   fee     Fee?           @relation(fields: [fee_id], references: [id], onDelete: SetNull)
   journal DaycareJournal @relation(fields: [journal_id], references: [id], onDelete: Cascade)
+}
+
+// DOCUMENT
+model Document {
+  id         String  @id @default(uuid())
+  creator_id String?
+
+  title   String @unique
+  content String @db.LongText
+
+  services Service[]
+  bookings Booking[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }

@@ -48,6 +48,14 @@ export const ServiceValidator = {
     que_id: Joi.string().external(relationExist("questionnaire")).required(),
     set: Joi.string().valid("add", "remove"),
   }),
+  setEntryFee: Joi.object({
+    fee_id: Joi.number().external(relationExist("fee")).required(),
+    set: Joi.string().valid("add", "remove"),
+  }),
+  setAgreementDocument: Joi.object({
+    document_id: Joi.string().external(relationExist("document")).required(),
+    set: Joi.string().valid("add", "remove"),
+  }),
 };
 
 export default ServiceValidator;

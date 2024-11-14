@@ -76,6 +76,11 @@ class ServiceService extends BaseService {
         "reports.id",
         "reports.title",
         "reports._count.questions",
+        "entry_fees.id",
+        "entry_fees.title",
+        "entry_fees.price",
+        "agrement_documents.id",
+        "agrement_documents.title",
       ]),
     });
     return data;
@@ -120,6 +125,36 @@ class ServiceService extends BaseService {
         reports: {
           [payload.set == "add" ? "connect" : "disconnect"]: {
             id: payload.que_id,
+          },
+        },
+      },
+    });
+  };
+
+  setEntryFee = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        entry_fees: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.fee_id,
+          },
+        },
+      },
+    });
+  };
+
+  setAgreementDocument = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        agrement_documents: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.document_id,
           },
         },
       },
