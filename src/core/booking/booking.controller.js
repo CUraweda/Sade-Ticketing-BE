@@ -124,6 +124,8 @@ class BookingController extends BaseController {
     data["fees"] = fees.items;
     data["fees_total"] = fees.total;
 
+    data["total"] = data.fees_total.price + data.items_total.price;
+
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
 

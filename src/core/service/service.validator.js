@@ -4,7 +4,7 @@ import { relationExist } from "../../base/validator.base.js";
 export const ServiceBillingType = {
   ONE_TIME: "one_time",
   DAILY: "daily",
-  monthly: "monthly",
+  MONTHLY: "monthly",
 };
 
 export const ServiceValidator = {

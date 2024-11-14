@@ -2,6 +2,8 @@ import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
+import { ServiceBillingType } from "../service/service.validator.js";
+import { parseJson } from "../../utils/transform.js";
 
 class InvoiceService extends BaseService {
   constructor() {
@@ -48,13 +50,9 @@ class InvoiceService extends BaseService {
         fees: {
           include: { fee: true },
         },
+        items: true,
       },
     });
-
-    // invoice main items
-    const items = await this.getItems(id);
-    data["items"] = items.items;
-    data["items_total"] = items.total;
 
     return data;
   };
@@ -85,31 +83,51 @@ class InvoiceService extends BaseService {
       bookingIds = [...bookingIds, invoiceBookings.bookings.map((b) => b.id)];
     }
 
-    const items = await this.db.$queryRaw`
-      SELECT 
-        DATE(s.start_date) AS start_date,
-        b.title,
-        CAST(COUNT(b.id) AS CHAR(32)) AS quantity,
-        b.price,
-        (b.price * COUNT(b.id)) AS total_price
-      FROM 
-        Schedule s
-      JOIN 
-        _BookingToSchedule bs ON s.id = bs.b
-      JOIN 
-        Booking b ON bs.a = b.id
-      JOIN
-        Service sr ON b.service_id = sr.id
-      WHERE
-        sr.billing_type = 'one_time' AND
-        b.id IN (${bookingIds.join(", ")})
-      GROUP BY 
-        DATE(s.start_date), b.title;
-    `;
+    const items = (
+      await this.db.booking.findMany({
+        where: {
+          id: {
+            in: bookingIds,
+          },
+          service: {
+            billing_type: ServiceBillingType.ONE_TIME,
+          },
+        },
+        include: {
+          schedules: {
+            select: {
+              start_date: true,
+              end_date: true,
+            },
+            orderBy: {
+              start_date: "asc",
+            },
+          },
+        },
+      })
+    ).map((b) => {
+      const service = parseJson(b.service_data);
+
+      const start = b.schedules.length ? b.schedules[0].start_date : null,
+        end = b.schedules.length
+          ? (b.schedules[b.schedules.length - 1].end_date ??
+            b.schedules[b.schedules.length - 1].start_date)
+          : null;
+
+      return {
+        start_date: start,
+        end_date: end,
+        name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
+        quantity: b.quantity ?? b.schedules.length,
+        quantity_unit: service.price_unit,
+        price: service.price,
+        service_id: service.id,
+      };
+    });
 
     const total = {
       quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
-      price: items.reduce((a, c) => (a += c.total_price), 0),
+      price: items.reduce((a, c) => (a += c.price * c.quantity), 0),
     };
 
     return { items, total };
@@ -169,7 +187,7 @@ class InvoiceService extends BaseService {
 
     const total = {
       quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
-      price: items.reduce((a, c) => (a += c.price), 0),
+      price: items.reduce((a, c) => (a += c.price * c.quantity), 0),
     };
 
     return { items, total };

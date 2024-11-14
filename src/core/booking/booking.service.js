@@ -261,18 +261,18 @@ class BookingService extends BaseService {
     const fees = await this.#invoiceService.getFees(null, ids);
 
     await this.db.$transaction(async (db) => {
-      const feesPrice = fees.items.reduce(
-        (a, c) => (a += c.quantity * c.price),
-        0
-      );
-
       await db.invoice.create({
         data: {
           user_id: payload.user_id,
           title: "Tagihan layanan",
-          total: items.total.price + feesPrice,
+          total: items.total.price + fees.total.price,
           status: InvoiceStatus.ISSUED,
-          expiry_date: moment().add({ day: 3 }).toDate(),
+          expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
+          items: {
+            createMany: {
+              data: items.items,
+            },
+          },
           bookings: {
             connect: ids.map((id) => ({ id })),
           },
