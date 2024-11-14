@@ -1,0 +1,41 @@
+import BaseController from "../../base/controller.base.js";
+import { NotFound } from "../../lib/response/catch.js";
+import DocumentService from "./document.service.js";
+
+class DocumentController extends BaseController {
+  #service;
+
+  constructor() {
+    super();
+    this.#service = new DocumentService();
+  }
+
+  findAll = this.wrapper(async (req, res) => {
+    const data = await this.#service.findAll(req.query);
+    return this.ok(res, data, "Banyak Document berhasil didapatkan");
+  });
+
+  findById = this.wrapper(async (req, res) => {
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound("Document tidak ditemukan");
+
+    return this.ok(res, data, "Document berhasil didapatkan");
+  });
+
+  create = this.wrapper(async (req, res) => {
+    const data = await this.#service.create(req.body);
+    return this.created(res, data, "Document berhasil dibuat");
+  });
+
+  update = this.wrapper(async (req, res) => {
+    const data = await this.#service.update(req.params.id, req.body);
+    return this.ok(res, data, "Document berhasil diperbarui");
+  });
+
+  delete = this.wrapper(async (req, res) => {
+    const data = await this.#service.delete(req.params.id);
+    return this.noContent(res, "Document berhasil dihapus");
+  });
+}
+
+export default DocumentController;

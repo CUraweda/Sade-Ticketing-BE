@@ -79,6 +79,8 @@ class ServiceService extends BaseService {
         "entry_fees.id",
         "entry_fees.title",
         "entry_fees.price",
+        "agrement_documents.id",
+        "agrement_documents.title",
       ]),
     });
     return data;
