@@ -80,7 +80,7 @@ const releaseInvoiceDaily = async () => {
 
         invoices.push({
           user_id: userId,
-          title: "Tagihan layanan harian",
+          title: `Tagihan layanan harian - ${moment().subtract(1, "day").format("DD MMMM YYYY")}`,
           total: items.reduce((a, c) => (a += c.quantity * c.price), 0),
           status: InvoiceStatus.ISSUED,
           expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
@@ -176,7 +176,7 @@ const releaseInvoiceMonthly = async () => {
 
         invoices.push({
           user_id: userId,
-          title: "Tagihan layanan bulanan",
+          title: `Tagihan layanan bulanan - ${moment().subtract(1, "month").format("MMMM YYYY")}`,
           total: items.reduce((a, c) => (a += c.quantity * c.price), 0),
           status: InvoiceStatus.ISSUED,
           expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
