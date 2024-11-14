@@ -126,6 +126,36 @@ class ServiceService extends BaseService {
     });
   };
 
+  setEntryFee = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        entry_fees: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.fee_id,
+          },
+        },
+      },
+    });
+  };
+
+  setAgreementDocument = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        agrement_documents: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.document_id,
+          },
+        },
+      },
+    });
+  };
+
   findAvailableDoctors = async (id) => {
     const data = await this.db.doctorProfile.findMany({
       where: {
