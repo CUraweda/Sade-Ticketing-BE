@@ -49,7 +49,7 @@ export const ServiceValidator = {
     set: Joi.string().valid("add", "remove"),
   }),
   setEntryFee: Joi.object({
-    fee_id: Joi.string().external(relationExist("fee")).required(),
+    fee_id: Joi.number().external(relationExist("fee")).required(),
     set: Joi.string().valid("add", "remove"),
   }),
   setAgreementDocument: Joi.object({
