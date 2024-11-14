@@ -23,7 +23,7 @@ const updateInvoiceOverdue = async () => {
       },
     });
 
-    console.log(`====== Invoices ======\nOverdue: ${overdueInvs.length}`);
+    console.log(`==== Invoices ====\nOverdue: ${overdueInvs?.length ?? 0}`);
   } catch (err) {
     console.error(err);
   }
