@@ -8,7 +8,18 @@ class daycarejournalService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.daycareJournal.findMany({ ...q });
+    const data = await this.db.daycareJournal.findMany({
+      ...q,
+      include: {
+        client: true,
+        booking: {
+          include: {
+            service: true,
+          },
+        },
+        logtime: true,
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.daycareJournal.count({ where: q.where });
@@ -18,7 +29,18 @@ class daycarejournalService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.daycareJournal.findUnique({ where: { id } });
+    const data = await this.db.daycareJournal.findUnique({
+      where: { id },
+      include: {
+        client: true,
+        booking: {
+          include: {
+            service: true,
+          },
+        },
+        logtime: true,
+      },
+    });
     return data;
   };
 

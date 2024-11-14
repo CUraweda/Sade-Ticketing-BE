@@ -23,9 +23,6 @@ class daycarejournalController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    let q;
-    q = this.joinBrowseQuery(q, "where", `date:date`);
-
     const data = await this.#service.create(req.body);
     return this.created(res, data, "daycare journal berhasil dibuat");
   });
