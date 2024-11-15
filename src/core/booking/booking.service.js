@@ -46,17 +46,14 @@ class BookingService extends BaseService {
       where: { id },
       include: {
         client: true,
+        agreed_documents: {
+          include: this.select(["document.title"]),
+        },
         questionnaire_responses: {
           include: this.select(["questionnaire.title"]),
         },
         reports: {
           include: this.select(["questionnaire.title"]),
-        },
-        agreed_documents: {
-          select: {
-            id: true,
-            title: true,
-          },
         },
         schedules: {
           include: {
@@ -81,6 +78,7 @@ class BookingService extends BaseService {
         "category.name",
         "location.title",
         "questionnaires",
+        "agrement_documents",
         "entry_fees.id",
       ]),
     });
@@ -90,7 +88,9 @@ class BookingService extends BaseService {
         ...payload,
         price: service.price,
         service_data:
-          JSON.stringify(this.exclude(service, ["questionnaires"])) ?? "",
+          JSON.stringify(
+            this.exclude(service, ["questionnaires", "agrement_documents"])
+          ) ?? "",
         status: BookingStatus.DRAFT,
         title: `${service.category?.name ?? ""} - ${service.title}`,
         questionnaire_responses: {
@@ -98,6 +98,11 @@ class BookingService extends BaseService {
             user_id: payload.user_id,
             client_id: payload.client_id,
             questionnaire_id: que.id,
+          })),
+        },
+        agreed_documents: {
+          create: service.agrement_documents?.map((doc) => ({
+            document_id: doc.id,
           })),
         },
       },
