@@ -46,7 +46,8 @@
     "description": "Layanan bagi anak dengan gangguan kemampuan berkomunikasi, mengunyah maupun menelan.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -55,7 +56,8 @@
     "description": "Layanan bagi anak dengan gangguan keterampilan motorik, keseimbangan, dan koordinasi fisik yang membatasi kemandiriannya melakukan aktivitas sehari-hari.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -64,7 +66,8 @@
     "description": "Layanan bagi anak dengan kesulitan memahami input sensorik (sentuhan, gerakan, penglihatan, au, suara, rasa) sehingga ia terlalu atau kurang sensitif terhadap stimulus sensorik di sekitarnya.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -73,7 +76,8 @@
     "description": "Layanan bagi anak yang belum bisa duduk. berjalan sehingga mengganggu mobilitasnya.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -82,7 +86,8 @@
     "description": "Layanan bagi anak yang mengalami kesulitan belajar.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 3,
