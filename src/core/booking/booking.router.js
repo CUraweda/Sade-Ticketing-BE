@@ -56,6 +56,13 @@ r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 r.put("/admin-confirm/:id", authMiddleware(["ADM"]), controller.adminConfirm);
 
 r.put(
+  "/accept-agreement-document",
+  authMiddleware(["USR"]),
+  validatorMiddleware({ body: validator.acceptAgreementDocument }),
+  controller.acceptAgreementDocument
+);
+
+r.put(
   "/update/:id",
   authMiddleware(),
   validatorMiddleware({ body: validator.update }),

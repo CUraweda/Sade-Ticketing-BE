@@ -155,6 +155,15 @@ class BookingController extends BaseController {
     );
     return this.ok(res, null, "Respon laporan berhasil dibuat");
   });
+
+  acceptAgreementDocument = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.body.booking_id, req.user.id);
+    await this.#service.acceptAgreementDocument(
+      req.body.booking_id,
+      req.body.document_id
+    );
+    return this.ok(res, null, "Berhasil menerima dokumen persetujuan");
+  });
 }
 
 export default BookingController;

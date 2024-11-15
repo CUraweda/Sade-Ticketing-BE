@@ -395,6 +395,20 @@ class BookingService extends BaseService {
       },
     });
   };
+
+  acceptAgreementDocument = async (booking_id, document_id) => {
+    await this.db.bookingAgreedDocuments.update({
+      where: {
+        booking_id_document_id: {
+          booking_id,
+          document_id,
+        },
+      },
+      data: {
+        is_agreed: true,
+      },
+    });
+  };
 }
 
 export default BookingService;

@@ -338,6 +338,8 @@ model BookingAgreedDocuments {
 
   booking  Booking  @relation(fields: [booking_id], references: [id], onDelete: Cascade)
   document Document @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@unique([booking_id, document_id])
 }
 
 // INVOICE AND PAYMENT

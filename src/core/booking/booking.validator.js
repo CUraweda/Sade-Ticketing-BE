@@ -40,6 +40,10 @@ export const BookingValidator = {
       .external(relationExist("questionnaire"))
       .required(),
   }),
+  acceptAgreementDocument: Joi.object({
+    booking_id: Joi.string().external(relationExist("booking")).required(),
+    document_id: Joi.string().external(relationExist("document")).required(),
+  }),
 };
 
 export default BookingValidator;
