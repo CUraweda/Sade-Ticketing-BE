@@ -13,7 +13,7 @@ const upBookingStatusOnUpdateInvoice = async ({ args, query }) => {
         invoices: {
           some: {
             id: {
-              in: args.where.id.in
+              in: args.where.id?.in
                 ? args.where.id.in
                 : args.where.id
                   ? [args.where.id]
@@ -34,7 +34,7 @@ const upBookingStatusOnUpdateInvoice = async ({ args, query }) => {
         invoices: {
           some: {
             id: {
-              in: args.where.id.in
+              in: args.where.id?.in
                 ? args.where.id.in
                 : args.where.id
                   ? [args.where.id]

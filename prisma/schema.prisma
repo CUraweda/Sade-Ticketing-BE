@@ -315,19 +315,31 @@ model Booking {
   title        String?
   is_locked    Boolean @default(false)
 
-  client                  ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  service                 Service?                @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  client                  ClientProfile?           @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  user                    User?                    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  service                 Service?                 @relation(fields: [service_id], references: [id], onDelete: SetNull)
   schedules               Schedule[]
-  questionnaire_responses QuestionnaireResponse[] @relation("BookingQuestionnaires")
-  reports                 QuestionnaireResponse[] @relation("BookingReports")
+  questionnaire_responses QuestionnaireResponse[]  @relation("BookingQuestionnaires")
+  reports                 QuestionnaireResponse[]  @relation("BookingReports")
   invoices                Invoice[]
   service_recommendations ServiceRecommendation[]
   daycare_journals        DaycareJournal[]
-  agreed_documents        Document[]
+  agreed_documents        BookingAgreedDocuments[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model BookingAgreedDocuments {
+  id          Int     @id @default(autoincrement())
+  booking_id  String
+  document_id String
+  is_agreed   Boolean @default(false)
+
+  booking  Booking  @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@unique([booking_id, document_id])
 }
 
 // INVOICE AND PAYMENT
@@ -554,8 +566,8 @@ model Document {
   title   String @unique
   content String @db.LongText
 
-  services Service[]
-  bookings Booking[]
+  services          Service[]
+  booking_agreement BookingAgreedDocuments[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

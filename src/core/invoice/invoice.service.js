@@ -157,34 +157,6 @@ class InvoiceService extends BaseService {
     });
     entryFees.forEach((sf) => items.push({ ...sf, quantity: 1 }));
 
-    // add fee Uang pangkal terapi if had a first therapy sevice booking
-    if (bookingIds) {
-      const checkBookingTherapy = await this.db.booking.groupBy({
-        where: {
-          service: {
-            category_id: 2,
-          },
-        },
-        by: ["client_id"],
-        _count: {
-          id: true,
-        },
-      });
-
-      if (checkBookingTherapy.length && checkBookingTherapy[0]._count.id == 1) {
-        const pangkalFee = await this.db.fee.findFirst({
-          where: {
-            title: "Uang pangkal terapi",
-          },
-        });
-
-        items.push({
-          ...pangkalFee,
-          quantity: 1,
-        });
-      }
-    }
-
     const total = {
       quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
       price: items.reduce((a, c) => (a += c.price * c.quantity), 0),

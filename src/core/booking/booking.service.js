@@ -46,17 +46,14 @@ class BookingService extends BaseService {
       where: { id },
       include: {
         client: true,
+        agreed_documents: {
+          include: this.select(["document.title"]),
+        },
         questionnaire_responses: {
           include: this.select(["questionnaire.title"]),
         },
         reports: {
           include: this.select(["questionnaire.title"]),
-        },
-        agreed_documents: {
-          select: {
-            id: true,
-            title: true,
-          },
         },
         schedules: {
           include: {
@@ -81,6 +78,7 @@ class BookingService extends BaseService {
         "category.name",
         "location.title",
         "questionnaires",
+        "agrement_documents",
         "entry_fees.id",
       ]),
     });
@@ -90,7 +88,9 @@ class BookingService extends BaseService {
         ...payload,
         price: service.price,
         service_data:
-          JSON.stringify(this.exclude(service, ["questionnaires"])) ?? "",
+          JSON.stringify(
+            this.exclude(service, ["questionnaires", "agrement_documents"])
+          ) ?? "",
         status: BookingStatus.DRAFT,
         title: `${service.category?.name ?? ""} - ${service.title}`,
         questionnaire_responses: {
@@ -98,6 +98,11 @@ class BookingService extends BaseService {
             user_id: payload.user_id,
             client_id: payload.client_id,
             questionnaire_id: que.id,
+          })),
+        },
+        agreed_documents: {
+          create: service.agrement_documents?.map((doc) => ({
+            document_id: doc.id,
           })),
         },
       },
@@ -119,9 +124,6 @@ class BookingService extends BaseService {
       const start = payload.start_date,
         end = payload.end_date;
 
-      delete payload.start_date;
-      delete payload.end_date;
-
       payload = {
         ...payload,
         schedules: {
@@ -141,7 +143,65 @@ class BookingService extends BaseService {
         payload["quantity"] = moment(end).diff(start, "days") + 1;
       else if (serviceData.billing_type == ServiceBillingType.DAILY)
         payload["quantity"] = moment(end).diff(start, "months") + 1;
+
+      // for training, psikolog, therapy
+    } else {
+      // check schedule availability
+      const schedules = await this.db.schedule.findMany({
+        where: {
+          id: {
+            in: payload.schedule_ids,
+          },
+          bookings: {
+            none: {
+              id,
+            },
+          },
+        },
+        select: {
+          start_date: true,
+          max_bookings: true,
+          _count: {
+            select: {
+              bookings: true,
+            },
+          },
+        },
+      });
+
+      if (schedules.filter((s) => s._count.bookings >= s.max_bookings).length)
+        throw new BadRequest(
+          `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
+        );
+
+      const prevScheduleIds = (
+        await this.db.schedule.findMany({
+          where: {
+            bookings: {
+              some: {
+                id,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        })
+      ).map((sc) => sc.id);
+
+      payload = {
+        ...payload,
+        quantity: payload.schedule_ids.length,
+        schedules: {
+          disconnect: prevScheduleIds.map((id) => ({ id })),
+          connect: payload.schedule_ids.map((id) => ({ id })),
+        },
+      };
     }
+
+    delete payload.start_date;
+    delete payload.end_date;
+    delete payload.schedule_ids;
 
     await this.db.booking.update({
       where: {
@@ -387,6 +447,20 @@ class BookingService extends BaseService {
         booking_report_id: booking_id,
         client_id: booking.client_id,
         questionnaire_id,
+      },
+    });
+  };
+
+  acceptAgreementDocument = async (booking_id, document_id) => {
+    await this.db.bookingAgreedDocuments.update({
+      where: {
+        booking_id_document_id: {
+          booking_id,
+          document_id,
+        },
+      },
+      data: {
+        is_agreed: true,
       },
     });
   };
