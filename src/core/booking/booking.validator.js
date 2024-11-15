@@ -26,6 +26,9 @@ export const BookingValidator = {
       then: Joi.required(),
       otherwise: Joi.optional(),
     }),
+    schedule_ids: Joi.array()
+      .items(Joi.string().external(relationExist("schedule")).optional())
+      .optional(),
   }),
   setSchedules: Joi.object({
     quantity: Joi.number().min(1).required(),

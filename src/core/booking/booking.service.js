@@ -124,9 +124,6 @@ class BookingService extends BaseService {
       const start = payload.start_date,
         end = payload.end_date;
 
-      delete payload.start_date;
-      delete payload.end_date;
-
       payload = {
         ...payload,
         schedules: {
@@ -146,7 +143,65 @@ class BookingService extends BaseService {
         payload["quantity"] = moment(end).diff(start, "days") + 1;
       else if (serviceData.billing_type == ServiceBillingType.DAILY)
         payload["quantity"] = moment(end).diff(start, "months") + 1;
+
+      // for training, psikolog, therapy
+    } else {
+      // check schedule availability
+      const schedules = await this.db.schedule.findMany({
+        where: {
+          id: {
+            in: payload.schedule_ids,
+          },
+          bookings: {
+            none: {
+              id,
+            },
+          },
+        },
+        select: {
+          start_date: true,
+          max_bookings: true,
+          _count: {
+            select: {
+              bookings: true,
+            },
+          },
+        },
+      });
+
+      if (schedules.filter((s) => s._count.bookings >= s.max_bookings).length)
+        throw new BadRequest(
+          `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
+        );
+
+      const prevScheduleIds = (
+        await this.db.schedule.findMany({
+          where: {
+            bookings: {
+              some: {
+                id,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        })
+      ).map((sc) => sc.id);
+
+      payload = {
+        ...payload,
+        quantity: payload.schedule_ids.length,
+        schedules: {
+          disconnect: prevScheduleIds.map((id) => ({ id })),
+          connect: payload.schedule_ids.map((id) => ({ id })),
+        },
+      };
     }
+
+    delete payload.start_date;
+    delete payload.end_date;
+    delete payload.schedule_ids;
 
     await this.db.booking.update({
       where: {
