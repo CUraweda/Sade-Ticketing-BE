@@ -68,7 +68,7 @@ class PaymentsService extends BaseService {
         await this.db.invoice.aggregate({
           where: {
             id: {
-              in: payload.invoice_ids,
+              in: invoice_ids,
             },
             user_id: payload.user_id,
             payment_id: null,
