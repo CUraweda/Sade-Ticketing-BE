@@ -1,6 +1,12 @@
 import Joi from "joi";
 import { relationExist } from "../../base/validator.base.js";
 
+export const ClientScheduleStatus = {
+  PRESENT: "present",
+  SICK: "sick",
+  EXCUSED: "excused",
+};
+
 export const ScheduleValidator = {
   create: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -42,6 +48,12 @@ export const ScheduleValidator = {
   setDoctor: Joi.object({
     doctor_id: Joi.string().external(relationExist("doctorProfile")).required(),
     set: Joi.string().valid("add", "remove").required(),
+  }),
+  setClientStatus: Joi.object({
+    client_id: Joi.string().external(relationExist("clientProfile")).required(),
+    status: Joi.string()
+      .valid(...Object.values(ClientScheduleStatus))
+      .required(),
   }),
 };
 

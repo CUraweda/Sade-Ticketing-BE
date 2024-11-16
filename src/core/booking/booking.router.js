@@ -44,6 +44,7 @@ r.post(
   controller.createReportResponse
 );
 
+// unused. will be removed soon
 r.put(
   "/set-schedules/:id",
   authMiddleware(["USR"]),

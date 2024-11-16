@@ -80,5 +80,12 @@ r.put(
   controller.setOvertime
 );
 
+r.put(
+  "/set-client-status/:id",
+  authMiddleware(["PSI", "ADM", "SDM"]),
+  validatorMiddleware({ body: validator.setClientStatus }),
+  controller.setClientStatus
+);
+
 const scheduleRouter = r;
 export default scheduleRouter;

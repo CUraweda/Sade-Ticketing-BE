@@ -63,7 +63,11 @@ class ScheduleService extends BaseService {
           connect: doctors.map((d) => ({ id: d })),
         },
         clients: {
-          connect: clients.map((c) => ({ id: c })),
+          createMany: {
+            data: clients.map((id) => ({
+              client_id: id,
+            })),
+          },
         },
       },
     });
@@ -110,7 +114,9 @@ class ScheduleService extends BaseService {
       ors.push({
         clients: {
           some: {
-            user_id,
+            client: {
+              user_id,
+            },
           },
         },
       });
@@ -136,7 +142,7 @@ class ScheduleService extends BaseService {
     this.db.schedule.update({
       where: { id },
       data: {
-        clients: { connect: { id: client_id } },
+        clients: { create: { client_id } },
       },
     });
 
@@ -149,11 +155,24 @@ class ScheduleService extends BaseService {
   removeClient = (id, client_id) =>
     this.db.schedule.update({
       where: { id },
-      data: { clients: { disconnect: { id: client_id } } },
+      data: { clients: { delete: { client_id } } },
     });
 
   setLock = (id, lock) =>
     this.db.schedule.update({ where: { id }, data: { is_locked: lock } });
+
+  setClientStatus = (id, client_id, status) =>
+    this.db.schedule.update({
+      where: { id },
+      data: {
+        clients: {
+          update: {
+            where: { client_id },
+            data: { status },
+          },
+        },
+      },
+    });
 }
 
 export default ScheduleService;

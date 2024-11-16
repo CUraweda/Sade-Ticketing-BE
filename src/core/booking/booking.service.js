@@ -233,6 +233,7 @@ class BookingService extends BaseService {
     return find;
   };
 
+  // unused. will be removed soon
   setSchedules = async (id, payload) => {
     // check schedule availability
     const schedules = await this.db.schedule.findMany({
@@ -360,9 +361,6 @@ class BookingService extends BaseService {
           },
         },
         data: {
-          // price: {
-          //   increment: feesPrice,
-          // },
           status: BookingStatus.NEED_PAYMENT,
           is_locked: true,
         },
@@ -402,9 +400,10 @@ class BookingService extends BaseService {
             },
           },
           data: {
+            is_locked: true,
             clients: {
-              connect: {
-                id: upBooking.client_id,
+              create: {
+                client_id: upBooking.client_id,
               },
             },
           },
