@@ -209,7 +209,7 @@ model ClientProfile {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   service_recommendations ServiceRecommendation[]
-  schedules               Schedule[]
+  schedules               ClientSchedule[]
   daycare_journals        DaycareJournal[]
 
   created_at DateTime @default(now())
@@ -470,7 +470,7 @@ model Schedule {
   creator_id String?
   service_id String?
 
-  clients               ClientProfile[]
+  clients               ClientSchedule[]
   doctors               DoctorProfile[]
   creator               User?               @relation(fields: [creator_id], references: [id], onDelete: Cascade)
   service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
@@ -480,6 +480,19 @@ model Schedule {
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model ClientSchedule {
+  id          Int     @id @default(autoincrement())
+  schedule_id String
+  client_id   String
+  status      String? // present, sick, permit, etc.
+  note        String?
+
+  client   ClientProfile @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  schedule Schedule      @relation(fields: [schedule_id], references: [id], onDelete: Cascade)
+
+  @@unique([schedule_id, client_id])
 }
 
 model RescheduleRequest {
