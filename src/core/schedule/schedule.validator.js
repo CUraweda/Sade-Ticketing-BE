@@ -4,7 +4,7 @@ import { relationExist } from "../../base/validator.base.js";
 export const ClientScheduleStatus = {
   PRESENT: "present",
   SICK: "sick",
-  EXCUSED: "excused",
+  PERMITTED: "permitted",
 };
 
 export const ScheduleValidator = {
