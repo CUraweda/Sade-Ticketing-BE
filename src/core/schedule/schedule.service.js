@@ -35,6 +35,8 @@ class ScheduleService extends BaseService {
         "doctors.first_name",
         "doctors.last_name",
         "doctors.category",
+        "clients.note",
+        "clients.status",
         "clients.client.id",
         "clients.client.first_name",
         "clients.client.last_name",
@@ -155,7 +157,7 @@ class ScheduleService extends BaseService {
   removeClient = (id, client_id) =>
     this.db.schedule.update({
       where: { id },
-      data: { clients: { delete: { client_id } } },
+      data: { clients: { deleteMany: { client_id } } },
     });
 
   setLock = (id, lock) =>
