@@ -162,11 +162,11 @@ model Service {
   duration             Int? // in minute
   duration_description String?
   price                Float
-  price_unit           String
+  price_unit           String?
   price_minimum        Float?
   doctor_fee           Decimal? @db.Decimal(5, 2) // in percentage
   is_active            Boolean? @default(true)
-  max_bookings         Int      @default(1)
+  billing_type         String   @default("one_time")
 
   category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
   location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
@@ -175,9 +175,11 @@ model Service {
   prerequisite_For             Service[]                   @relation("RequiredServices")
   questionnaires               Questionnaire[]             @relation("ServiceQuestionnaires")
   reports                      Questionnaire[]             @relation("ServiceReports")
+  agrement_documents           Document[]
   service_recommendation_items ServiceRecommendationItem[]
   schedules                    Schedule[]
   bookings                     Booking[]
+  entry_fees                   Fee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -308,26 +310,36 @@ model Booking {
   compliant    String?
   quantity     Int
   price        Float
-  service_data String?   @db.LongText
+  service_data String? @db.LongText
   status       String // draft, pending_payment, waiting, ongoing, completed
   title        String?
-  group_label  String?
-  is_locked    Boolean   @default(false)
-  is_approved  Boolean   @default(false)
-  expired_at   DateTime?
+  is_locked    Boolean @default(false)
 
-  client                  ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  service                 Service?                @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  client                  ClientProfile?           @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  user                    User?                    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  service                 Service?                 @relation(fields: [service_id], references: [id], onDelete: SetNull)
   schedules               Schedule[]
-  questionnaire_responses QuestionnaireResponse[] @relation("BookingQuestionnaires")
-  reports                 QuestionnaireResponse[] @relation("BookingReports")
+  questionnaire_responses QuestionnaireResponse[]  @relation("BookingQuestionnaires")
+  reports                 QuestionnaireResponse[]  @relation("BookingReports")
   invoices                Invoice[]
   service_recommendations ServiceRecommendation[]
   daycare_journals        DaycareJournal[]
+  agreed_documents        BookingAgreedDocuments[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model BookingAgreedDocuments {
+  id          Int     @id @default(autoincrement())
+  booking_id  String
+  document_id String
+  is_agreed   Boolean @default(false)
+
+  booking  Booking  @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [document_id], references: [id], onDelete: Cascade)
+
+  @@unique([booking_id, document_id])
 }
 
 // INVOICE AND PAYMENT
@@ -339,6 +351,7 @@ model Fee {
 
   invoices         InvoiceFee[]
   daycare_logtimes DaycareLogTime[]
+  services         Service[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -354,6 +367,22 @@ model InvoiceFee {
   invoice Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
 }
 
+model InvoiceItem {
+  id         Int    @id @default(autoincrement())
+  invoice_id String
+  service_id String
+
+  start_date    DateTime?
+  end_date      DateTime?
+  name          String
+  quantity      Int
+  quantity_unit String?
+  price         Float
+  note          String?
+
+  invoice Invoice? @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+}
+
 model Invoice {
   id              String  @id @default(uuid())
   bank_account_id Int?
@@ -367,11 +396,12 @@ model Invoice {
   paid_date   DateTime?
   note        String?
 
-  bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
-  user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  payment      Payments?    @relation(fields: [payment_id], references: [id], onDelete: SetNull)
+  bank_account BankAccount?  @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  user         User?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  payment      Payments?     @relation(fields: [payment_id], references: [id], onDelete: SetNull)
   bookings     Booking[]
   fees         InvoiceFee[]
+  items        InvoiceItem[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -490,12 +520,12 @@ model DaycareJournal {
   booking_id String
 
   date            DateTime
-  bed_time        DateTime
-  wakeup_time     DateTime
-  body_temperatur Float
-  breakfast_menu  String
-  is_poop         Boolean
-  parent_note     String?  @db.LongText
+  bed_time        DateTime?
+  wakeup_time     DateTime?
+  body_temperatur Float?
+  breakfast_menu  String?
+  is_poop         Boolean?
+  parent_note     String?   @db.LongText
 
   is_present            Boolean  @default(false)
   morning_snack         String?
@@ -527,4 +557,19 @@ model DaycareLogTime {
 
   fee     Fee?           @relation(fields: [fee_id], references: [id], onDelete: SetNull)
   journal DaycareJournal @relation(fields: [journal_id], references: [id], onDelete: Cascade)
+}
+
+// DOCUMENT
+model Document {
+  id         String  @id @default(uuid())
+  creator_id String?
+
+  title   String @unique
+  content String @db.LongText
+
+  services          Service[]
+  booking_agreement BookingAgreedDocuments[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }

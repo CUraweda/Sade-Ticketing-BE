@@ -15,19 +15,19 @@ r.get(
 
 r.get("/show-one/:id", controller.findById);
 
-r.post(
-  "/create",
-  validatorMiddleware({ body: validator.create }),
-  controller.create
-);
+// r.post(
+//   "/create",
+//   validatorMiddleware({ body: validator.create }),
+//   controller.create
+// );
 
-r.put(
-  "/update/:id",
-  validatorMiddleware({ body: validator.update }),
-  controller.update
-);
+// r.put(
+//   "/update/:id",
+//   validatorMiddleware({ body: validator.update }),
+//   controller.update
+// );
 
-r.delete("/delete/:id", controller.delete);
+// r.delete("/delete/:id", controller.delete);
 
 const servicecategoryRouter = r;
 export default servicecategoryRouter;

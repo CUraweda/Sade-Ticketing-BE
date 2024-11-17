@@ -70,7 +70,10 @@ class DashboardService extends BaseService {
         ...dat,
         _income: dat.bookings.reduce(
           (a, c) =>
-            (a += c.invoices.reduce((a, c) => (a += c.payment.amount_paid), 0)),
+            (a += c.invoices.reduce(
+              (a, c) => (a += c.payment?.amount_paid),
+              0
+            )),
           0
         ),
       }));
@@ -94,7 +97,7 @@ class DashboardService extends BaseService {
       },
     });
 
-    return data._sum.amount_paid;
+    return data._sum?.amount_paid;
   };
 
   totalAmountIssuedInvoice = async (query) => {

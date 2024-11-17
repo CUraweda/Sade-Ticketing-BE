@@ -57,7 +57,7 @@ class BookingController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
-    if (req.user.role_code == "USR") {
+    if (!this.isAdmin(req)) {
       const find = await this.#service.checkBookingOwner(
         req.params.id,
         req.user.id
@@ -66,6 +66,9 @@ class BookingController extends BaseController {
         throw new Forbidden(
           "Booking Anda sudah dikunci dan tidak bisa diubah lagi"
         );
+
+      // user cant update status field
+      if (req.body.status) delete req.body.status;
     }
 
     const data = await this.#service.update(req.params.id, req.body);
@@ -121,6 +124,8 @@ class BookingController extends BaseController {
     data["fees"] = fees.items;
     data["fees_total"] = fees.total;
 
+    data["total"] = data.fees_total.price + data.items_total.price;
+
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
 
@@ -149,6 +154,15 @@ class BookingController extends BaseController {
       payload.questionnaire_id
     );
     return this.ok(res, null, "Respon laporan berhasil dibuat");
+  });
+
+  acceptAgreementDocument = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.body.booking_id, req.user.id);
+    await this.#service.acceptAgreementDocument(
+      req.body.booking_id,
+      req.body.document_id
+    );
+    return this.ok(res, null, "Berhasil menerima dokumen persetujuan");
   });
 }
 
