@@ -37,7 +37,7 @@ class daycarelogtimeService extends BaseService {
 
   update = async (id, payload) => {
     const data = await this.db.daycareLogTime.update({
-      where: { id },
+      where: { id: parseInt(id, 10) },
       data: payload,
     });
     return data;
