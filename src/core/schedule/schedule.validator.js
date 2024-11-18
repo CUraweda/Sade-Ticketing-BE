@@ -54,6 +54,7 @@ export const ScheduleValidator = {
     status: Joi.string()
       .valid(...Object.values(ClientScheduleStatus))
       .required(),
+    note: Joi.string().max(50).optional(),
   }),
 };
 

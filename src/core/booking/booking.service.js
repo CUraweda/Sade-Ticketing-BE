@@ -479,6 +479,7 @@ class BookingService extends BaseService {
         },
       },
       select: this.select([
+        "id",
         "start_date",
         "end_date",
         "title",

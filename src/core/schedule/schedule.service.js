@@ -163,14 +163,19 @@ class ScheduleService extends BaseService {
   setLock = (id, lock) =>
     this.db.schedule.update({ where: { id }, data: { is_locked: lock } });
 
-  setClientStatus = (id, client_id, status) =>
+  setClientStatus = (id, client_id, data) =>
     this.db.schedule.update({
       where: { id },
       data: {
         clients: {
           update: {
-            where: { client_id },
-            data: { status },
+            where: {
+              schedule_id_client_id: {
+                client_id,
+                schedule_id: id,
+              },
+            },
+            data,
           },
         },
       },

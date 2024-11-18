@@ -189,11 +189,10 @@ class ScheduleController extends BaseController {
   });
 
   setClientStatus = this.wrapper(async (req, res) => {
-    await this.#service.setClientStatus(
-      req.params.id,
-      req.body.client_id,
-      req.body.status
-    );
+    await this.#service.setClientStatus(req.params.id, req.body.client_id, {
+      status: req.body.status,
+      note: req.body.note,
+    });
     return this.ok(res, null, "Status kehadiran klien berhasil diperbaharui");
   });
 }
