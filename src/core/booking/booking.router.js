@@ -39,7 +39,7 @@ r.post(
 
 r.post(
   "/create-report-response",
-  authMiddleware(["ASR", "PSI", "TRS"]),
+  authMiddleware(["ASR", "PSI", "TRS", "ADM", "SDM"]),
   validatorMiddleware({ body: validator.createReportResponse }),
   controller.createReportResponse
 );
