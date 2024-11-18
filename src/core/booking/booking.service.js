@@ -463,6 +463,31 @@ class BookingService extends BaseService {
       },
     });
   };
+
+  getCurrentSchedule = async (id) => {
+    const booking = await this.findById(id);
+
+    return await this.db.schedule.findMany({
+      where: {
+        start_date: { lte: moment().toDate() },
+        end_date: { gte: moment().toDate() },
+        bookings: {
+          some: { id },
+        },
+        clients: {
+          some: { client_id: booking.client_id },
+        },
+      },
+      select: this.select([
+        "start_date",
+        "end_date",
+        "title",
+        "clients.status",
+        "clients.note",
+        "clients.client_id",
+      ]),
+    });
+  };
 }
 
 export default BookingService;

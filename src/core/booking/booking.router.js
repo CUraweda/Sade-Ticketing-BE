@@ -30,6 +30,8 @@ r.get(
   controller.invoiceSimulation
 );
 
+r.get("/current-schedule/:id", authMiddleware(), controller.getCurrentSchedule);
+
 r.post(
   "/create",
   authMiddleware(["USR"]),

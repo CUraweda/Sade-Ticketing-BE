@@ -164,6 +164,12 @@ class BookingController extends BaseController {
     );
     return this.ok(res, null, "Berhasil menerima dokumen persetujuan");
   });
+
+  getCurrentSchedule = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.params.id, req.user.id);
+    const data = await this.#service.getCurrentSchedule(req.params.id);
+    return this.ok(res, data, "Jadwal terkini berhasil didapatkan");
+  });
 }
 
 export default BookingController;
