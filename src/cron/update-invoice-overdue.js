@@ -7,7 +7,7 @@ import { InvoiceStatus } from "../core/invoice/invoice.validator.js";
 const db = prism;
 
 const updateInvoiceOverdue = async () => {
-  console.log("\n/cron/update-invoice-overdue.js\n");
+  console.log("\n[CRON] Update Invoices Overdue");
   const now = moment();
 
   try {
@@ -23,7 +23,7 @@ const updateInvoiceOverdue = async () => {
       },
     });
 
-    console.log(`==== Invoices ====\nOverdue: ${overdueInvs?.length ?? 0}`);
+    console.log(`- Overdue invoices: ${overdueInvs?.length ?? 0}`);
   } catch (err) {
     console.error(err);
   }
