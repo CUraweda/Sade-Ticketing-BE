@@ -7,6 +7,7 @@ import { BookingStatus } from "../core/booking/booking.validator.js";
 const db = prism;
 
 const updateBookingComplete = async () => {
+  console.log(`\n[CRON] Update Bookings Completed`);
   const now = moment();
 
   try {
@@ -50,7 +51,7 @@ const updateBookingComplete = async () => {
     });
 
     console.log(
-      `\n/cron/update-booking-complete.js\n====== Reservasi ======\nBerlangsung: ${bookingsOngoing.length} \nSelesai: ${bookingsComplete.length}`
+      `- Ongoing bookings: ${bookingsOngoing.length} \n- Completed bookings: ${bookingsComplete.length}`
     );
   } catch {}
 };

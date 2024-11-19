@@ -35,11 +35,13 @@ class ScheduleService extends BaseService {
         "doctors.first_name",
         "doctors.last_name",
         "doctors.category",
-        "clients.id",
-        "clients.first_name",
-        "clients.last_name",
-        "clients.category",
-        "clients.dob",
+        "clients.note",
+        "clients.status",
+        "clients.client.id",
+        "clients.client.first_name",
+        "clients.client.last_name",
+        "clients.client.category",
+        "clients.client.dob",
         "service.id",
         "service.title",
         "service.category.name",
@@ -63,7 +65,11 @@ class ScheduleService extends BaseService {
           connect: doctors.map((d) => ({ id: d })),
         },
         clients: {
-          connect: clients.map((c) => ({ id: c })),
+          createMany: {
+            data: clients.map((id) => ({
+              client_id: id,
+            })),
+          },
         },
       },
     });
@@ -110,7 +116,9 @@ class ScheduleService extends BaseService {
       ors.push({
         clients: {
           some: {
-            user_id,
+            client: {
+              user_id,
+            },
           },
         },
       });
@@ -136,7 +144,7 @@ class ScheduleService extends BaseService {
     this.db.schedule.update({
       where: { id },
       data: {
-        clients: { connect: { id: client_id } },
+        clients: { create: { client_id } },
       },
     });
 
@@ -149,11 +157,29 @@ class ScheduleService extends BaseService {
   removeClient = (id, client_id) =>
     this.db.schedule.update({
       where: { id },
-      data: { clients: { disconnect: { id: client_id } } },
+      data: { clients: { deleteMany: { client_id } } },
     });
 
   setLock = (id, lock) =>
     this.db.schedule.update({ where: { id }, data: { is_locked: lock } });
+
+  setClientStatus = (id, client_id, data) =>
+    this.db.schedule.update({
+      where: { id },
+      data: {
+        clients: {
+          update: {
+            where: {
+              schedule_id_client_id: {
+                client_id,
+                schedule_id: id,
+              },
+            },
+            data,
+          },
+        },
+      },
+    });
 }
 
 export default ScheduleService;

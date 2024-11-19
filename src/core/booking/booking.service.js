@@ -233,6 +233,7 @@ class BookingService extends BaseService {
     return find;
   };
 
+  // unused. will be removed soon
   setSchedules = async (id, payload) => {
     // check schedule availability
     const schedules = await this.db.schedule.findMany({
@@ -360,9 +361,6 @@ class BookingService extends BaseService {
           },
         },
         data: {
-          // price: {
-          //   increment: feesPrice,
-          // },
           status: BookingStatus.NEED_PAYMENT,
           is_locked: true,
         },
@@ -402,9 +400,10 @@ class BookingService extends BaseService {
             },
           },
           data: {
+            is_locked: true,
             clients: {
-              connect: {
-                id: upBooking.client_id,
+              create: {
+                client_id: upBooking.client_id,
               },
             },
           },
@@ -462,6 +461,32 @@ class BookingService extends BaseService {
       data: {
         is_agreed: true,
       },
+    });
+  };
+
+  getCurrentSchedule = async (id) => {
+    const booking = await this.findById(id);
+
+    return await this.db.schedule.findMany({
+      where: {
+        start_date: { lte: moment().toDate() },
+        end_date: { gte: moment().toDate() },
+        bookings: {
+          some: { id },
+        },
+        clients: {
+          some: { client_id: booking.client_id },
+        },
+      },
+      select: this.select([
+        "id",
+        "start_date",
+        "end_date",
+        "title",
+        "clients.status",
+        "clients.note",
+        "clients.client_id",
+      ]),
     });
   };
 }

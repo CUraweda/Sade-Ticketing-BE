@@ -40,7 +40,7 @@ class ScheduleController extends BaseController {
     ) {
       q = this.joinBrowseQuery(q, "in_", `doctors.user_id:${uid}`);
     } else if (role == RoleCode.USER) {
-      q = this.joinBrowseQuery(q, "in_", `clients.user_id:${uid}`);
+      q = this.joinBrowseQuery(q, "in_", `clients.some.client.user_id:${uid}`);
     }
 
     const data = await this.#service.findAll(q);
@@ -186,6 +186,14 @@ class ScheduleController extends BaseController {
 
     const data = await this.#service.update(req.params.id, payload);
     return this.ok(res, data, "Overtime jadwal berhasil diperbarui");
+  });
+
+  setClientStatus = this.wrapper(async (req, res) => {
+    await this.#service.setClientStatus(req.params.id, req.body.client_id, {
+      status: req.body.status,
+      note: req.body.note,
+    });
+    return this.ok(res, null, "Status kehadiran klien berhasil diperbaharui");
   });
 }
 

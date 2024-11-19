@@ -4,12 +4,13 @@ import moment from "moment";
 import { InvoiceStatus } from "../core/invoice/invoice.validator.js";
 import { parseJson } from "../utils/transform.js";
 import { ServiceBillingType } from "../core/service/service.validator.js";
+import { ClientScheduleStatus } from "../core/schedule/schedule.validator.js";
 
 /** @type {PrismaClient} */
 const db = prism;
 
 const releaseInvoiceDaily = async () => {
-  console.log("\n\n/cron/release-invoice-by-service-billing.js\n");
+  console.log("\n[CRON] Create Daily Invoices");
 
   try {
     const invoices = [];
@@ -19,9 +20,42 @@ const releaseInvoiceDaily = async () => {
         service: {
           billing_type: ServiceBillingType.DAILY,
         },
+        OR: [
+          {
+            schedules: {
+              some: {
+                start_date: {
+                  lte: moment().subtract(1, "day").endOf("day").toDate(),
+                  gte: moment().subtract(1, "day").startOf("day").toDate(),
+                },
+              },
+            },
+          },
+          {
+            daycare_journals: {
+              some: {
+                date: {
+                  lte: moment().subtract(1, "day").endOf("day").toDate(),
+                  gte: moment().subtract(1, "day").startOf("day").toDate(),
+                },
+              },
+            },
+          },
+        ],
       },
       include: {
         schedules: {
+          include: {
+            clients: {
+              include: {
+                client: {
+                  select: {
+                    user_id: true,
+                  },
+                },
+              },
+            },
+          },
           where: {
             start_date: {
               lte: moment().subtract(1, "day").endOf("day").toDate(),
@@ -55,20 +89,27 @@ const releaseInvoiceDaily = async () => {
           const service = parseJson(b.service_data, {
             keep: ["id", "price", "category", "title", "price_unit"],
           });
+          const schedules = b.schedules.filter(
+            (sc) =>
+              sc.clients?.length &&
+              (sc.clients[0].status == ClientScheduleStatus.PRESENT ||
+                sc.clients[0].status == null) &&
+              sc.clients[0].client?.user_id == userId
+          );
           let quantity = 0;
 
           if (service.category?.name == "Daycare") {
             quantity = b.daycare_journals.length;
           } else {
-            quantity = b.schedules.length;
+            quantity = schedules.length;
           }
 
           if (quantity > 0) {
             items.push({
-              start_date: b.schedules[0].start_date,
+              start_date: schedules[0].start_date,
               end_date:
-                b.schedules[b.schedules.length - 1].end_date ??
-                b.schedules[b.schedules.length - 1].start_date,
+                schedules[schedules.length - 1].end_date ??
+                schedules[schedules.length - 1].start_date,
               name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
               quantity,
               quantity_unit: service.price_unit,
@@ -100,14 +141,16 @@ const releaseInvoiceDaily = async () => {
       }
     }
 
-    `==== Daily Invoices ====\nInvoices: ${invoices.length}\nTotal: Rp ${invoices.reduce((a, c) => (a += c.total), 0)}`;
+    console.log(
+      `- Invoices: ${invoices.length}\n- Total: Rp ${invoices.reduce((a, c) => (a += c.total), 0)}`
+    );
   } catch (err) {
     console.error(err);
   }
 };
 
 const releaseInvoiceMonthly = async () => {
-  console.log("\n\n/cron/release-invoice-by-service-billing.js\n");
+  console.log("\n[CRON] Create Monthly Invoices");
 
   try {
     const invoices = [];
@@ -117,9 +160,42 @@ const releaseInvoiceMonthly = async () => {
         service: {
           billing_type: ServiceBillingType.MONTHLY,
         },
+        OR: [
+          {
+            schedules: {
+              some: {
+                start_date: {
+                  lte: moment().subtract(1, "month").endOf("month").toDate(),
+                  gte: moment().subtract(1, "month").startOf("month").toDate(),
+                },
+              },
+            },
+          },
+          {
+            daycare_journals: {
+              some: {
+                date: {
+                  lte: moment().subtract(1, "month").endOf("month").toDate(),
+                  gte: moment().subtract(1, "month").startOf("month").toDate(),
+                },
+              },
+            },
+          },
+        ],
       },
       include: {
         schedules: {
+          include: {
+            clients: {
+              include: {
+                client: {
+                  select: {
+                    user_id: true,
+                  },
+                },
+              },
+            },
+          },
           where: {
             start_date: {
               lte: moment().subtract(1, "month").endOf("month").toDate(),
@@ -153,20 +229,27 @@ const releaseInvoiceMonthly = async () => {
           const service = parseJson(b.service_data, {
             keep: ["id", "price", "category", "title", "price_unit"],
           });
+          const schedules = b.schedules.filter(
+            (sc) =>
+              sc.clients?.length &&
+              (sc.clients[0].status == ClientScheduleStatus.PRESENT ||
+                sc.clients[0].status == null) &&
+              sc.clients[0].client?.user_id == userId
+          );
           let quantity = 0;
 
           if (service.category?.name == "Daycare") {
             quantity = 1;
           } else {
-            quantity = b.schedules.length;
+            quantity = schedules.length;
           }
 
           if (quantity > 0) {
             items.push({
-              start_date: b.schedules[0].start_date,
+              start_date: schedules[0].start_date,
               end_date:
-                b.schedules[b.schedules.length - 1].end_date ??
-                b.schedules[b.schedules.length - 1].start_date,
+                schedules[schedules.length - 1].end_date ??
+                schedules[schedules.length - 1].start_date,
               name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
               quantity,
               quantity_unit: service.price_unit,
@@ -199,7 +282,7 @@ const releaseInvoiceMonthly = async () => {
     }
 
     console.log(
-      `==== Monthly Invoices ====\nInvoices: ${invoices.length}\nTotal: Rp ${invoices.reduce((a, c) => (a += c.total), 0)}`
+      `- Invoices: ${invoices.length}\n- Total: Rp ${invoices.reduce((a, c) => (a += c.total), 0)}`
     );
   } catch (err) {
     console.error(err);
