@@ -540,6 +540,7 @@ model DaycareJournal {
   is_poop         Boolean?
   parent_note     String?   @db.LongText
 
+  is_present            Boolean  @default(false)
   morning_snack         String?
   noon_snack            String?
   afternoon_snack       String?

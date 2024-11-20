@@ -41,7 +41,7 @@ r.post(
 
 r.post(
   "/create-report-response",
-  authMiddleware(["ASR", "PSI", "TRS"]),
+  authMiddleware(["ASR", "PSI", "TRS", "ADM", "SDM"]),
   validatorMiddleware({ body: validator.createReportResponse }),
   controller.createReportResponse
 );
@@ -56,7 +56,11 @@ r.put(
 
 r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 
-r.put("/admin-confirm/:id", authMiddleware(["ADM"]), controller.adminConfirm);
+r.put(
+  "/admin-confirm/:id",
+  authMiddleware(["ADM", "SDM"]),
+  controller.adminConfirm
+);
 
 r.put(
   "/accept-agreement-document",
