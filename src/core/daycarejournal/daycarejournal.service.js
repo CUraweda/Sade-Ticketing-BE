@@ -38,7 +38,11 @@ class daycarejournalService extends BaseService {
             service: true,
           },
         },
-        logtime: true,
+        logtime: {
+          include: {
+            fee: true,
+          },
+        },
       },
     });
     return data;
