@@ -58,7 +58,19 @@ class InvoiceService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.invoice.create({ data: payload });
+    const data = await this.db.invoice.create({
+      data: {
+        ...payload,
+        items: {
+          createMany: {
+            data: payload.items,
+          },
+        },
+        fees: {
+          connect: payload.fees.map((feeId) => ({ id: feeId })),
+        },
+      },
+    });
     return data;
   };
 
