@@ -63,6 +63,7 @@ export const relationExist = (table) => {
 export const baseValidator = {
   browseQuery: Joi.object({
     search: Joi.string().optional().custom(containColon),
+    starts: Joi.string().optional().custom(containColon),
     where: Joi.string().optional().custom(containColon),
     in_: Joi.string().optional().custom(containColon),
     not_: Joi.string().optional().custom(containColon),
