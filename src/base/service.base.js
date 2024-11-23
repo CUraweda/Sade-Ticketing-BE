@@ -84,7 +84,7 @@ class BaseService {
           if (index === keys.length - 1) {
             temp[key] = {
               contains: val,
-              mode: "insensitive",
+              // mode: "insensitive",
             };
           } else {
             temp[key] = {};
