@@ -14,6 +14,7 @@ const generateRecurringSchedule = async () => {
 
     const schedules = await db.schedule.findMany({
       where: {
+        is_locked: true,
         recurring: {
           not: null,
         },
