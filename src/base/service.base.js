@@ -43,11 +43,11 @@ class BaseService {
       });
     }
 
-    // search
-    let likes = {};
-    if (query && query.search) {
+    // starts
+    let starts = {};
+    if (query && query.starts) {
       const ors = [];
-      query.search.split("+").forEach((q) => {
+      query.starts.split("+").forEach((q) => {
         const [col, val] = q.split(":");
         const keys = col.split(".");
         let current = {},
@@ -67,7 +67,35 @@ class BaseService {
         ors.push(current);
       });
 
-      likes["OR"] = ors;
+      starts["OR"] = ors;
+    }
+
+    // search
+    let search = {};
+    if (query && query.search) {
+      const ors = [];
+      query.search.split("+").forEach((q) => {
+        const [col, val] = q.split(":");
+        const keys = col.split(".");
+        let current = {},
+          temp = current;
+
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            temp[key] = {
+              contains: val,
+              // mode: "insensitive",
+            };
+          } else {
+            temp[key] = {};
+            temp = temp[key];
+          }
+        });
+
+        ors.push(current);
+      });
+
+      search["OR"] = ors;
     }
 
     // in
@@ -165,7 +193,7 @@ class BaseService {
 
     return {
       where: {
-        AND: [wheres, likes, in_, not_, isnull, gte, lte],
+        AND: [wheres, search, starts, in_, not_, isnull, gte, lte],
       },
       take: pagination["take"],
       skip: pagination["skip"],

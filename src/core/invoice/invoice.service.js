@@ -51,6 +51,9 @@ class InvoiceService extends BaseService {
           include: { fee: true },
         },
         items: true,
+        user: {
+          select: this.select(["email", "full_name", "id"]),
+        },
       },
     });
 
@@ -58,8 +61,43 @@ class InvoiceService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.invoice.create({ data: payload });
-    return data;
+    const data = await this.db.invoice.create({
+      data: {
+        ...payload,
+        total: 0,
+        items: {
+          createMany: {
+            data: payload.items,
+          },
+        },
+        fees: {
+          createMany: {
+            data: payload.fees,
+          },
+        },
+      },
+      include: {
+        items: true,
+        fees: {
+          include: {
+            fee: true,
+          },
+        },
+      },
+    });
+
+    const total =
+      data.items.reduce((a, c) => (a += c.price * c.quantity), 0) +
+      data.fees.reduce((a, c) => (a += c.fee.price * c.quantity), 0);
+
+    return await this.db.invoice.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        total,
+      },
+    });
   };
 
   update = async (id, payload) => {
