@@ -484,6 +484,8 @@ model Schedule {
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+
+  @@unique([start_date, end_date, parent_id])
 }
 
 model ClientSchedule {
