@@ -18,6 +18,11 @@ const generateRecurringSchedule = async () => {
           not: null,
         },
       },
+      include: {
+        clients: true,
+        doctors: true,
+        bookings: true,
+      },
     });
 
     schedules.forEach((sc) => {
@@ -39,21 +44,38 @@ const generateRecurringSchedule = async () => {
               .add(diff + 7, "days")
               .toDate()
           : null;
-        data.parent_id = data.id;
-        data.recurring = null;
       }
+
+      data.parent_id = data.id;
+      data.recurring = null;
+      data.clients = {
+        createMany: {
+          data: data.clients.map((c) => ({ client_id: c.client_id })),
+        },
+      };
+      data.doctors = {
+        connect: data.doctors.map((d) => ({ id: d.id })),
+      };
+      data.bookings = {
+        connect: data.bookings.map((b) => ({ id: b.id })),
+      };
 
       delete data.id;
 
       newSchedules.push(sc);
     });
 
-    const res = await db.schedule.createMany({
-      data: newSchedules,
-      skipDuplicates: true,
-    });
+    let createdCount = 0;
+    for (const sch of newSchedules) {
+      try {
+        await db.schedule.create({
+          data: sch,
+        });
+        createdCount++;
+      } catch {}
+    }
 
-    console.log(`- New schedules: ${res.count}`);
+    console.log(`- New schedules: ${createdCount}`);
   } catch (error) {
     console.error(error);
   }
