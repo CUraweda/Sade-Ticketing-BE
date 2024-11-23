@@ -18,7 +18,7 @@ export const InvoiceValidator = {
       .items(
         Joi.object({
           name: Joi.string().max(50).required(),
-          quantity: Joi.string().required(),
+          quantity: Joi.string().min(1).required(),
           quantity_unit: Joi.string().optional(),
           price: Joi.number().required(),
           note: Joi.string().max(50).optional(),
@@ -26,7 +26,12 @@ export const InvoiceValidator = {
       )
       .optional(),
     fees: Joi.array()
-      .items(Joi.string().external(relationExist("fee")).optional())
+      .items(
+        Joi.object({
+          fee_id: Joi.number().external(relationExist("fee")).required(),
+          quantity: Joi.number().min(1).required(),
+        })
+      )
       .optional(),
   }),
   update: Joi.object({
