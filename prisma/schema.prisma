@@ -348,6 +348,7 @@ model Fee {
   title       String  @unique
   description String?
   price       Float
+  tags        String?
 
   invoices         InvoiceFee[]
   daycare_logtimes DaycareLogTime[]
