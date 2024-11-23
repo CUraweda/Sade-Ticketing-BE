@@ -145,7 +145,7 @@ class BookingService extends BaseService {
         payload["quantity"] = moment(end).diff(start, "months") + 1;
 
       // for training, psikolog, therapy
-    } else {
+    } else if (payload.schedule_ids?.length) {
       // check schedule availability
       const schedules = await this.db.schedule.findMany({
         where: {
@@ -209,6 +209,23 @@ class BookingService extends BaseService {
       },
       data: payload,
     });
+
+    if (payload.status == BookingStatus.COMPLETED) {
+      await this.db.booking.update({
+        where: {
+          id,
+        },
+        data: {
+          schedules: {
+            updateMany: {
+              data: {
+                recurring: null,
+              },
+            },
+          },
+        },
+      });
+    }
   };
 
   delete = async (id) => {
