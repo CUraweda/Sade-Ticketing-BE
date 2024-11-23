@@ -22,6 +22,7 @@ const updateBookingComplete = async () => {
             id: true,
             start_date: true,
             end_date: true,
+            recurring: true,
           },
           orderBy: {
             start_date: "desc",
@@ -36,7 +37,8 @@ const updateBookingComplete = async () => {
         b.schedules.length &&
         moment(now).isAfter(
           b.schedules[0].end_date ?? b.schedules[0].start_date
-        )
+        ) &&
+        b.schedules.every((s) => s.recurring == null)
     );
 
     await db.booking.updateMany({

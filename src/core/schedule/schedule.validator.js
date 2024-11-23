@@ -7,6 +7,12 @@ export const ClientScheduleStatus = {
   PERMITTED: "permitted",
 };
 
+export const ScheduleRecurring = {
+  MONTHLY: "monthly",
+  DAILY: "daily",
+  WEEKLY: "weekly",
+};
+
 export const ScheduleValidator = {
   create: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -21,6 +27,9 @@ export const ScheduleValidator = {
       .items(Joi.string().external(relationExist("clientProfile")).required())
       .optional(),
     max_bookings: Joi.number().min(1).optional(),
+    recurring: Joi.string()
+      .valid(...Object.values(ScheduleRecurring))
+      .optional(),
   }),
   createByDoctor: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -29,6 +38,9 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
+    recurring: Joi.string()
+      .valid(...Object.values(ScheduleRecurring))
+      .optional(),
   }),
   setOvertime: Joi.object({
     minutes: Joi.number().min(1).required(),
@@ -40,6 +52,9 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
+    recurring: Joi.string()
+      .valid(...Object.values(ScheduleRecurring))
+      .optional(),
   }),
   setClient: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),

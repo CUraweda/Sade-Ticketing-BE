@@ -466,7 +466,9 @@ model Schedule {
   is_locked        Boolean   @default(false)
   overtime_minutes Int?      @default(0)
   max_bookings     Int?      @default(1)
+  recurring        String?
 
+  parent_id  String?
   creator_id String?
   service_id String?
 
@@ -477,9 +479,13 @@ model Schedule {
   reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
   new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
   bookings              Booking[]
+  parent                Schedule?           @relation("ScheduleParent", fields: [parent_id], references: [id])
+  children              Schedule[]          @relation("ScheduleParent")
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+
+  @@unique([start_date, end_date, parent_id])
 }
 
 model ClientSchedule {

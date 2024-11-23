@@ -12,6 +12,7 @@ class ScheduleService extends BaseService {
     const data = await this.db.schedule.findMany({
       ...q,
       include: this.select([
+        "service.category_id",
         "creator.full_name",
         "creator.avatar",
         "_count.bookings",
@@ -51,6 +52,9 @@ class ScheduleService extends BaseService {
         "bookings.client.first_name",
         "bookings.client.last_name",
         "bookings.status",
+        "parent.id",
+        "parent.start_date",
+        "parent.recurring",
       ]),
     });
     return data;

@@ -135,7 +135,7 @@ class BaseService {
       query.lte.split("+").forEach((q) => {
         const [col, val] = q.split(":");
         lte[col] = {
-          lte: isDateAble(val) ? moment(val).toDate() : val,
+          lte: isDateAble(val) ? moment(val).endOf("day").toDate() : val,
         };
       });
     }
