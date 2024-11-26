@@ -8,7 +8,7 @@ import {
 import { generateRecurringSchedule } from "./recurring-schedule.js";
 
 // set ongoing bookings to be completed everyday at 07:00 AM and 07:00 PM
-cron.schedule("0 7,19 * * *", updateBookingComplete);
+cron.schedule("0 */6 * * *", updateBookingComplete);
 
 // set overtime invoices to be overdue everyday at 01:00 AM
 cron.schedule("0 1 * * *", updateInvoiceOverdue);
@@ -20,4 +20,4 @@ cron.schedule("0 1 * * *", releaseInvoiceDaily);
 cron.schedule("0 1 1 * *", releaseInvoiceMonthly);
 
 // generate recurring schedule everyday at 23:00 AM
-cron.schedule("0 23 * * *", generateRecurringSchedule);
+cron.schedule("0 21 * * *", generateRecurringSchedule);
