@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { prism } from "../config/db.js";
-import { ScheduleRecurring } from "../core/schedule/schedule.validator.js";
 import moment from "moment";
 
 /** @type {PrismaClient} */
@@ -29,24 +28,28 @@ const generateRecurringSchedule = async () => {
     schedules.forEach((sc) => {
       const data = sc;
 
-      const current = moment();
+      if (
+        !data.recurring.includes(
+          moment().add(1, "day").format("ddd").toLowerCase()
+        )
+      )
+        return;
 
-      if (data.recurring == ScheduleRecurring.WEEKLY) {
-        const diff = moment(current)
-          .add(1, "days")
-          .diff(data.start_date, "days");
-        if (diff % 7 != 0) return;
-
-        data.start_date = moment(data.start_date)
-          .add(diff + 7, "days")
+      if (data.end_date) {
+        const diff = moment(data.end_date).diff(moment(data.start_date), "day");
+        data.end_date = moment(data.end_date)
+          .set({
+            date: moment().add(1, "day").date(),
+          })
+          .add(diff, "day")
           .toDate();
-        data.end_date = data.end_date
-          ? moment(data.end_date)
-              .add(diff + 7, "days")
-              .toDate()
-          : null;
       }
 
+      data.start_date = moment(data.start_date)
+        .set({
+          date: moment().add(1, "day").date(),
+        })
+        .toDate();
       data.parent_id = data.id;
       data.recurring = null;
       data.clients = {

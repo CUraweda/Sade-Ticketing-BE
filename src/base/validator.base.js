@@ -76,3 +76,11 @@ export const baseValidator = {
     order: Joi.string().optional().custom(orderPattern),
   }),
 };
+
+export const Workday = {
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
+};
