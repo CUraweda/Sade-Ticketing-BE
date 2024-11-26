@@ -20,4 +20,4 @@ cron.schedule("0 1 * * *", releaseInvoiceDaily);
 cron.schedule("0 1 1 * *", releaseInvoiceMonthly);
 
 // generate recurring schedule everyday at 23:00 AM
-cron.schedule("0 21 * * *", generateRecurringSchedule);
+cron.schedule("0 12 * * *", generateRecurringSchedule);
