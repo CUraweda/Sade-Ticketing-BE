@@ -64,7 +64,9 @@ class ScheduleService extends BaseService {
     const { doctors = [], clients = [], ...rest } = payload;
 
     if (rest.recurring && Array.isArray(rest.recurring))
-      rest["recurring"] = rest.recurring.join(",");
+      rest["recurring"] = rest.recurring.length
+        ? rest.recurring.join(",")
+        : null;
 
     const data = await this.db.schedule.create({
       data: {
@@ -86,7 +88,9 @@ class ScheduleService extends BaseService {
 
   update = async (id, payload) => {
     if (payload.recurring && Array.isArray(payload.recurring))
-      payload["recurring"] = payload.recurring.join(",");
+      payload["recurring"] = rest.recurring.length
+        ? payload.recurring.join(",")
+        : null;
 
     const data = await this.db.schedule.update({
       where: { id },

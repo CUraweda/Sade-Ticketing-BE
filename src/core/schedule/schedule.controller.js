@@ -153,7 +153,7 @@ class ScheduleController extends BaseController {
 
   setDoctor = this.wrapper(async (req, res) => {
     if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
-      await this.#service.checkCreator(id, req.user.id);
+      await this.#service.checkCreator(req.params.id, req.user.id);
 
     if (req.body.set == "add")
       await this.#service.addDoctor(req.params.id, req.body.doctor_id);
