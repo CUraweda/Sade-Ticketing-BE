@@ -93,6 +93,16 @@ class ScheduleController extends BaseController {
   create = this.wrapper(async (req, res) => {
     let payload = req.body;
     payload["creator_id"] = req.user.id;
+
+    if (!this.isAdmin(req)) {
+      const doctor = await this.#doctorService.findByUser(req.user.id);
+      if (!doctor)
+        throw new BadRequest(
+          "Akun anda belum ditautkan dengan profil spesialis"
+        );
+      else payload["doctors"] = [doctor.id];
+    }
+
     const data = await this.#service.create(payload);
     return this.created(res, data, "Jadwal berhasil dibuat");
   });

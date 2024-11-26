@@ -32,7 +32,7 @@ r.get(
 
 r.post(
   "/create",
-  authMiddleware(["ADM", "SDM"]),
+  authMiddleware(),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
