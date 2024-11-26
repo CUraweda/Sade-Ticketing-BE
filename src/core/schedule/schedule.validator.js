@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { relationExist } from "../../base/validator.base.js";
+import { relationExist, Workday } from "../../base/validator.base.js";
 
 export const ClientScheduleStatus = {
   PRESENT: "present",
@@ -27,8 +27,8 @@ export const ScheduleValidator = {
       .items(Joi.string().external(relationExist("clientProfile")).required())
       .optional(),
     max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.string()
-      .valid(...Object.values(ScheduleRecurring))
+    recurring: Joi.array()
+      .items(Joi.string().valid(...Object.values(Workday)))
       .optional(),
   }),
   createByDoctor: Joi.object({
@@ -38,8 +38,8 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.string()
-      .valid(...Object.values(ScheduleRecurring))
+    recurring: Joi.array()
+      .items(Joi.string().valid(...Object.values(Workday)))
       .optional(),
   }),
   setOvertime: Joi.object({
@@ -52,8 +52,8 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.string()
-      .valid(...Object.values(ScheduleRecurring))
+    recurring: Joi.array()
+      .items(Joi.string().valid(...Object.values(Workday)))
       .optional(),
   }),
   setClient: Joi.object({
