@@ -18,7 +18,7 @@ export const InvoiceValidator = {
       .items(
         Joi.object({
           name: Joi.string().max(50).required(),
-          quantity: Joi.string().min(1).required(),
+          quantity: Joi.number().min(1).required(),
           quantity_unit: Joi.string().optional(),
           price: Joi.number().required(),
           note: Joi.string().max(50).optional(),
