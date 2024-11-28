@@ -1,3 +1,4 @@
+import { BalanceType } from "@prisma/client";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { NotFound } from "../../lib/response/catch.js";
@@ -100,31 +101,52 @@ class PaymentsService extends BaseService {
     });
   };
 
-  update = async (id, payload) => {
-    const data = await this.db.payments.update({
-      where: { id },
-      data: payload,
-      include: this.select(["invoices.id"]),
-    });
+  update = async (id, payload) =>
+    this.db.$transaction(async (db) => {
+      const data = await db.payments.update({
+        where: { id },
+        data: payload,
+        include: this.select(["invoices.id"]),
+      });
 
-    // update related invoice status
-    await this.db.invoice.updateMany({
-      where: {
-        id: {
-          in: data.invoices.map((inv) => inv.id),
+      // update related invoice status
+      await db.invoice.updateMany({
+        where: {
+          id: {
+            in: data.invoices.map((inv) => inv.id),
+          },
         },
-      },
-      data: {
-        status: [PaymentStatus.COMPLETED, PaymentStatus.SETTLED].includes(
-          data.status
-        )
-          ? InvoiceStatus.PAID
-          : InvoiceStatus.ISSUED,
-      },
-    });
+        data: {
+          status: [PaymentStatus.COMPLETED, PaymentStatus.SETTLED].includes(
+            data.status
+          )
+            ? InvoiceStatus.PAID
+            : InvoiceStatus.ISSUED,
+        },
+      });
 
-    return data;
-  };
+      if (data.status == PaymentStatus.SETTLED) {
+        await db.balance.create({
+          data: {
+            title: "Transaksi batal",
+            amount: data.amount_paid,
+            type: BalanceType.OUT,
+            holder: "system",
+          },
+        });
+      } else {
+        await db.balance.create({
+          data: {
+            title: "Transaksi batal",
+            amount: data.amount_paid,
+            type: BalanceType.OUT,
+            holder: "system",
+          },
+        });
+      }
+
+      return data;
+    });
 
   delete = async (id) => {
     const data = await this.db.payments.delete({ where: { id } });
