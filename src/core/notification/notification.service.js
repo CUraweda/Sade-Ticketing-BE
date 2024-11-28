@@ -17,6 +17,17 @@ class NotificationService extends BaseService {
     return data;
   };
 
+  count = async (userId) =>
+    this.db.notification.count({
+      where: {
+        users: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+    });
+
   findById = async (id) => {
     const data = await this.db.notification.findUnique({ where: { id } });
     return data;
@@ -28,7 +39,10 @@ class NotificationService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.notification.update({ where: { id }, data: payload });
+    const data = await this.db.notification.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +52,4 @@ class NotificationService extends BaseService {
   };
 }
 
-export default NotificationService;  
+export default NotificationService;

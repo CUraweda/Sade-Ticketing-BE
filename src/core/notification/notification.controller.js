@@ -15,6 +15,11 @@ class NotificationController extends BaseController {
     return this.ok(res, data, "Banyak Notification berhasil didapatkan");
   });
 
+  count = this.wrapper(async (req, res) => {
+    const data = await this.#service.count(req.user.id);
+    return this.ok(res, data, "Jumlah notifikasi berhasil didapatkan");
+  });
+
   findById = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound("Notification tidak ditemukan");

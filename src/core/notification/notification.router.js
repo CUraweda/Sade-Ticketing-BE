@@ -3,6 +3,7 @@ import validatorMiddleware from "../../middlewares/validator.middleware.js";
 import NotificationController from "./notification.controller.js";
 import NotificationValidator from "./notification.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 const r = Router(),
   validator = NotificationValidator,
   controller = new NotificationController();
@@ -14,6 +15,8 @@ r.get(
 );
 
 r.get("/show-one/:id", controller.findById);
+
+r.get("/count", authMiddleware(), controller.count);
 
 r.post(
   "/create",
