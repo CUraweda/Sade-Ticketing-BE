@@ -101,8 +101,52 @@ class InvoiceService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.invoice.update({ where: { id }, data: payload });
-    return data;
+    await this.db.invoiceItem.deleteMany({ where: { invoice_id: id } });
+    await this.db.invoiceFee.deleteMany({ where: { invoice_id: id } });
+
+    const data = await this.db.invoice.update({
+      where: {
+        id: id,
+      },
+      data: {
+        ...payload,
+        total: 0,
+        items: {
+          createMany: {
+            data: payload.items,
+          },
+        },
+        fees: {
+          createMany: {
+            data: payload.fees,
+          },
+        },
+      },
+      include: {
+        items: true,
+        fees: {
+          include: {
+            fee: true,
+          },
+        },
+      },
+    });
+
+    const total =
+      data.items.reduce((a, c) => a + Number(c.price) * Number(c.quantity), 0) +
+      data.fees.reduce(
+        (a, c) => a + Number(c.fee.price) * Number(c.quantity),
+        0
+      );
+
+    return await this.db.invoice.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        total,
+      },
+    });
   };
 
   delete = async (id) => {

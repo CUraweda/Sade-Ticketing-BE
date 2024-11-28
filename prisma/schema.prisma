@@ -369,9 +369,9 @@ model InvoiceFee {
 }
 
 model InvoiceItem {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   invoice_id String
-  service_id String
+  service_id String?
 
   start_date    DateTime?
   end_date      DateTime?
