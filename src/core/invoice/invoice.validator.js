@@ -22,6 +22,8 @@ export const InvoiceValidator = {
           quantity_unit: Joi.string().optional(),
           price: Joi.number().required(),
           note: Joi.string().max(50).optional(),
+          start_date: Joi.date().optional(),
+          end_date: Joi.date().optional(),
         })
       )
       .optional(),
@@ -48,6 +50,8 @@ export const InvoiceValidator = {
           quantity_unit: Joi.string().optional(),
           price: Joi.number().required(),
           note: Joi.string().max(50).optional(),
+          start_date: Joi.date().optional(),
+          end_date: Joi.date().optional(),
         })
       )
       .optional(),
