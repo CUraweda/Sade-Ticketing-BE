@@ -176,6 +176,7 @@ class DashboardService extends BaseService {
             category: {
               select: {
                 name: true,
+                hex_color: true,
               },
             },
           },
@@ -195,8 +196,8 @@ class DashboardService extends BaseService {
       if (!groupedByService[categoryName]) {
         groupedByService[categoryName] = {
           data: Array(12).fill(0),
-          borderColor: "#000000",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: b.service.category?.hex_color ?? "",
+          backgroundColor: b.service.category?.hex_color ?? "",
         };
       }
 

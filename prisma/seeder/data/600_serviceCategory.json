@@ -1,14 +1,18 @@
 [
   {
-    "name": "Psikolog"
+    "name": "Psikolog",
+    "hex_color": "#2563eb"
   },
   {
-    "name": "Terapi"
+    "name": "Terapi",
+    "hex_color": "#22c55e"
   },
   {
-    "name": "Training"
+    "name": "Training",
+    "hex_color": "#f97316"
   },
   {
-    "name": "Daycare"
+    "name": "Daycare",
+    "hex_color": "#eab308"
   }
 ]
