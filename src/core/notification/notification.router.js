@@ -32,7 +32,7 @@ r.put(
   controller.update
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const notificationRouter = r;
 export default notificationRouter;

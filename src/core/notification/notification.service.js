@@ -1,5 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { Forbidden } from "../../lib/response/catch.js";
 
 class NotificationService extends BaseService {
   constructor() {
@@ -23,10 +24,18 @@ class NotificationService extends BaseService {
         users: {
           some: {
             user_id: userId,
+            is_read: false,
           },
         },
       },
     });
+
+  checkSender = async (id, userId) => {
+    const check = await this.db.notification.count({
+      where: { id, sender_id: userId },
+    });
+    if (!check) throw new Forbidden();
+  };
 
   findById = async (id) => {
     const data = await this.db.notification.findUnique({ where: { id } });

@@ -32,14 +32,6 @@ export const NotificationValidator = {
       .default(NotifType.NONE),
     color: Joi.string().hex().optional(),
     payload: Joi.object().optional(),
-    roles: Joi.array().items(Joi.string()).optional(),
-    users: Joi.array()
-      .items(
-        Joi.object({
-          user_id: Joi.string().required(),
-        })
-      )
-      .optional(),
   }),
 };
 

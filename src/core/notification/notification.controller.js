@@ -36,11 +36,13 @@ class NotificationController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
+    await this.#service.checkSender(req.params.id, req.user.id);
     const data = await this.#service.update(req.params.id, req.body);
     return this.ok(res, data, "Notification berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
+    await this.#service.checkSender(req.params.id, req.user.id);
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "Notification berhasil dihapus");
   });
