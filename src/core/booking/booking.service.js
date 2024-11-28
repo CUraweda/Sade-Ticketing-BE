@@ -364,6 +364,8 @@ class BookingService extends BaseService {
             createMany: {
               data: fees.items.map((f) => ({
                 fee_id: f.id,
+                name: f.title,
+                price: f.price,
                 quantity: f.quantity,
               })),
             },
