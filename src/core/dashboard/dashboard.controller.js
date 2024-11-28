@@ -32,6 +32,18 @@ class DashboardController extends BaseController {
     };
     return this.ok(res, data, "Chart dashboard admin berhasil didapatkan");
   });
+
+  userStats = this.wrapper(async (req, res) => {
+    const data = {
+      ongoing_booking_count: await this.#service.countOngoingBookingByUser(
+        req.user.id
+      ),
+      issued_invoice_count: await this.#service.countIssuedInvoices(
+        req.user.id
+      ),
+    };
+    return this.ok(res, data, "Stat dashboard user berhasil didapatkan");
+  });
 }
 
 export default DashboardController;

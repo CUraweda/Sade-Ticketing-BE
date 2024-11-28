@@ -142,6 +142,24 @@ class DashboardService extends BaseService {
     return data;
   };
 
+  countOngoingBookingByUser = async (userId) =>
+    this.db.booking.count({
+      where: {
+        status: BookingStatus.ONGOING,
+        client: {
+          user_id: userId,
+        },
+      },
+    });
+
+  countIssuedInvoices = async (userId) =>
+    this.db.invoice.count({
+      where: {
+        user_id: userId,
+        status: InvoiceStatus.ISSUED,
+      },
+    });
+
   bookingByServiceCategoryChart = async () => {
     const labels = [
       "Jan",
