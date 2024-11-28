@@ -116,6 +116,15 @@ class DashboardService extends BaseService {
     return data._sum.total;
   };
 
+  countActiveSpecialists = async () => {
+    const data = await this.db.doctorProfile.count({
+      where: {
+        is_active: true,
+      },
+    });
+    return data;
+  };
+
   countActiveBookings = async (query) => {
     const q = this.transformBrowseQuery(query);
 
