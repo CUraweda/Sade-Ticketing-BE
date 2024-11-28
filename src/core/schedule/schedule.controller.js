@@ -66,19 +66,20 @@ class ScheduleController extends BaseController {
 
     const bookings = (await this.#service.findById(req.params.id)).bookings;
 
-    const patient = await this.#questionnaireResponseService.findAll({
-      paginate: false,
-      where: role_code == RoleCode.USER ? `booking.user_id:${uid}` : undefined,
-      in_: `booking_id:${bookings?.map((b) => b.id)}`,
-    });
-    const reports = await this.#questionnaireResponseService.findAll({
-      paginate: false,
-      where:
-        role_code == RoleCode.USER
-          ? `booking_report.user_id:${uid}`
-          : undefined,
-      in_: `booking_report_id:${bookings?.map((b) => b.id)}`,
-    });
+    const patient = await this.#questionnaireResponseService.findAll(
+      {
+        paginate: false,
+        in_: `booking_id:${bookings?.map((b) => b.id)}`,
+      },
+      uid
+    );
+    const reports = await this.#questionnaireResponseService.findAll(
+      {
+        paginate: false,
+        in_: `booking_report_id:${bookings?.map((b) => b.id).join(",")}`,
+      },
+      uid
+    );
 
     return this.ok(
       res,
