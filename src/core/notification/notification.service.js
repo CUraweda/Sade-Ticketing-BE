@@ -9,7 +9,10 @@ class NotificationService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.notification.findMany({ ...q });
+    const data = await this.db.notification.findMany({
+      ...q,
+      include: this.select(["sender.full_name"]),
+    });
 
     if (query.paginate) {
       const countData = await this.db.notification.count({ where: q.where });
@@ -18,17 +21,28 @@ class NotificationService extends BaseService {
     return data;
   };
 
-  count = async (userId) =>
-    this.db.notification.count({
-      where: {
-        users: {
-          some: {
-            user_id: userId,
-            is_read: false,
+  count = async (userId) => {
+    const [unread, all, created] = await Promise.all([
+      this.db.notification.count({
+        where: {
+          users: {
+            some: { user_id: userId, is_read: false },
           },
         },
-      },
-    });
+      }),
+      this.db.notification.count({
+        where: {
+          users: {
+            some: { user_id: userId },
+          },
+        },
+      }),
+      this.db.notification.count({
+        where: { sender_id: userId },
+      }),
+    ]);
+    return { unread, all, created };
+  };
 
   checkSender = async (id, userId) => {
     const check = await this.db.notification.count({
