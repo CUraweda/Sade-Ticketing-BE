@@ -81,6 +81,17 @@ class NotificationService extends BaseService {
     return data;
   };
 
+  read = async (id, userId, read = true) =>
+    this.db.notificationUser.updateMany({
+      where: {
+        notification_id: id,
+        user_id: userId,
+      },
+      data: {
+        is_read: read,
+      },
+    });
+
   delete = async (id) => {
     const data = await this.db.notification.delete({ where: { id } });
     return data;

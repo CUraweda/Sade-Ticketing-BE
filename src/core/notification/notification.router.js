@@ -32,6 +32,8 @@ r.put(
   controller.update
 );
 
+r.put("/read/:id", authMiddleware(), controller.read);
+
 r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const notificationRouter = r;
