@@ -22,7 +22,7 @@ class NotificationService extends BaseService {
   };
 
   count = async (userId) => {
-    const [unread, all, created] = await Promise.all([
+    const [unread, read, created] = await Promise.all([
       this.db.notification.count({
         where: {
           users: {
@@ -33,7 +33,7 @@ class NotificationService extends BaseService {
       this.db.notification.count({
         where: {
           users: {
-            some: { user_id: userId },
+            some: { user_id: userId, is_read: true },
           },
         },
       }),
@@ -41,7 +41,7 @@ class NotificationService extends BaseService {
         where: { sender_id: userId },
       }),
     ]);
-    return { unread, all, created };
+    return { unread, read, created };
   };
 
   checkSender = async (id, userId) => {

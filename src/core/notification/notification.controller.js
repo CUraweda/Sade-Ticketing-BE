@@ -11,7 +11,13 @@ class NotificationController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    const q = this.joinBrowseQuery(
+      req.query,
+      "where",
+      `users.some.user_id:${req.user.id}`
+    );
+
+    const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Notification berhasil didapatkan");
   });
 
