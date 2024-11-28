@@ -24,7 +24,7 @@ class InvoiceService extends BaseService {
         },
         _count: {
           select: {
-            bookings: true,
+            items: true,
             fees: true,
           },
         },
