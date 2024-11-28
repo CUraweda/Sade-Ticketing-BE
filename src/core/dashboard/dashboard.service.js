@@ -5,6 +5,7 @@ import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
+import { BalanceType } from "@prisma/client";
 
 class DashboardService extends BaseService {
   constructor() {
@@ -83,23 +84,27 @@ class DashboardService extends BaseService {
     return data;
   };
 
-  totalIncome = async (query) => {
-    const q = this.transformBrowseQuery(query);
-
-    const data = await this.db.payments.aggregate({
-      where: {
-        ...q.where,
-        OR: [
-          { status: PaymentStatus.SETTLED },
-          { status: PaymentStatus.COMPLETED },
-        ],
-      },
+  totalIncome = async () => {
+    const in_ = await this.db.balance.aggregate({
       _sum: {
-        amount_paid: true,
+        amount: true,
+      },
+      where: {
+        holder: "system",
+        type: BalanceType.IN,
+      },
+    });
+    const out = await this.db.balance.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        holder: "system",
+        type: BalanceType.OUT,
       },
     });
 
-    return data._sum?.amount_paid;
+    return in_._sum.amount - out._sum.amount;
   };
 
   totalAmountIssuedInvoice = async (query) => {

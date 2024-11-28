@@ -1,3 +1,4 @@
+import { BalanceType } from "@prisma/client";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { NotFound } from "../../lib/response/catch.js";
@@ -122,6 +123,26 @@ class PaymentsService extends BaseService {
           : InvoiceStatus.ISSUED,
       },
     });
+
+    if (data.status == PaymentStatus.SETTLED) {
+      await this.db.balance.create({
+        data: {
+          title: "Transaksi masuk",
+          amount: data.amount_paid,
+          type: BalanceType.IN,
+          holder: "system",
+        },
+      });
+    } else {
+      await this.db.balance.create({
+        data: {
+          title: "Transaksi batal",
+          amount: data.amount_paid,
+          type: BalanceType.OUT,
+          holder: "system",
+        },
+      });
+    }
 
     return data;
   };

@@ -603,3 +603,20 @@ model Document {
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
+
+// BALANCE
+enum BalanceType {
+  IN
+  OUT
+}
+
+model Balance {
+  id     String      @id @default(uuid())
+  title  String
+  amount Float
+  holder String // the value will be system OR DoctorProfile.id
+  type   BalanceType
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
