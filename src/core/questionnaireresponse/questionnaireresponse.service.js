@@ -6,10 +6,21 @@ class QuestionnaireResponseService extends BaseService {
     super(prism);
   }
 
-  findAll = async (query) => {
+  findAll = async (query, userId) => {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.questionnaireResponse.findMany({
       ...q,
+      where: {
+        ...q.where,
+        OR: [
+          { user_id: userId },
+          {
+            client: {
+              user_id: userId,
+            },
+          },
+        ],
+      },
       include: this.select(["questionnaire.title"]),
     });
 
