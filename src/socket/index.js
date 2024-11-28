@@ -28,6 +28,7 @@ const initSocket = (server) => {
     console.log(`[SOCKET] user '${data.uid}' joined`);
 
     socket.on("disconnect", () => {
+      socket.leave(data.uid);
       console.log(`[SOCKET] user '${data.uid}' disconnected`);
     });
   });
