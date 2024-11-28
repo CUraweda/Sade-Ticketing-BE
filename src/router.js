@@ -24,6 +24,7 @@ import dashboardRouter from "./core/dashboard/dashboard.router.js";
 import daycarejournalRouter from "./core/daycarejournal/daycarejournal.router.js";
 import daycarelogtimeRouter from "./core/daycarelogtime/daycarelogtime.router.js";
 import documentRouter from "./core/document/document.router.js";
+import notificationRouter from "./core/notification/notification.router.js";
 
 const r = Router();
 
@@ -52,6 +53,7 @@ r.use("/dashboard", dashboardRouter);
 r.use("/daycare-journal", daycarejournalRouter);
 r.use("/daycare-log-time", daycarelogtimeRouter);
 r.use("/document", documentRouter);
+r.use("/notification", notificationRouter);
 
 const appRouter = r;
 export default appRouter;

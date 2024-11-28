@@ -28,7 +28,10 @@ class NotificationController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    const data = await this.#service.create(req.body);
+    const payload = req.body;
+    payload["sender_id"] = req.user.id;
+
+    const data = await this.#service.create(payload);
     return this.created(res, data, "Notification berhasil dibuat");
   });
 

@@ -34,7 +34,19 @@ class NotificationService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.notification.create({ data: payload });
+    const data = await this.db.notification.create({
+      data: {
+        ...payload,
+        users: {
+          createMany: {
+            data: payload.users.map((u) => ({ user_id: u.user_id })),
+          },
+        },
+        roles: {
+          connect: payload.roles,
+        },
+      },
+    });
     return data;
   };
 

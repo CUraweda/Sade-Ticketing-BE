@@ -20,12 +20,14 @@ r.get("/count", authMiddleware(), controller.count);
 
 r.post(
   "/create",
+  authMiddleware(),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
+  authMiddleware(),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
