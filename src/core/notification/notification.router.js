@@ -21,7 +21,7 @@ r.get("/count", authMiddleware(), controller.count);
 
 r.post(
   "/create",
-  authMiddleware(),
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );

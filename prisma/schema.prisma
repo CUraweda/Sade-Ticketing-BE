@@ -62,11 +62,12 @@ model Notification {
   id        String  @id @default(uuid())
   sender_id String?
 
-  title   String
-  message String
-  type    String
-  color   String?
-  payload String? @db.LongText
+  title     String
+  message   String
+  type      String
+  color     String?
+  payload   String? @db.LongText
+  is_system Boolean @default(false)
 
   roles  Role[]
   users  NotificationUser[]
