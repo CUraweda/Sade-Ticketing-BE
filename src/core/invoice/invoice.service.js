@@ -24,7 +24,7 @@ class InvoiceService extends BaseService {
         },
         _count: {
           select: {
-            bookings: true,
+            items: true,
             fees: true,
           },
         },
@@ -64,7 +64,9 @@ class InvoiceService extends BaseService {
     const data = await this.db.invoice.create({
       data: {
         ...payload,
-        total: 0,
+        total:
+          payload.items.reduce((a, c) => (a += c.price * c.quantity), 0) +
+          payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
         items: {
           createMany: {
             data: payload.items,
@@ -76,32 +78,33 @@ class InvoiceService extends BaseService {
           },
         },
       },
-      include: {
-        items: true,
+    });
+
+    return data;
+  };
+
+  update = async (id, payload) => {
+    const data = await this.db.invoice.update({
+      where: { id },
+      data: {
+        ...payload,
+        total:
+          payload.items.reduce((a, c) => (a += c.price * c.quantity), 0) +
+          payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+        items: {
+          deleteMany: {},
+          createMany: {
+            data: payload.items,
+          },
+        },
         fees: {
-          include: {
-            fee: true,
+          deleteMany: {},
+          createMany: {
+            data: payload.fees,
           },
         },
       },
     });
-
-    const total =
-      data.items.reduce((a, c) => (a += c.price * c.quantity), 0) +
-      data.fees.reduce((a, c) => (a += c.fee.price * c.quantity), 0);
-
-    return await this.db.invoice.update({
-      where: {
-        id: data.id,
-      },
-      data: {
-        total,
-      },
-    });
-  };
-
-  update = async (id, payload) => {
-    const data = await this.db.invoice.update({ where: { id }, data: payload });
     return data;
   };
 

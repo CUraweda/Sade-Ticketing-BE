@@ -360,18 +360,21 @@ model Fee {
 
 model InvoiceFee {
   id         Int    @id @default(autoincrement())
-  quantity   Int    @default(1)
-  fee_id     Int
   invoice_id String
+  fee_id     Int?
 
-  fee     Fee     @relation(fields: [fee_id], references: [id], onDelete: Cascade)
+  name     String
+  quantity Int    @default(1)
+  price    Float
+
+  fee     Fee?    @relation(fields: [fee_id], references: [id], onDelete: SetNull)
   invoice Invoice @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
 }
 
 model InvoiceItem {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   invoice_id String
-  service_id String
+  service_id String?
 
   start_date    DateTime?
   end_date      DateTime?
