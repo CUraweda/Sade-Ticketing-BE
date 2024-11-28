@@ -4,6 +4,7 @@ import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
+import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
 
 class DashboardService extends BaseService {
   constructor() {
@@ -231,6 +232,84 @@ class DashboardService extends BaseService {
     }
 
     return { labels, series };
+  };
+
+  doctorClients = (doctorId) =>
+    this.db.clientProfile.count({
+      where: {
+        schedules: {
+          some: {
+            schedule: {
+              doctors: {
+                some: {
+                  id: doctorId,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+  doctorWorkTime = async (doctorId) => {
+    const data = await this.db.schedule.findMany({
+      where: {
+        clients: {
+          some: {
+            status: ClientScheduleStatus.PRESENT,
+          },
+        },
+        doctors: {
+          some: {
+            id: doctorId,
+          },
+        },
+        end_date: {
+          not: null,
+        },
+      },
+      select: {
+        start_date: true,
+        end_date: true,
+      },
+    });
+
+    const minutes = data.reduce(
+      (a, c) => (a += moment(c.end_date).diff(moment(c.start_date), "minutes")),
+      0
+    );
+
+    return minutes;
+  };
+
+  doctorCompletedSchedules = async (doctorId) => {
+    const total = await this.db.schedule.count({
+      where: {
+        is_locked: true,
+        doctors: {
+          some: {
+            id: doctorId,
+          },
+        },
+      },
+    });
+    const completed = await this.db.schedule.count({
+      where: {
+        bookings: {
+          every: {
+            status: BookingStatus.COMPLETED,
+          },
+        },
+        is_locked: true,
+        doctors: {
+          some: {
+            id: doctorId,
+          },
+        },
+      },
+    });
+
+    return (completed / total) * 100;
   };
 }
 

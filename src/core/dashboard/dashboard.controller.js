@@ -1,13 +1,16 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
+import DoctorService from "../doctor/doctor.service.js";
 import DashboardService from "./dashboard.service.js";
 
 class DashboardController extends BaseController {
   #service;
+  #doctorService;
 
   constructor() {
     super();
     this.#service = new DashboardService();
+    this.#doctorService = new DoctorService();
   }
 
   topServices = this.wrapper(async (req, res) => {
@@ -43,6 +46,22 @@ class DashboardController extends BaseController {
       ),
     };
     return this.ok(res, data, "Stat dashboard user berhasil didapatkan");
+  });
+
+  doctorStats = this.wrapper(async (req, res) => {
+    let data = {};
+
+    const doctor = await this.#doctorService.findByUser(req.user.id);
+    if (doctor)
+      data = {
+        work_time_minute: await this.#service.doctorWorkTime(doctor.id),
+        total_clients: await this.#service.doctorClients(doctor.id),
+        completed_schedules: await this.#service.doctorCompletedSchedules(
+          doctor.id
+        ),
+      };
+
+    return this.ok(res, data, "Stat dashboard doctor berhasil didapatkan");
   });
 }
 
