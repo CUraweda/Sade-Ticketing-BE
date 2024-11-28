@@ -22,5 +22,7 @@ r.get(
   controller.adminStats
 );
 
+r.get("/admin-charts", authMiddleware(["ADM", "SDM"]), controller.adminCharts);
+
 const dashboardRouter = r;
 export default dashboardRouter;

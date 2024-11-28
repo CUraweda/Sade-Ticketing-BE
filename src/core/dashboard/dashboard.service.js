@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
@@ -139,6 +140,78 @@ class DashboardService extends BaseService {
     });
 
     return data;
+  };
+
+  bookingByServiceCategoryChart = async () => {
+    const labels = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const bookings = await this.db.booking.findMany({
+      where: {
+        status: {
+          in: [BookingStatus.COMPLETED, BookingStatus.ONGOING],
+        },
+        created_at: {
+          gte: moment().startOf("year"),
+          lte: moment().endOf("year").add(1, "day"),
+        },
+      },
+      select: {
+        id: true,
+        created_at: true,
+        service: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        created_at: "asc",
+      },
+    });
+
+    const series = [];
+    const groupedByService = {};
+
+    bookings.forEach((b) => {
+      const categoryName = b.service.category.name;
+
+      if (!groupedByService[categoryName]) {
+        groupedByService[categoryName] = {
+          data: Array(12).fill(0),
+          borderColor: "#000000",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+        };
+      }
+
+      const bookingMonth = moment(b.created_at).month();
+      groupedByService[categoryName].data[bookingMonth] += 1;
+    });
+
+    for (const [
+      label,
+      { data, backgroundColor, borderColor },
+    ] of Object.entries(groupedByService)) {
+      series.push({ label, data, backgroundColor, borderColor });
+    }
+
+    return { labels, series };
   };
 }
 

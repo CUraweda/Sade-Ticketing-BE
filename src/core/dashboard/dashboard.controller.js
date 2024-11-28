@@ -24,6 +24,14 @@ class DashboardController extends BaseController {
     };
     return this.ok(res, data, "Stat dashboard admin berhasil didapatkan");
   });
+
+  adminCharts = this.wrapper(async (req, res) => {
+    const data = {
+      booking_by_service_category:
+        await this.#service.bookingByServiceCategoryChart(),
+    };
+    return this.ok(res, data, "Chart dashboard admin berhasil didapatkan");
+  });
 }
 
 export default DashboardController;
