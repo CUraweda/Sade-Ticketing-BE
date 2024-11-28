@@ -46,6 +46,7 @@ export const doctorFields = {
     dob: ["USR"],
     address: ["USR"],
     sex: [],
+    grade_id: [],
     is_active: [],
     created_at: [],
     updated_at: [],
@@ -54,6 +55,7 @@ export const doctorFields = {
     user: ["USR"],
     location: [],
     specialisms: [],
+    grade: [],
   },
   get(role = "") {
     return Object.keys(this.fields).filter((k) =>

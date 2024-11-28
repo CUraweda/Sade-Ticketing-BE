@@ -53,6 +53,7 @@ class DoctorService extends BaseService {
         "user.full_name",
         "user.email",
         "user.avatar",
+        "grade.name",
       ]),
     });
     return data;
