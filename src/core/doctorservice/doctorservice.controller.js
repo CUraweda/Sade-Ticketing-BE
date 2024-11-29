@@ -1,17 +1,27 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
+import DoctorService from "../doctor/doctor.service.js";
 import DoctorServiceService from "./doctorservice.service.js";
 
 class DoctorServiceController extends BaseController {
   #service;
+  #doctorService;
 
   constructor() {
     super();
     this.#service = new DoctorServiceService();
+    this.#doctorService = new DoctorService();
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(req.query);
+    let q = req.query;
+
+    if (!this.isAdmin(req)) {
+      const doctor = await this.#doctorService.findByUser(req.user.id);
+      q = this.joinBrowseQuery(q, "where", `doctor_id:${doctor.id}`);
+    }
+
+    const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak DoctorService berhasil didapatkan");
   });
 
