@@ -46,14 +46,6 @@ r.post(
   controller.createReportResponse
 );
 
-// unused. will be removed soon
-r.put(
-  "/set-schedules/:id",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.setSchedules }),
-  controller.setSchedules
-);
-
 r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 
 r.put(
