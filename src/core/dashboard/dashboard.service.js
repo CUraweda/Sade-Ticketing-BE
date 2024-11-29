@@ -84,13 +84,15 @@ class DashboardService extends BaseService {
     return data;
   };
 
-  totalIncome = async () => {
+  totalIncome = async (holder) => {
+    if (!holder) return 0;
+
     const in_ = await this.db.balance.aggregate({
       _sum: {
         amount: true,
       },
       where: {
-        holder: "system",
+        holder: holder,
         type: BalanceType.IN,
       },
     });
@@ -99,7 +101,7 @@ class DashboardService extends BaseService {
         amount: true,
       },
       where: {
-        holder: "system",
+        holder: holder,
         type: BalanceType.OUT,
       },
     });
@@ -315,6 +317,61 @@ class DashboardService extends BaseService {
     });
 
     return (completed / total) * 100;
+  };
+
+  doctorServiceStat = async (doctorId) => {
+    const services = await this.db.service.findMany({
+      where: {
+        doctors: {
+          some: {
+            doctor_id: doctorId,
+          },
+        },
+      },
+      include: {
+        category: true,
+        doctors: {
+          where: {
+            doctor_id: doctorId,
+          },
+          select: {
+            salary: true,
+          },
+        },
+        schedules: {
+          where: {
+            doctors: {
+              some: {
+                id: doctorId,
+              },
+            },
+          },
+          include: {
+            bookings: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return services.map((s) => {
+      const scheduleComplete = s.schedules.filter((sc) =>
+        sc.bookings.every((b) => b.status == BookingStatus.COMPLETED)
+      ).length;
+
+      return {
+        name: s.title,
+        category: s.category?.name,
+        category_color: s.category?.hex_color,
+        schedule_count: s.schedules.length,
+        schedule_complete_count: scheduleComplete,
+        received_salary:
+          scheduleComplete * (s.doctors.length ? s.doctors[0].salary : 0),
+      };
+    });
   };
 }
 
