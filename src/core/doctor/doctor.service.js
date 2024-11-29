@@ -37,7 +37,16 @@ class DoctorService extends BaseService {
       where: {
         user_id,
       },
-      include: this.select(["location.id", "location.title", "specialisms"]),
+      include: this.select([
+        "location.id",
+        "location.title",
+        "specialisms",
+        "user.id",
+        "user.full_name",
+        "user.email",
+        "user.avatar",
+        "grade",
+      ]),
     });
     return data;
   };
