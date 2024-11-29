@@ -212,6 +212,8 @@ model DoctorService {
 
   doctor  DoctorProfile @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
   service Service       @relation(fields: [service_id], references: [id], onDelete: Cascade)
+
+  @@unique([doctor_id, service_id])
 }
 
 // CLIENT / PATIENT
