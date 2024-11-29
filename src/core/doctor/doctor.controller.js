@@ -47,6 +47,16 @@ class DoctorController extends BaseController {
     return this.ok(res, data, "Doctor berhasil diperbarui");
   });
 
+  linkUser = this.wrapper(async (req, res) => {
+    let user_id = req.params.user_id;
+
+    const doctor = await this.#service.findById(req.params.id);
+    if (doctor.user_id) user_id = null;
+
+    const data = await this.#service.update(req.params.id, { user_id });
+    return this.ok(res, data, "Penautan akun berhasil diperbarui");
+  });
+
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     this.noContent(res, "Doctor berhasil dihapus");

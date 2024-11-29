@@ -124,9 +124,11 @@ model Specialism {
 }
 
 model DoctorProfile {
-  id           String    @id @default(uuid())
-  user_id      String?   @unique
-  location_id  Int?
+  id          String  @id @default(uuid())
+  user_id     String? @unique
+  location_id Int?
+  grade_id    Int?
+
   category     String
   title        String?
   first_name   String
@@ -142,12 +144,21 @@ model DoctorProfile {
   location                Location?               @relation(fields: [location_id], references: [id], onDelete: SetNull)
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   specialisms             Specialism[]
-  services                Service[]
+  grade                   DoctorGrade?            @relation(fields: [grade_id], references: [id], onDelete: SetNull)
+  services                DoctorService[]
   service_recommendations ServiceRecommendation[]
   schedules               Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model DoctorGrade {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  hex_color String?
+
+  doctors DoctorProfile[]
 }
 
 // SERVICE 
@@ -177,7 +188,7 @@ model Service {
 
   category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
   location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
-  doctors                      DoctorProfile[]
+  doctors                      DoctorService[]
   required_services            Service[]                   @relation("RequiredServices")
   prerequisite_For             Service[]                   @relation("RequiredServices")
   questionnaires               Questionnaire[]             @relation("ServiceQuestionnaires")
@@ -190,6 +201,19 @@ model Service {
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model DoctorService {
+  id         Int    @id @default(autoincrement())
+  doctor_id  String
+  service_id String
+
+  salary Float
+
+  doctor  DoctorProfile @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  service Service       @relation(fields: [service_id], references: [id], onDelete: Cascade)
+
+  @@unique([doctor_id, service_id])
 }
 
 // CLIENT / PATIENT

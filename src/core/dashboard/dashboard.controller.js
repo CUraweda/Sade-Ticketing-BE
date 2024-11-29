@@ -1,5 +1,5 @@
 import BaseController from "../../base/controller.base.js";
-import { NotFound } from "../../lib/response/catch.js";
+import { Forbidden, NotFound } from "../../lib/response/catch.js";
 import DoctorService from "../doctor/doctor.service.js";
 import DashboardService from "./dashboard.service.js";
 
@@ -20,7 +20,7 @@ class DashboardController extends BaseController {
 
   adminStats = this.wrapper(async (req, res) => {
     const data = {
-      total_income: await this.#service.totalIncome(req.query),
+      total_income: await this.#service.totalIncome("system"),
       pending_income: await this.#service.totalAmountIssuedInvoice(req.query),
       active_booking_count: await this.#service.countActiveBookings(req.query),
       active_specialist_count: await this.#service.countActiveSpecialists(),
@@ -48,20 +48,56 @@ class DashboardController extends BaseController {
     return this.ok(res, data, "Stat dashboard user berhasil didapatkan");
   });
 
-  doctorStats = this.wrapper(async (req, res) => {
-    let data = {};
+  getDoctorId = async (req) => {
+    let doctorId = req.params.doctor_id;
 
-    const doctor = await this.#doctorService.findByUser(req.user.id);
-    if (doctor)
-      data = {
-        work_time_minute: await this.#service.doctorWorkTime(doctor.id),
-        total_clients: await this.#service.doctorClients(doctor.id),
-        completed_schedules: await this.#service.doctorCompletedSchedules(
-          doctor.id
-        ),
-      };
+    if (!this.isAdmin(req)) {
+      const doctor = await this.#doctorService.findByUser(req.user.id);
+      if (!doctor) throw new Forbidden();
+      doctorId = doctor.id;
+    }
+
+    return doctorId;
+  };
+
+  doctorStats = this.wrapper(async (req, res) => {
+    const doctorId = await this.getDoctorId(req);
+
+    const data = {
+      balance: await this.#service.totalIncome(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
+      work_time_minute: await this.#service.doctorWorkTime(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
+      total_clients: await this.#service.doctorClients(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
+      completed_schedules: await this.#service.doctorCompletedSchedules(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
+    };
 
     return this.ok(res, data, "Stat dashboard doctor berhasil didapatkan");
+  });
+
+  doctorServicesStat = this.wrapper(async (req, res) => {
+    const doctorId = await this.getDoctorId(req);
+
+    const data = await this.#service.doctorServiceStat(
+      doctorId,
+      req.query.start_date,
+      req.query.end_date
+    );
+    return this.ok(res, data, "Stat layanan doctor berhasil didapatkan");
   });
 }
 

@@ -38,6 +38,12 @@ r.put(
 );
 
 r.put(
+  "/link-user/:id/:user_id",
+  authMiddleware(["ADM", "SDM"]),
+  controller.linkUser
+);
+
+r.put(
   "/set-specialism/:id",
   authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.setSpecialism }),

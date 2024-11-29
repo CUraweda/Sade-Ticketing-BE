@@ -84,14 +84,23 @@ class DashboardService extends BaseService {
     return data;
   };
 
-  totalIncome = async () => {
+  totalIncome = async (holder, start, end) => {
+    if (!holder) return 0;
+
     const in_ = await this.db.balance.aggregate({
       _sum: {
         amount: true,
       },
       where: {
-        holder: "system",
+        holder: holder,
         type: BalanceType.IN,
+        ...(start &&
+          end && {
+            created_at: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
       },
     });
     const out = await this.db.balance.aggregate({
@@ -99,8 +108,15 @@ class DashboardService extends BaseService {
         amount: true,
       },
       where: {
-        holder: "system",
+        holder: holder,
         type: BalanceType.OUT,
+        ...(start &&
+          end && {
+            created_at: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
       },
     });
 
@@ -239,12 +255,19 @@ class DashboardService extends BaseService {
     return { labels, series };
   };
 
-  doctorClients = (doctorId) =>
+  doctorClients = (doctorId, start, end) =>
     this.db.clientProfile.count({
       where: {
         schedules: {
           some: {
             schedule: {
+              ...(start &&
+                end && {
+                  start_date: {
+                    gte: moment(start).toDate(),
+                    lte: moment(end).toDate(),
+                  },
+                }),
               doctors: {
                 some: {
                   id: doctorId,
@@ -256,7 +279,7 @@ class DashboardService extends BaseService {
       },
     });
 
-  doctorWorkTime = async (doctorId) => {
+  doctorWorkTime = async (doctorId, start, end) => {
     const data = await this.db.schedule.findMany({
       where: {
         clients: {
@@ -272,6 +295,13 @@ class DashboardService extends BaseService {
         end_date: {
           not: null,
         },
+        ...(start &&
+          end && {
+            start_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
       },
       select: {
         start_date: true,
@@ -287,7 +317,7 @@ class DashboardService extends BaseService {
     return minutes;
   };
 
-  doctorCompletedSchedules = async (doctorId) => {
+  doctorCompletedSchedules = async (doctorId, start, end) => {
     const total = await this.db.schedule.count({
       where: {
         is_locked: true,
@@ -296,6 +326,13 @@ class DashboardService extends BaseService {
             id: doctorId,
           },
         },
+        ...(start &&
+          end && {
+            start_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
       },
     });
     const completed = await this.db.schedule.count({
@@ -311,10 +348,79 @@ class DashboardService extends BaseService {
             id: doctorId,
           },
         },
+        ...(start &&
+          end && {
+            start_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
       },
     });
 
     return (completed / total) * 100;
+  };
+
+  doctorServiceStat = async (doctorId, start_date, end_date) => {
+    const services = await this.db.service.findMany({
+      where: {
+        doctors: {
+          some: {
+            doctor_id: doctorId,
+          },
+        },
+      },
+      include: {
+        category: true,
+        doctors: {
+          where: {
+            doctor_id: doctorId,
+          },
+          select: {
+            salary: true,
+          },
+        },
+        schedules: {
+          where: {
+            ...(start_date &&
+              end_date && {
+                start_date: {
+                  gte: moment(start_date).toDate(),
+                  lte: moment(end_date).toDate(),
+                },
+              }),
+            doctors: {
+              some: {
+                id: doctorId,
+              },
+            },
+          },
+          include: {
+            bookings: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return services.map((s) => {
+      const scheduleComplete = s.schedules.filter((sc) =>
+        sc.bookings.every((b) => b.status == BookingStatus.COMPLETED)
+      ).length;
+
+      return {
+        name: s.title,
+        category: s.category?.name,
+        category_color: s.category?.hex_color,
+        schedule_count: s.schedules.length,
+        schedule_complete_count: scheduleComplete,
+        received_salary:
+          scheduleComplete * (s.doctors.length ? s.doctors[0].salary : 0),
+      };
+    });
   };
 }
 
