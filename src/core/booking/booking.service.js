@@ -257,42 +257,97 @@ class BookingService extends BaseService {
     return find;
   };
 
-  userConfirm = async (ids, payload) => {
-    const requestedSchedules = await this.db.schedule.findMany({
-      where: { bookings: { some: { id: { in: ids } } } },
+  // unused. will be removed soon
+  setSchedules = async (id, payload) => {
+    // check schedule availability
+    const schedules = await this.db.schedule.findMany({
+      where: {
+        id: {
+          in: payload.schedule_ids,
+        },
+        bookings: {
+          none: {
+            id,
+          },
+        },
+      },
       select: {
-        id: true,
         start_date: true,
         max_bookings: true,
         _count: {
           select: {
-            bookings: { where: { status: { not: BookingStatus.DRAFT } } },
+            bookings: true,
           },
         },
       },
     });
 
-    const blockedSchedules = [];
-    requestedSchedules.forEach((rsc) => {
-      if (rsc._count.bookings >= rsc.max_bookings) blockedSchedules.push(rsc);
-    });
+    if (schedules.filter((s) => s._count.bookings >= s.max_bookings).length)
+      throw new BadRequest(
+        `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
+      );
 
-    if (blockedSchedules.length) {
-      for (const id of ids) {
-        await this.db.booking.update({
-          where: { id },
+    return await this.db.$transaction(async (db) => {
+      // disconnect previous related schedules
+      const prevScheduleIds = (
+        await db.schedule.findMany({
+          where: {
+            bookings: {
+              some: {
+                id,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        })
+      ).map((sc) => sc.id);
+
+      for (let scheduleId of prevScheduleIds) {
+        await db.schedule.update({
+          where: {
+            id: scheduleId,
+          },
           data: {
-            schedules: {
-              disconnect: blockedSchedules.map((bsc) => ({ id: bsc.id })),
+            bookings: {
+              disconnect: {
+                id,
+              },
             },
           },
         });
       }
-      throw new BadRequest(
-        `Jadwal pada tanggal ${blockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
-      );
-    }
 
+      // update booking by payload
+      await db.booking.update({
+        where: {
+          id: id,
+        },
+        data: {
+          compliant: payload.compliant,
+          quantity: payload.quantity,
+        },
+      });
+
+      // update schedules and connect to booking
+      for (let scheduleId of payload.schedule_ids)
+        await db.schedule.update({
+          where: {
+            id: scheduleId,
+          },
+          data: {
+            bookings: {
+              connect: {
+                id,
+              },
+            },
+          },
+        });
+    });
+  };
+
+  userConfirm = async ([ids], payload) => {
     const items = await this.#invoiceService.getItems(null, ids);
     const fees = await this.#invoiceService.getFees(null, ids);
 
