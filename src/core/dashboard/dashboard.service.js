@@ -5,7 +5,10 @@ import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
-import { BalanceType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+const { BalanceType } = prisma;
 
 class DashboardService extends BaseService {
   constructor() {
