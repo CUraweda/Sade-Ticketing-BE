@@ -27,6 +27,13 @@ class DashboardService extends BaseService {
             },
           },
           bookings: {
+            where: {
+              OR: [
+                { status: BookingStatus.ONGOING },
+                { status: BookingStatus.COMPLETED },
+              ],
+            },
+
             select: {
               invoices: {
                 select: {
