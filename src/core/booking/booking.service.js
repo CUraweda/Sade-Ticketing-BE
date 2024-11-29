@@ -163,7 +163,13 @@ class BookingService extends BaseService {
           max_bookings: true,
           _count: {
             select: {
-              bookings: true,
+              bookings: {
+                where: {
+                  status: {
+                    not: BookingStatus.DRAFT,
+                  },
+                },
+              },
             },
           },
         },
@@ -251,6 +257,41 @@ class BookingService extends BaseService {
   };
 
   userConfirm = async (ids, payload) => {
+    const requestedSchedules = await this.db.schedule.findMany({
+      where: { bookings: { some: { id: { in: ids } } } },
+      select: {
+        id: true,
+        start_date: true,
+        max_bookings: true,
+        _count: {
+          select: {
+            bookings: { where: { status: { not: BookingStatus.DRAFT } } },
+          },
+        },
+      },
+    });
+
+    const blockedSchedules = [];
+    requestedSchedules.forEach((rsc) => {
+      if (rsc._count.bookings >= rsc.max_bookings) blockedSchedules.push(rsc);
+    });
+
+    if (blockedSchedules.length) {
+      for (const id of ids) {
+        await this.db.booking.update({
+          where: { id },
+          data: {
+            schedules: {
+              disconnect: blockedSchedules.map((bsc) => ({ id: bsc.id })),
+            },
+          },
+        });
+      }
+      throw new BadRequest(
+        `Jadwal pada tanggal ${blockedSchedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
+      );
+    }
+
     const items = await this.#invoiceService.getItems(null, ids);
     const fees = await this.#invoiceService.getFees(null, ids);
 
@@ -261,7 +302,7 @@ class BookingService extends BaseService {
           title: "Tagihan layanan",
           total: items.total.price + fees.total.price,
           status: InvoiceStatus.ISSUED,
-          expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
+          expiry_date: moment().add({ hour: 3 }).endOf("day").toDate(),
           items: {
             createMany: {
               data: items.items,
@@ -319,7 +360,7 @@ class BookingService extends BaseService {
       if (!upBooking) return;
 
       for (let schId of upBooking.schedules.map((sc) => sc.id)) {
-        await db.schedule.update({
+        const schedule = await db.schedule.update({
           where: {
             id: schId,
             bookings: {
@@ -329,14 +370,29 @@ class BookingService extends BaseService {
             },
           },
           data: {
-            is_locked: true,
             clients: {
               create: {
                 client_id: upBooking.client_id,
               },
             },
           },
+          select: {
+            max_bookings: true,
+            _count: {
+              select: {
+                bookings: {
+                  where: { status: BookingStatus.ONGOING },
+                },
+              },
+            },
+          },
         });
+
+        if (schedule._count.bookings >= schedule.max_bookings)
+          await db.schedule.update({
+            where: { id: schId },
+            data: { is_locked: true },
+          });
       }
     });
   };
