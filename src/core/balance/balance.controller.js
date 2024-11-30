@@ -14,7 +14,7 @@ class BalanceController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const q = req.query;
+    let q = req.query;
 
     if (!this.isAdmin(req)) {
       const doctor = await this.#doctorService.findByUser(req.user.id);
