@@ -224,6 +224,7 @@ class BookingService extends BaseService {
         data: {
           schedules: {
             updateMany: {
+              where: {},
               data: {
                 recurring: null,
               },
