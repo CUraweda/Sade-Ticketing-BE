@@ -27,7 +27,7 @@ class ChatRoomService extends BaseService {
           },
         },
         members: {
-          select: {
+          include: {
             user: {
               select: {
                 avatar: true,
@@ -35,10 +35,10 @@ class ChatRoomService extends BaseService {
               },
             },
           },
-          where: {
-            is_admin: false,
+          take: 2,
+          orderBy: {
+            is_admin: "desc",
           },
-          take: 1,
         },
       },
     });
