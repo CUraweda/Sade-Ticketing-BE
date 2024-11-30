@@ -1,6 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
-import { Forbidden } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden } from "../../lib/response/catch.js";
 import { getSocket } from "../../socket/index.js";
 
 class ChatRoomService extends BaseService {
@@ -78,6 +78,22 @@ class ChatRoomService extends BaseService {
   };
 
   create = async (payload) => {
+    if (!payload.is_group) {
+      const findDuplicate = await this.db.chatRoom.count({
+        where: {
+          is_group: false,
+          members: {
+            some: {
+              user_id: {
+                in: payload.members.map((m) => m.user_id),
+              },
+            },
+          },
+        },
+      });
+      if (findDuplicate) throw new BadRequest("Percakapan sudah ada");
+    }
+
     const data = await this.db.chatRoom.create({
       data: {
         ...payload,
