@@ -40,6 +40,11 @@ class ChatRoomService extends BaseService {
             is_admin: "desc",
           },
         },
+        _count: {
+          select: {
+            members: true,
+          },
+        },
       },
     });
 

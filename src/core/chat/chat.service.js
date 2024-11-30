@@ -8,7 +8,10 @@ class ChatService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.chat.findMany({ ...q });
+    const data = await this.db.chat.findMany({
+      ...q,
+      include: { _count: { select: { readers: true } } },
+    });
 
     if (query.paginate) {
       const countData = await this.db.chat.count({ where: q.where });
@@ -56,8 +59,6 @@ class ChatService extends BaseService {
         id: true,
       },
     });
-
-    console.log(chats);
 
     return this.db.chatRead.createMany({
       data: chats.map((chat) => ({ chat_id: chat.id, user_id: userId })),

@@ -1,6 +1,5 @@
 import BaseController from "../../base/controller.base.js";
 import { BadRequest, NotFound } from "../../lib/response/catch.js";
-import { getSocket } from "../../socket/index.js";
 import ChatRoomService from "../chatroom/chatroom.service.js";
 import ChatService from "./chat.service.js";
 
