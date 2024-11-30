@@ -105,7 +105,14 @@ class PaymentsService extends BaseService {
     const data = await this.db.payments.update({
       where: { id },
       data: payload,
-      include: this.select(["invoices.id"]),
+      include: {
+        invoices: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
     });
 
     // update related invoice status
@@ -127,7 +134,7 @@ class PaymentsService extends BaseService {
     if (data.status == PaymentStatus.SETTLED) {
       await this.db.balance.create({
         data: {
-          title: "Transaksi masuk",
+          title: `Pembayaran ${data.invoices.map((inv) => inv.title.toLowerCase()).join(", ")}`,
           amount: data.amount_paid,
           type: BalanceType.IN,
           holder: "system",
@@ -136,7 +143,7 @@ class PaymentsService extends BaseService {
     } else {
       await this.db.balance.create({
         data: {
-          title: "Transaksi batal",
+          title: `Pembayaran batal ${data.invoices.map((inv) => inv.title.toLowerCase()).join(", ")}`,
           amount: data.amount_paid,
           type: BalanceType.OUT,
           holder: "system",

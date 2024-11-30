@@ -6,7 +6,7 @@ import moment from "moment";
 const db = prism;
 
 const generateRecurringSchedule = async () => {
-  console.log("\n[CRON] Generate Recurring Schedules");
+  console.log("\n\x1b[34m[CRON]\x1b[0m Generate Recurring Schedules");
 
   try {
     const newSchedules = [];

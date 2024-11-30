@@ -7,7 +7,7 @@ import { BookingStatus } from "../core/booking/booking.validator.js";
 const db = prism;
 
 const updateBookingComplete = async () => {
-  console.log(`\n[CRON] Update Bookings Completed`);
+  console.log(`\n\x1b[34m[CRON]\x1b[0m Update Bookings Completed`);
   const now = moment();
 
   try {
