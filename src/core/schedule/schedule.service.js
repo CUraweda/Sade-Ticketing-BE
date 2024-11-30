@@ -1,6 +1,7 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { Forbidden } from "../../lib/response/catch.js";
+import { BookingStatus } from "../booking/booking.validator.js";
 
 class ScheduleService extends BaseService {
   constructor() {
@@ -11,12 +12,25 @@ class ScheduleService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.schedule.findMany({
       ...q,
-      include: this.select([
-        "service.category_id",
-        "creator.full_name",
-        "creator.avatar",
-        "_count.bookings",
-      ]),
+      include: {
+        ...this.select([
+          "service.category_id",
+          "creator.full_name",
+          "creator.avatar",
+          "_count.bookings",
+        ]),
+        _count: {
+          select: {
+            bookings: {
+              where: {
+                status: {
+                  not: BookingStatus.DRAFT,
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     if (query.paginate) {
