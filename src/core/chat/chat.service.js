@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 
@@ -30,6 +31,10 @@ class ChatService extends BaseService {
 
   create = async (payload) => {
     const data = await this.db.chat.create({ data: payload });
+    await this.db.chatRoom.update({
+      where: { id: data.chatroom_id },
+      data: { updated_at: moment().toDate() },
+    });
     return data;
   };
 

@@ -46,6 +46,9 @@ class ChatRoomService extends BaseService {
           },
         },
       },
+      orderBy: {
+        updated_at: "desc",
+      },
     });
 
     if (query.paginate) {
