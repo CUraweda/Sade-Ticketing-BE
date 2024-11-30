@@ -6,18 +6,22 @@ import {
   releaseInvoiceMonthly,
 } from "./release-invoice-by-service-billing.js";
 import { generateRecurringSchedule } from "./recurring-schedule.js";
+import { releaseSpecialistSalary } from "./release-specialist-salary.js";
 
-// set ongoing bookings to be completed everyday at 07:00 AM and 07:00 PM
-cron.schedule("0 */6 * * *", updateBookingComplete);
+// set ongoing bookings to be completed every 30 min between 1:00 - 11:00 (8:00 - 18:00 in ID)
+cron.schedule("*/30 1-11 * * *", updateBookingComplete);
 
-// set overtime invoices to be overdue everyday at 01:00 AM
-cron.schedule("0 1 * * *", updateInvoiceOverdue);
+// generate recurring schedule everyday at 23:00 (6:00 in ID)
+cron.schedule("0 23 * * *", generateRecurringSchedule);
 
-// release daily invoices
-cron.schedule("0 1 * * *", releaseInvoiceDaily);
+// release daily invoices every day at 0:10 (7:10 in ID)
+cron.schedule("10 0 * * *", releaseInvoiceDaily);
 
-// release monthly invoices
-cron.schedule("0 1 1 * *", releaseInvoiceMonthly);
+// release monthly invoices every first day of the month at 0:20 (7:00 in ID)
+cron.schedule("20 0 1 * *", releaseInvoiceMonthly);
 
-// generate recurring schedule everyday at 23:00 AM
-cron.schedule("0 12 * * *", generateRecurringSchedule);
+// set overtime invoices to be overdue everyday at 0:30 (7:30 in ID)
+cron.schedule("30 0 * * *", updateInvoiceOverdue);
+
+// release specialist salary everyday at 0:40 (7:40 in ID)
+cron.schedule("40 0 * * *", releaseSpecialistSalary);
