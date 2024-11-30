@@ -35,6 +35,7 @@ class ChatRoomController extends BaseController {
       members: [...req.body.members, { user_id: req.user.id, is_admin: true }],
     };
     const data = await this.#service.create(payload);
+    await this.#service.notifyMembers(data.id, [req.user.id]);
     return this.created(res, data, "ChatRoom berhasil dibuat");
   });
 

@@ -10,7 +10,10 @@ class ChatService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.chat.findMany({
       ...q,
-      include: { _count: { select: { readers: true } } },
+      include: {
+        user: { select: { full_name: true } },
+        _count: { select: { readers: true } },
+      },
     });
 
     if (query.paginate) {
