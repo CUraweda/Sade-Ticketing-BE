@@ -32,6 +32,9 @@ model User {
   invoices                Invoice[]
   notifications           NotificationUser[]
   created_notifications   Notification[]
+  chatrooms               ChatRoomMember[]
+  chats                   Chat[]
+  chat_reads              ChatRead[]
 }
 
 model UserRole {
@@ -643,4 +646,60 @@ model Balance {
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+// CUSTOMER SERVICE
+model ChatRoom {
+  id       String  @id @default(uuid())
+  name     String?
+  is_group Boolean
+
+  members ChatRoomMember[]
+  chats   Chat[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ChatRoomMember {
+  id          Int    @id @default(autoincrement())
+  user_id     String
+  chatroom_id String
+
+  is_admin  Boolean  @default(false)
+  joined_at DateTime @default(now())
+
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  chatroom ChatRoom @relation(fields: [chatroom_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, chatroom_id])
+}
+
+model Chat {
+  id          String  @id @default(uuid())
+  user_id     String?
+  chatroom_id String
+  parent_id   String? // reply
+
+  message String @db.LongText
+
+  user     User?      @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  chatroom ChatRoom   @relation(fields: [chatroom_id], references: [id], onDelete: Cascade)
+  parent   Chat?      @relation("ChatReplies", fields: [parent_id], references: [id])
+  children Chat[]     @relation("ChatReplies")
+  readers  ChatRead[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ChatRead {
+  id      Int    @id @default(autoincrement())
+  chat_id String
+  user_id String
+
+  read_at DateTime @default(now())
+
+  chat Chat @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
