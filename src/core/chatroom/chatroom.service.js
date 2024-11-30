@@ -26,7 +26,18 @@ class ChatRoomService extends BaseService {
           },
         },
         members: {
-          take: 2,
+          select: {
+            user: {
+              select: {
+                avatar: true,
+                full_name: true,
+              },
+            },
+          },
+          where: {
+            is_admin: false,
+          },
+          take: 1,
         },
       },
     });
@@ -58,7 +69,16 @@ class ChatRoomService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.chatRoom.create({ data: payload });
+    const data = await this.db.chatRoom.create({
+      data: {
+        ...payload,
+        members: {
+          createMany: {
+            data: payload.members,
+          },
+        },
+      },
+    });
     return data;
   };
 
