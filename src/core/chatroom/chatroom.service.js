@@ -1,6 +1,7 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { Forbidden } from "../../lib/response/catch.js";
+import { getSocket } from "../../socket/index.js";
 
 class ChatRoomService extends BaseService {
   constructor() {
@@ -101,6 +102,21 @@ class ChatRoomService extends BaseService {
     });
     if (!member) throw new Forbidden();
     return member;
+  };
+
+  notifyMembers = async (id, except = []) => {
+    const chatRoom = await this.findById(id);
+
+    if (chatRoom?.members?.length) {
+      const socket = getSocket();
+      socket
+        .to(
+          chatRoom.members
+            .map((member) => member.user_id)
+            .filter((uid) => !except.includes(uid))
+        )
+        .emit("new_chat");
+    }
   };
 }
 

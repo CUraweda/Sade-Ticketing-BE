@@ -1,5 +1,6 @@
 import BaseController from "../../base/controller.base.js";
 import { BadRequest, NotFound } from "../../lib/response/catch.js";
+import { getSocket } from "../../socket/index.js";
 import ChatRoomService from "../chatroom/chatroom.service.js";
 import ChatService from "./chat.service.js";
 
@@ -39,6 +40,9 @@ class ChatController extends BaseController {
     const payload = req.body;
     payload["user_id"] = req.user.id;
     const data = await this.#service.create(payload);
+
+    await this.#chatRoomService.notifyMembers(data.chatroom_id, [req.user.id]);
+
     return this.created(res, data, "Chat berhasil dibuat");
   });
 
