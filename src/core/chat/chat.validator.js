@@ -10,6 +10,9 @@ export const ChatValidator = {
   update: Joi.object({
     // no-data
   }),
+  read: Joi.object({
+    chat_ids: Joi.array().items(Joi.string()).required(),
+  }),
 };
 
 export default ChatValidator;

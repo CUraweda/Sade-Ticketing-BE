@@ -702,4 +702,6 @@ model ChatRead {
 
   chat Chat @relation(fields: [chat_id], references: [id], onDelete: Cascade)
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([chat_id, user_id])
 }

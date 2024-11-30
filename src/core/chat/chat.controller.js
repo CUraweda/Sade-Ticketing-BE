@@ -47,13 +47,28 @@ class ChatController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
+    await this.#service.isSender(req.params.id, req.user.id);
     const data = await this.#service.update(req.params.id, req.body);
     return this.ok(res, data, "Chat berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
+    await this.#service.isSender(req.params.id, req.user.id);
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "Chat berhasil dihapus");
+  });
+
+  read = this.wrapper(async (req, res) => {
+    const reads = await this.#service.read(req.body.chat_ids, req.user.id);
+    return this.ok(res, null, `${reads.count} chat berhasil dibaca`);
+  });
+
+  findReaders = this.wrapper(async (req, res) => {
+    const chat = await this.#service.findById(req.params.id);
+    await this.#chatRoomService.isMember(chat.chatroom_id, req.user.id);
+
+    const data = await this.#service.findReaders(req.params.id, req.user.id);
+    return this.ok(res, data, "Pembaca berhasil didapatkan");
   });
 }
 

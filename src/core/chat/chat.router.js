@@ -17,6 +17,8 @@ r.get(
 
 r.get("/show-one/:id", controller.findById);
 
+r.get("/readers/:id", authMiddleware(), controller.findReaders);
+
 r.post(
   "/create",
   authMiddleware(),
@@ -30,6 +32,8 @@ r.put(
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
+
+r.put("/read", authMiddleware(), controller.read);
 
 r.delete("/delete/:id", authMiddleware(), controller.delete);
 
