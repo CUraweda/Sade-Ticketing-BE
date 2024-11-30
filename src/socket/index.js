@@ -19,7 +19,7 @@ const initSocket = (server) => {
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
     if (!token) {
-      console.error("[SOCKET] No token provided");
+      console.error("\x1b[33m[SOCKET]\x1b[0m No token provided");
       return next(new Error("Authentication error"));
     }
 
@@ -28,7 +28,7 @@ const initSocket = (server) => {
       socket.user = decoded;
       next();
     } catch (err) {
-      console.error("[SOCKET] Invalid token:", err.message);
+      console.error("\x1b[33m[SOCKET]\x1b[0m Invalid token:", err.message);
       return next(new Error("Authentication error"));
     }
   });
@@ -36,15 +36,18 @@ const initSocket = (server) => {
   io.on("connection", (socket) => {
     const user = socket.user;
     if (!user || !user.uid) {
-      console.error("[SOCKET] Invalid user data");
+      console.error("\x1b[33m[SOCKET]\x1b[0m Invalid user data");
       return socket.disconnect(true);
     }
 
     socket.join(user.uid);
-    console.log(`[SOCKET] User '${user.uid}' connected`);
+    console.log(`\x1b[33m[SOCKET]\x1b[0m User '${user.uid}' connected`);
 
     socket.on("disconnect", (reason) => {
-      console.log(`[SOCKET] User '${user.uid}' disconnected:`, reason);
+      console.log(
+        `\x1b[33m[SOCKET]\x1b[0m User '${user.uid}' disconnected:`,
+        reason
+      );
     });
   });
 };

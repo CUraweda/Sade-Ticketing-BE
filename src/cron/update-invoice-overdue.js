@@ -7,7 +7,7 @@ import { InvoiceStatus } from "../core/invoice/invoice.validator.js";
 const db = prism;
 
 const updateInvoiceOverdue = async () => {
-  console.log("\n[CRON] Update Invoices Overdue");
+  console.log("\n\x1b[34m[CRON]\x1b[0m Update Invoices Overdue");
   const now = moment();
 
   try {
