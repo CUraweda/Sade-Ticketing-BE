@@ -8,7 +8,7 @@ class ChatRoomService extends BaseService {
     super(prism);
   }
 
-  findAll = async (query) => {
+  findAll = async (query, userId) => {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.chatRoom.findMany({
       ...q,
@@ -43,6 +43,18 @@ class ChatRoomService extends BaseService {
         _count: {
           select: {
             members: true,
+            chats: {
+              where: {
+                user_id: {
+                  not: userId,
+                },
+                readers: {
+                  none: {
+                    user_id: userId,
+                  },
+                },
+              },
+            },
           },
         },
       },

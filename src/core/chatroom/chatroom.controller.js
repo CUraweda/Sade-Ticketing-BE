@@ -16,7 +16,7 @@ class ChatRoomController extends BaseController {
       "where",
       `members.some.user_id:${req.user.id}`
     );
-    const data = await this.#service.findAll(q);
+    const data = await this.#service.findAll(q, req.user.id);
     return this.ok(res, data, "Banyak ChatRoom berhasil didapatkan");
   });
 
