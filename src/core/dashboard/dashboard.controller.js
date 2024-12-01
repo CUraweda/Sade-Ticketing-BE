@@ -99,6 +99,15 @@ class DashboardController extends BaseController {
     );
     return this.ok(res, data, "Stat layanan doctor berhasil didapatkan");
   });
+
+  stats = this.wrapper(async (req, res) => {
+    const data = {
+      chats: {
+        unread: await this.#service.unreadChats(req.user.id),
+      },
+    };
+    return this.ok(res, data, "Stat berhasil didapatkan");
+  });
 }
 
 export default DashboardController;

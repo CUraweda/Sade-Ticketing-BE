@@ -38,5 +38,7 @@ r.get(
   controller.doctorServicesStat
 );
 
+r.get("/stats", authMiddleware(), controller.stats);
+
 const dashboardRouter = r;
 export default dashboardRouter;
