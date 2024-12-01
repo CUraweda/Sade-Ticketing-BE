@@ -48,8 +48,11 @@ class ChatRoomController extends BaseController {
   });
 
   delete = this.wrapper(async (req, res) => {
-    const member = await this.#service.isMember(req.params.id, req.user.id);
-    if (!member.is_admin) throw new Forbidden();
+    if (req.user.role_code != "SDM") {
+      const member = await this.#service.isMember(req.params.id, req.user.id);
+      if (!member.is_admin)
+        throw new Forbidden("Anda bukan admin grup/percakapan ini");
+    }
 
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "ChatRoom berhasil dihapus");
