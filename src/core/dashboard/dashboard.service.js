@@ -429,6 +429,19 @@ class DashboardService extends BaseService {
       };
     });
   };
+
+  unreadChats = async (userId) =>
+    this.db.chat.count({
+      where: {
+        chatroom: {
+          members: {
+            some: { user_id: userId },
+          },
+        },
+        user_id: { not: userId },
+        readers: { none: { user_id: userId } },
+      },
+    });
 }
 
 export default DashboardService;
