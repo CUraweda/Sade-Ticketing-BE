@@ -1,3 +1,4 @@
+import { BalanceType } from "@prisma/client";
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
@@ -5,10 +6,6 @@ import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-const { BalanceType } = prisma;
 
 class DashboardService extends BaseService {
   constructor() {

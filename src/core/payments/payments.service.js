@@ -1,13 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { BalanceType } from "@prisma/client";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { NotFound } from "../../lib/response/catch.js";
 import BookingService from "../booking/booking.service.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "./payments.validator.js";
-
-const prisma = new PrismaClient();
-const { BalanceType } = prisma;
 
 class PaymentsService extends BaseService {
   #bookingService;
