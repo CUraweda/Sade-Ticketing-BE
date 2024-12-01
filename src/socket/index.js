@@ -10,7 +10,7 @@ const initSocket = (server) => {
 
   io = new Server(server, {
     cors: {
-      origin: process.env.WEB_URL,
+      origin: process.env.ALLOWED_ORIGINS.split(","),
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },
