@@ -6,7 +6,10 @@
     "status": true,
     "email_verified": true,
     "user_roles": {
-      "create": [{ "role_id": 1 }, { "role_id": 2 }]
+      "create": [
+        { "role_id": 1, "is_active": true },
+        { "role_id": 2, "is_active": false }
+      ]
     }
   },
 
