@@ -6,10 +6,9 @@ class clientService extends BaseService {
     super(prism);
   }
 
-  findAll = async (query, user_id) => {
+  findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const where = { ...q.where, user_id };
-    const data = await this.db.clientProfile.findMany({ ...q, where });
+    const data = await this.db.clientProfile.findMany({ ...q });
 
     if (query.paginate) {
       const countData = await this.db.clientProfile.count({ where });
