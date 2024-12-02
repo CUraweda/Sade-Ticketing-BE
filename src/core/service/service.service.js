@@ -1,6 +1,7 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { BookingStatus } from "../booking/booking.validator.js";
 
 class ServiceService extends BaseService {
   constructor() {
@@ -24,11 +25,18 @@ class ServiceService extends BaseService {
             max_bookings: true,
             _count: {
               select: {
-                bookings: true,
+                bookings: {
+                  where: {
+                    status: {
+                      not: BookingStatus.DRAFT,
+                    },
+                  },
+                },
               },
             },
           },
           where: {
+            is_locked: false,
             start_date: {
               gte: moment().toDate(),
             },
@@ -177,7 +185,13 @@ class ServiceService extends BaseService {
       include: {
         schedules: {
           include: {
-            bookings: true,
+            bookings: {
+              where: {
+                status: {
+                  not: BookingStatus.DRAFT,
+                },
+              },
+            },
           },
         },
       },

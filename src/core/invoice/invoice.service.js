@@ -207,11 +207,13 @@ class InvoiceService extends BaseService {
   };
 
   createOvertime = async (payload) => {
-    console.log(payload);
     const data = await this.db.invoice.create({
       data: {
-        ...payload,
+        title: payload.title,
+        status: payload.status,
+        user_id: payload.user_id,
         total: payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+        expiry_date: payload.expiry_date,
         bookings: {
           connect: { id: payload.booking_id },
         },
@@ -230,10 +232,11 @@ class InvoiceService extends BaseService {
     const data = await this.db.invoice.update({
       where: { id },
       data: {
-        ...payload,
+        title: payload.title,
+        status: payload.status,
+        user_id: payload.user_id,
         total: payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
         bookings: {
-          disconnect: {},
           connect: { id: payload.booking_id },
         },
         fees: {

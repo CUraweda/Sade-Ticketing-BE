@@ -10,7 +10,7 @@ import { ClientScheduleStatus } from "../core/schedule/schedule.validator.js";
 const db = prism;
 
 const releaseInvoiceDaily = async () => {
-  console.log("\n[CRON] Create Daily Invoices");
+  console.log("\n\x1b[34m[CRON]\x1b[0m Create Daily Invoices");
 
   try {
     const invoices = [];
