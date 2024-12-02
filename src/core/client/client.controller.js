@@ -11,10 +11,12 @@ class clientController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const data = await this.#service.findAll(
-      req.query,
-      req.user?.role_code == "USR" ? req.user.id : undefined
-    );
+    let q = req.query;
+
+    if (!this.isAdmin(req))
+      q = this.joinBrowseQuery(q, "where", `user_id:${req.user.id}`);
+
+    const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak client berhasil didapatkan");
   });
 
