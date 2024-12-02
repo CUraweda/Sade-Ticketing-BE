@@ -70,6 +70,42 @@ export const InvoiceValidator = {
       )
       .optional(),
   }),
+  createOvertime: Joi.object({
+    title: Joi.string().max(50).optional(),
+    status: Joi.valid(...Object.values(InvoiceStatus)).required(),
+    expiry_date: Joi.date().optional(),
+    note: Joi.string().max(100).optional(),
+    user_id: Joi.string().required(),
+    booking_id: Joi.string().required(),
+    fees: Joi.array()
+      .items(
+        Joi.object({
+          fee_id: Joi.number().external(relationExist("fee")).required(),
+          name: Joi.string().max(50).required(),
+          quantity: Joi.number().min(1).required(),
+          price: Joi.number().required(),
+        })
+      )
+      .optional(),
+  }),
+  updateOvertime: Joi.object({
+    title: Joi.string().max(50).optional(),
+    status: Joi.valid(...Object.values(InvoiceStatus)).optional(),
+    expiry_date: Joi.date().optional(),
+    note: Joi.string().max(100).optional(),
+    user_id: Joi.string().required(),
+    booking_id: Joi.string().required(),
+    fees: Joi.array()
+      .items(
+        Joi.object({
+          fee_id: Joi.number().external(relationExist("fee")).required(),
+          name: Joi.string().max(50).required(),
+          quantity: Joi.number().min(1).required(),
+          price: Joi.number().required(),
+        })
+      )
+      .optional(),
+  }),
 };
 
 export default InvoiceValidator;
