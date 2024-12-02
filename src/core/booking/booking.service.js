@@ -347,7 +347,7 @@ class BookingService extends BaseService {
     });
   };
 
-  userConfirm = async ([ids], payload) => {
+  userConfirm = async (ids, payload) => {
     const items = await this.#invoiceService.getItems(null, ids);
     const fees = await this.#invoiceService.getFees(null, ids);
 
