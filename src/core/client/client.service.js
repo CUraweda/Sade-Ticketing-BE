@@ -8,10 +8,10 @@ class clientService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.clientProfile.findMany({ ...q });
+    const data = await this.db.clientProfile.findMany(q);
 
     if (query.paginate) {
-      const countData = await this.db.clientProfile.count({ where });
+      const countData = await this.db.clientProfile.count({ where: q.where });
       return this.paginate(data, countData, q);
     }
     return data;
