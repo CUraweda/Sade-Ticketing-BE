@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import { catchResponse } from "../lib/response/catch.js";
+import { RoleCode } from "../core/role/role.validator.js";
 
 class BaseController {
   constructor() {}
@@ -89,7 +90,14 @@ class BaseController {
         );
   };
 
-  isAdmin = (req) => ["ADM", "SDM"].includes(req.user.role_code);
+  isAdmin = (req) =>
+    [RoleCode.ADMIN, RoleCode.SUPERADMIN].includes(req.user.role_code);
+
+  isDoctor = (req) =>
+    [RoleCode.PSIKOLOG, RoleCode.ASESOR, RoleCode.TERAPIS].includes(
+      req.user.role_code
+    );
+
   /**
    * @param {any} data
    * @param {string[]} selects

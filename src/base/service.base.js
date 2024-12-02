@@ -130,12 +130,28 @@ class BaseService {
     // is not
     let not_ = {};
     if (query && query.not_) {
+      const ors = [];
       query.not_.split("+").forEach((q) => {
         const [col, val] = q.split(":");
-        not_[col] = {
-          not: val,
-        };
+        const keys = col.split(".");
+        let current = {},
+          temp = current;
+
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            temp[key] = {
+              not: val,
+            };
+          } else {
+            temp[key] = {};
+            temp = temp[key];
+          }
+        });
+
+        ors.push(current);
       });
+
+      not_["OR"] = ors;
     }
 
     // is null
