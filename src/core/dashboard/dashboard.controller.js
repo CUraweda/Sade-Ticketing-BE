@@ -1,16 +1,19 @@
 import BaseController from "../../base/controller.base.js";
 import { Forbidden, NotFound } from "../../lib/response/catch.js";
+import clientService from "../client/client.service.js";
 import DoctorService from "../doctor/doctor.service.js";
 import DashboardService from "./dashboard.service.js";
 
 class DashboardController extends BaseController {
   #service;
   #doctorService;
+  #clientService;
 
   constructor() {
     super();
     this.#service = new DashboardService();
     this.#doctorService = new DoctorService();
+    this.#clientService = new clientService();
   }
 
   topServices = this.wrapper(async (req, res) => {
@@ -37,6 +40,23 @@ class DashboardController extends BaseController {
   });
 
   userStats = this.wrapper(async (req, res) => {
+    let clientIds = req.query.client_id ? [req.query.client_id] : [];
+
+    if (!this.isAdmin(req)) {
+      const clients = await this.#clientService.findAll({
+        paginate: false,
+        where: `user_id:${req.user.id}`,
+      });
+
+      const userClients = clients.map((cl) => cl.id);
+
+      if (req.query.client_id)
+        clientIds = userClients.includes(req.query.client_id)
+          ? [req.query.client_id]
+          : [];
+      else clientIds = userClients;
+    }
+
     const data = {
       ongoing_booking_count: await this.#service.countOngoingBookingByUser(
         req.user.id
@@ -44,6 +64,13 @@ class DashboardController extends BaseController {
       issued_invoice_count: await this.#service.countIssuedInvoices(
         req.user.id
       ),
+      schedule: {
+        presence: await this.#service.schedulePresence(clientIds),
+        absence: await this.#service.scheduleAbsence(clientIds),
+        sick: await this.#service.scheduleSick(clientIds),
+        permitted: await this.#service.schedulePermitted(clientIds),
+        upcoming: await this.#service.countUpcomingSchedules(clientIds),
+      },
     };
     return this.ok(res, data, "Stat dashboard user berhasil didapatkan");
   });
