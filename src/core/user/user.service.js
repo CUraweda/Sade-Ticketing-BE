@@ -160,6 +160,19 @@ class UserService extends BaseService {
     const data = await this.db.user.delete({ where: { id } });
     return data;
   };
+
+  unreadChats = async (userId) =>
+    this.db.chat.count({
+      where: {
+        chatroom: {
+          members: {
+            some: { user_id: userId },
+          },
+        },
+        user_id: { not: userId },
+        readers: { none: { user_id: userId } },
+      },
+    });
 }
 
 export default UserService;

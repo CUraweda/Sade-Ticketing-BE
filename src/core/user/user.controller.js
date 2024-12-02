@@ -58,6 +58,16 @@ class UserController extends BaseController {
     const data = await this.#service.delete(req.params.id);
     this.noContent(res, "User berhasil dihapus");
   });
+
+  // will be used for count notifs in future
+  countMessages = this.wrapper(async (req, res) => {
+    const unreadChats = await this.#service.unreadChats(req.user.id);
+    return this.ok(
+      res,
+      { unread_chats: unreadChats },
+      "Jumlah pesan berhasil didapatkan"
+    );
+  });
 }
 
 export default UserController;

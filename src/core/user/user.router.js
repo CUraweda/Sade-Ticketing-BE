@@ -20,6 +20,8 @@ r.get("/me", authMiddleware(), controller.me);
 
 r.get("/roles/:id", controller.findUserRoles);
 
+r.get("/count-messages", authMiddleware(), controller.countMessages);
+
 r.post(
   "/create",
   validatorMiddleware({ body: validator.create }),

@@ -65,13 +65,19 @@ class ChatService extends BaseService {
       },
       select: {
         id: true,
+        chatroom_id: true,
       },
     });
 
-    return this.db.chatRead.createMany({
+    const res = await this.db.chatRead.createMany({
       data: chats.map((chat) => ({ chat_id: chat.id, user_id: userId })),
       skipDuplicates: true,
     });
+
+    return {
+      created_count: res.count,
+      chatroom_ids: [...new Set(chats.map((c) => c.chatroom_id))],
+    };
   };
 
   findReaders = async (id, userId) =>

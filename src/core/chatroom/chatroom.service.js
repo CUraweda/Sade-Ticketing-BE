@@ -140,7 +140,7 @@ class ChatRoomService extends BaseService {
     return member;
   };
 
-  notifyMembers = async (id, except = []) => {
+  notifyMembers = async (id, except = [], topic = "new_chat") => {
     const chatRoom = await this.findById(id);
 
     if (chatRoom?.members?.length) {
@@ -151,7 +151,7 @@ class ChatRoomService extends BaseService {
             .map((member) => member.user_id)
             .filter((uid) => !except.includes(uid))
         )
-        .emit("new_chat");
+        .emit(topic);
     }
   };
 }
