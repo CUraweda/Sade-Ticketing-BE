@@ -236,6 +236,7 @@ class InvoiceService extends BaseService {
         status: payload.status,
         user_id: payload.user_id,
         total: payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+        expiry_date: payload.expiry_date,
         bookings: {
           connect: { id: payload.booking_id },
         },
