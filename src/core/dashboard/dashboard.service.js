@@ -442,6 +442,65 @@ class DashboardService extends BaseService {
         readers: { none: { user_id: userId } },
       },
     });
+
+  schedulePresence = async (clientIds = []) => {
+    const whole = await this.db.schedule.count({
+      where: { clients: { some: { client_id: { in: clientIds } } } },
+    });
+    const part = await this.db.schedule.count({
+      where: {
+        clients: {
+          some: {
+            client_id: { in: clientIds },
+            status: ClientScheduleStatus.PRESENT,
+          },
+        },
+      },
+    });
+    return { part, whole };
+  };
+
+  scheduleAbsence = async (clientIds = []) =>
+    this.db.schedule.count({
+      where: {
+        start_date: { lte: moment() },
+        clients: { some: { client_id: { in: clientIds }, status: null } },
+      },
+    });
+
+  scheduleSick = async (clientIds = []) =>
+    this.db.schedule.count({
+      where: {
+        start_date: { lte: moment() },
+        clients: {
+          some: {
+            client_id: { in: clientIds },
+            status: ClientScheduleStatus.SICK,
+          },
+        },
+      },
+    });
+
+  schedulePermitted = async (clientIds = []) =>
+    this.db.schedule.count({
+      where: {
+        start_date: { lte: moment() },
+        clients: {
+          some: {
+            client_id: { in: clientIds },
+            status: ClientScheduleStatus.PERMITTED,
+          },
+        },
+      },
+    });
+
+  countUpcomingSchedules = async (clientIds = []) =>
+    this.db.schedule.count({
+      where: {
+        start_date: { gte: moment().toDate() },
+        clients: { some: { client_id: { in: clientIds } } },
+      },
+    });
 }
 
 export default DashboardService;

@@ -17,7 +17,7 @@ export const ScheduleValidator = {
   create: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     doctors: Joi.array()
@@ -34,7 +34,7 @@ export const ScheduleValidator = {
   createByDoctor: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
@@ -68,7 +68,8 @@ export const ScheduleValidator = {
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
     status: Joi.string()
       .valid(...Object.values(ClientScheduleStatus))
-      .required(),
+      .required()
+      .allow(""),
     note: Joi.string().max(50).optional(),
   }),
 };

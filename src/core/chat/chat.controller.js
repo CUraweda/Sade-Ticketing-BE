@@ -58,8 +58,13 @@ class ChatController extends BaseController {
   });
 
   read = this.wrapper(async (req, res) => {
-    const reads = await this.#service.read(req.body.chat_ids, req.user.id);
-    return this.ok(res, null, `${reads.count} chat berhasil dibaca`);
+    const data = await this.#service.read(req.body.chat_ids, req.user.id);
+
+    for (const id of data.chatroom_ids) {
+      await this.#chatRoomService.notifyMembers(id, [], "refresh_read");
+    }
+
+    return this.ok(res, null, `${data.created_count} chat berhasil dibaca`);
   });
 
   findReaders = this.wrapper(async (req, res) => {
