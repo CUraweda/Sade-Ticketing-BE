@@ -17,6 +17,8 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
+r.get("/export/:id", authMiddleware(), controller.export);
+
 // r.post(
 //   "/create",
 //   validatorMiddleware({ body: validator.create }),

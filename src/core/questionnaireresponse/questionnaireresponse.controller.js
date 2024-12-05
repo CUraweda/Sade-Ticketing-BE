@@ -54,6 +54,25 @@ class QuestionnaireResponseController extends BaseController {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "QuestionnaireResponse berhasil dihapus");
   });
+
+  export = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req)) {
+      if (req.user.role_code == RoleCode.USER) {
+        const chk = await this.#service.checkAccess(req.params.id, req.user.id);
+        if (!chk) throw new Forbidden();
+      }
+    }
+
+    const result = await this.#service.exportResponse(req.params.id);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${result.data.questionnaire.title ?? "Respon"}.pdf`
+    );
+    result.doc.getBuffer((buffer) => {
+      res.send(Buffer.from(buffer));
+    });
+  });
 }
 
 export default QuestionnaireResponseController;
