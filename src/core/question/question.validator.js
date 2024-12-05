@@ -14,6 +14,7 @@ const question_typ = [
   "number",
   "date",
   "datetime",
+  "wysiwyg",
 ];
 
 export const QuestionValidator = {

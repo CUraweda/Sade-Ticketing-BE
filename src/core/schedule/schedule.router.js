@@ -24,9 +24,15 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
+r.get(
+  "/show-one/:id/questionnaires",
+  authMiddleware(),
+  controller.findQuestionnaires
+);
+
 r.post(
   "/create",
-  authMiddleware(["ADM", "SDM"]),
+  authMiddleware(),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
@@ -72,6 +78,13 @@ r.put(
   authMiddleware(["PSI", "ADM", "SDM"]),
   validatorMiddleware({ body: validator.setOvertime }),
   controller.setOvertime
+);
+
+r.put(
+  "/set-client-status/:id",
+  authMiddleware(["PSI", "ADM", "SDM"]),
+  validatorMiddleware({ body: validator.setClientStatus }),
+  controller.setClientStatus
 );
 
 const scheduleRouter = r;

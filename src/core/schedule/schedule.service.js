@@ -1,6 +1,7 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { Forbidden } from "../../lib/response/catch.js";
+import { BookingStatus } from "../booking/booking.validator.js";
 
 class ScheduleService extends BaseService {
   constructor() {
@@ -11,7 +12,25 @@ class ScheduleService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.schedule.findMany({
       ...q,
-      include: this.select(["creator.full_name", "creator.avatar"]),
+      include: {
+        ...this.select([
+          "service.category_id",
+          "creator.full_name",
+          "creator.avatar",
+          "_count.bookings",
+        ]),
+        _count: {
+          select: {
+            bookings: {
+              where: {
+                status: {
+                  not: BookingStatus.DRAFT,
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     if (query.paginate) {
@@ -31,32 +50,50 @@ class ScheduleService extends BaseService {
         "doctors.first_name",
         "doctors.last_name",
         "doctors.category",
-        "clients.id",
-        "clients.first_name",
-        "clients.last_name",
-        "clients.category",
-        "clients.dob",
+        "clients.note",
+        "clients.status",
+        "clients.client.id",
+        "clients.client.first_name",
+        "clients.client.last_name",
+        "clients.client.category",
+        "clients.client.dob",
         "service.id",
         "service.title",
         "service.category.name",
-        "booking.id",
-        "booking.title",
-        "booking.status",
+        "bookings.id",
+        "bookings.title",
+        "bookings.user_id",
+        "bookings.client.first_name",
+        "bookings.client.last_name",
+        "bookings.status",
+        "parent.id",
+        "parent.start_date",
+        "parent.recurring",
       ]),
     });
     return data;
   };
 
   create = async (payload) => {
-    const { doctors = [], clients = [], ...restPayload } = payload;
+    const { doctors = [], clients = [], ...rest } = payload;
+
+    if (rest.recurring && Array.isArray(rest.recurring))
+      rest["recurring"] = rest.recurring.length
+        ? rest.recurring.join(",")
+        : null;
+
     const data = await this.db.schedule.create({
       data: {
-        ...restPayload,
+        ...rest,
         doctors: {
           connect: doctors.map((d) => ({ id: d })),
         },
         clients: {
-          connect: clients.map((c) => ({ id: c })),
+          createMany: {
+            data: clients.map((id) => ({
+              client_id: id,
+            })),
+          },
         },
       },
     });
@@ -64,6 +101,11 @@ class ScheduleService extends BaseService {
   };
 
   update = async (id, payload) => {
+    if (payload.recurring && Array.isArray(payload.recurring))
+      payload["recurring"] = rest.recurring.length
+        ? payload.recurring.join(",")
+        : null;
+
     const data = await this.db.schedule.update({
       where: { id },
       data: payload,
@@ -103,7 +145,9 @@ class ScheduleService extends BaseService {
       ors.push({
         clients: {
           some: {
-            user_id,
+            client: {
+              user_id,
+            },
           },
         },
       });
@@ -129,7 +173,7 @@ class ScheduleService extends BaseService {
     this.db.schedule.update({
       where: { id },
       data: {
-        clients: { connect: { id: client_id } },
+        clients: { create: { client_id } },
       },
     });
 
@@ -142,11 +186,29 @@ class ScheduleService extends BaseService {
   removeClient = (id, client_id) =>
     this.db.schedule.update({
       where: { id },
-      data: { clients: { disconnect: { id: client_id } } },
+      data: { clients: { deleteMany: { client_id } } },
     });
 
   setLock = (id, lock) =>
     this.db.schedule.update({ where: { id }, data: { is_locked: lock } });
+
+  setClientStatus = (id, client_id, data) =>
+    this.db.schedule.update({
+      where: { id },
+      data: {
+        clients: {
+          update: {
+            where: {
+              schedule_id_client_id: {
+                client_id,
+                schedule_id: id,
+              },
+            },
+            data,
+          },
+        },
+      },
+    });
 }
 
 export default ScheduleService;

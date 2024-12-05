@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Terapis junior",
+    "hex_color": "#CD7F32"
+  },
+  {
+    "name": "Terapis senior",
+    "hex_color": "#C0C0C0"
+  },
+  {
+    "name": "Terapis master",
+    "hex_color": "#FFD700"
+  }
+]

@@ -23,11 +23,13 @@ class RescheduleRequestController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    const isLocked = await this.#service.checkIsLocked(req.body);
-    if (isLocked)
-      return new BadRequest(
-        "Schedule telah di kunci anda tidak bisa mengajukan reschedule"
-      );
+    // const isLocked = await this.#service.checkIsLocked(req.body);
+
+    // if (isLocked)
+    //   return new BadRequest(
+    //     "Schedule telah di kunci anda tidak bisa mengajukan reschedule"
+    //   );
+
     const data = await this.#service.create(req.body);
     return this.created(res, data, "RescheduleRequest berhasil dibuat");
   });

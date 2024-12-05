@@ -1,3 +1,4 @@
+import { BalanceType } from "@prisma/client";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { NotFound } from "../../lib/response/catch.js";
@@ -68,7 +69,7 @@ class PaymentsService extends BaseService {
         await this.db.invoice.aggregate({
           where: {
             id: {
-              in: payload.invoice_ids,
+              in: invoice_ids,
             },
             user_id: payload.user_id,
             payment_id: null,
@@ -104,7 +105,14 @@ class PaymentsService extends BaseService {
     const data = await this.db.payments.update({
       where: { id },
       data: payload,
-      include: this.select(["invoices.id"]),
+      include: {
+        invoices: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
     });
 
     // update related invoice status
@@ -122,6 +130,26 @@ class PaymentsService extends BaseService {
           : InvoiceStatus.ISSUED,
       },
     });
+
+    if (data.status == PaymentStatus.SETTLED) {
+      await this.db.balance.create({
+        data: {
+          title: `Pembayaran ${data.invoices.map((inv) => inv.title.toLowerCase()).join(", ")}`,
+          amount: data.amount_paid,
+          type: BalanceType.IN,
+          holder: "system",
+        },
+      });
+    } else {
+      await this.db.balance.create({
+        data: {
+          title: `Pembayaran batal ${data.invoices.map((inv) => inv.title.toLowerCase()).join(", ")}`,
+          amount: data.amount_paid,
+          type: BalanceType.OUT,
+          holder: "system",
+        },
+      });
+    }
 
     return data;
   };

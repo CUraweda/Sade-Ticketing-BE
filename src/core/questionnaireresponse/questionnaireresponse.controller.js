@@ -13,12 +13,12 @@ class QuestionnaireResponseController extends BaseController {
 
   findAll = this.wrapper(async (req, res) => {
     let q = req.query;
-    if (!this.isAdmin(req)) {
-      if (req.user.role_code == RoleCode.USER)
-        q = this.joinBrowseQuery(q, "where", `user_id:${req.user.id}`);
-    }
+    // if (!this.isAdmin(req)) {
+    //   if (req.user.role_code == RoleCode.USER)
+    //     q = this.joinBrowseQuery(q, "where", `user_id:${req.user.id}`);
+    // }
 
-    const data = await this.#service.findAll(q);
+    const data = await this.#service.findAll(q, req.user.id);
     return this.ok(
       res,
       data,
@@ -29,7 +29,7 @@ class QuestionnaireResponseController extends BaseController {
   findById = this.wrapper(async (req, res) => {
     if (!this.isAdmin(req)) {
       if (req.user.role_code == RoleCode.USER) {
-        const chk = await this.#service.checkOwner(req.params.id, req.user.id);
+        const chk = await this.#service.checkAccess(req.params.id, req.user.id);
         if (!chk) throw new Forbidden();
       }
     }

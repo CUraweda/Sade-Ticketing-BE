@@ -63,6 +63,7 @@ export const relationExist = (table) => {
 export const baseValidator = {
   browseQuery: Joi.object({
     search: Joi.string().optional().custom(containColon),
+    starts: Joi.string().optional().custom(containColon),
     where: Joi.string().optional().custom(containColon),
     in_: Joi.string().optional().custom(containColon),
     not_: Joi.string().optional().custom(containColon),
@@ -74,4 +75,12 @@ export const baseValidator = {
     page: Joi.number().optional().default(1),
     order: Joi.string().optional().custom(orderPattern),
   }),
+};
+
+export const Workday = {
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
 };

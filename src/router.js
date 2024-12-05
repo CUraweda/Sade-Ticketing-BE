@@ -20,6 +20,16 @@ import rescheduleRouter from "./core/reschedulerequest/reschedulerequest.router.
 import invoiceRouter from "./core/invoice/invoice.router.js";
 import feeRouter from "./core/fee/fee.router.js";
 import questionnaireresponseRouter from "./core/questionnaireresponse/questionnaireresponse.router.js";
+import dashboardRouter from "./core/dashboard/dashboard.router.js";
+import daycarejournalRouter from "./core/daycarejournal/daycarejournal.router.js";
+import daycarelogtimeRouter from "./core/daycarelogtime/daycarelogtime.router.js";
+import documentRouter from "./core/document/document.router.js";
+import notificationRouter from "./core/notification/notification.router.js";
+import doctorgradeRouter from "./core/doctorgrade/doctorgrade.router.js";
+import doctorserviceRouter from "./core/doctorservice/doctorservice.router.js";
+import balanceRouter from "./core/balance/balance.router.js";
+import chatroomRouter from "./core/chatroom/chatroom.router.js";
+import chatRouter from "./core/chat/chat.router.js";
 
 const r = Router();
 
@@ -44,6 +54,16 @@ r.use("/user-file", userFile);
 r.use("/reschedule", rescheduleRouter);
 r.use("/invoice", invoiceRouter);
 r.use("/fee", feeRouter);
+r.use("/dashboard", dashboardRouter);
+r.use("/daycare-journal", daycarejournalRouter);
+r.use("/daycare-log-time", daycarelogtimeRouter);
+r.use("/document", documentRouter);
+r.use("/notification", notificationRouter);
+r.use("/doctor-grade", doctorgradeRouter);
+r.use("/doctor-service", doctorserviceRouter);
+r.use("/balance", balanceRouter);
+r.use("/chat-room", chatroomRouter);
+r.use("/chat", chatRouter);
 
 const appRouter = r;
 export default appRouter;

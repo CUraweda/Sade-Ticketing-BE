@@ -24,6 +24,7 @@ export const DoctorValidator = {
       .valid(...doctorSexes)
       .optional(),
     is_active: Joi.bool().default(true),
+    grade_id: Joi.number().external(relationExist("doctorGrade")).optional(),
   }),
   update: Joi.object({
     user_id: Joi.string().external(relationExist("user")).optional(),
@@ -43,6 +44,7 @@ export const DoctorValidator = {
       .valid(...doctorSexes)
       .optional(),
     is_active: Joi.bool().default(true),
+    grade_id: Joi.number().external(relationExist("doctorGrade")).optional(),
   }),
   setSpecialism: Joi.object({
     specialism_id: Joi.number()

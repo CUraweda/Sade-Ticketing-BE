@@ -6,7 +6,10 @@
     "status": true,
     "email_verified": true,
     "user_roles": {
-      "create": [{ "role_id": 1 }, { "role_id": 2 }]
+      "create": [
+        { "role_id": 1, "is_active": true },
+        { "role_id": 2, "is_active": false }
+      ]
     }
   },
 
@@ -28,6 +31,19 @@
     "email_verified": true,
     "user_roles": {
       "create": [{ "role_id": 3 }]
+    },
+    "clients": {
+      "create": [
+        {
+          "relation": "ANAK",
+          "category": "ANAK",
+          "first_name": "User Satu",
+          "last_name": "Junior",
+          "pob": "Bandung",
+          "dob": "2016-11-13T00:00:00Z",
+          "sex": "L"
+        }
+      ]
     }
   },
   {
@@ -38,6 +54,19 @@
     "email_verified": true,
     "user_roles": {
       "create": [{ "role_id": 3 }]
+    },
+    "clients": {
+      "create": [
+        {
+          "relation": "ANAK",
+          "category": "ANAK",
+          "first_name": "User Dua",
+          "last_name": "Junior",
+          "pob": "Bandung",
+          "dob": "2016-11-13T00:00:00Z",
+          "sex": "L"
+        }
+      ]
     }
   },
   {

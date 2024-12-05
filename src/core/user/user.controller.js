@@ -1,5 +1,6 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
+import { RoleCode } from "../role/role.validator.js";
 import UserService from "./user.service.js";
 
 class UserController extends BaseController {
@@ -11,6 +12,24 @@ class UserController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
+    let q = req.query;
+
+    if (!this.isAdmin(req)) {
+      if (this.isDoctor(req)) {
+        q = this.joinBrowseQuery(
+          q,
+          "not_",
+          `user_roles.every.role.code:${RoleCode.SUPERADMIN}`
+        );
+      } else {
+        q = this.joinBrowseQuery(
+          q,
+          "where",
+          `user_roles.some.role.code:${RoleCode.ADMIN}+user_roles.some.is_active:true`
+        );
+      }
+    }
+
     const data = await this.#service.findAll(req.query);
     return this.ok(res, data, "Banyak user berhasil didapatkan");
   });
@@ -57,6 +76,16 @@ class UserController extends BaseController {
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     this.noContent(res, "User berhasil dihapus");
+  });
+
+  // will be used for count notifs in future
+  countMessages = this.wrapper(async (req, res) => {
+    const unreadChats = await this.#service.unreadChats(req.user.id);
+    return this.ok(
+      res,
+      { unread_chats: unreadChats },
+      "Jumlah pesan berhasil didapatkan"
+    );
   });
 }
 

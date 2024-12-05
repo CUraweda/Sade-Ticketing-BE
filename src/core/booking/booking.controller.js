@@ -20,21 +20,21 @@ class BookingController extends BaseController {
       uid = req.user.id;
 
     if (!this.isAdmin(req)) {
-      if (role == RoleCode.USER)
+      if (role == RoleCode.USER) {
         q = this.joinBrowseQuery(q, "where", `user_id:${uid}`);
-      else if (
-        role == RoleCode.ASESOR ||
-        role == RoleCode.PSIKOLOG ||
-        role == RoleCode.TERAPIS
-      )
+      } else if (role == RoleCode.PSIKOLOG || role == RoleCode.TERAPIS) {
         q = this.joinBrowseQuery(
           q,
           "in_",
           `schedules.some.doctors.user_id:${uid}`
         );
+      } else if (role == RoleCode.ASESOR) {
+        q = this.joinBrowseQuery(q, "where", `status.not:draft`);
+      }
     }
 
     const data = await this.#service.findAll(q);
+
     return this.ok(res, data, "Banyak Booking berhasil didapatkan");
   });
 
@@ -57,7 +57,7 @@ class BookingController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
-    if (req.user.role_code == "USR") {
+    if (!this.isAdmin(req)) {
       const find = await this.#service.checkBookingOwner(
         req.params.id,
         req.user.id
@@ -66,6 +66,9 @@ class BookingController extends BaseController {
         throw new Forbidden(
           "Booking Anda sudah dikunci dan tidak bisa diubah lagi"
         );
+
+      // user cant update status field
+      if (req.body.status) delete req.body.status;
     }
 
     const data = await this.#service.update(req.params.id, req.body);
@@ -88,18 +91,15 @@ class BookingController extends BaseController {
     return this.noContent(res, "Booking berhasil dihapus");
   });
 
-  setSchedules = this.wrapper(async (req, res) => {
-    await this.#service.checkBookingOwner(req.params.id, req.user.id);
-    const data = await this.#service.setSchedules(req.params.id, req.body);
-    return this.ok(res, data, "Booking jadwal berhasil dibuat");
-  });
-
   userConfirm = this.wrapper(async (req, res) => {
-    await this.#service.checkBookingOwner(req.params.ids, req.user.id);
+    const ids = req.params.ids.split("+");
+    for (const id of ids) {
+      await this.#service.checkBookingOwner(id, req.user.id);
+    }
 
     let payload = req.body ?? {};
     payload["user_id"] = req.user.id;
-    await this.#service.userConfirm([req.params.ids], payload);
+    await this.#service.userConfirm(ids, payload);
 
     return this.ok(res, null, "Booking berhasil dikonfirmasi");
   });
@@ -121,6 +121,8 @@ class BookingController extends BaseController {
     data["fees"] = fees.items;
     data["fees_total"] = fees.total;
 
+    data["total"] = data.fees_total.price + data.items_total.price;
+
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
 
@@ -139,6 +141,30 @@ class BookingController extends BaseController {
       data,
       "Banyak response kuesioner booking berhasil didapatkan"
     );
+  });
+
+  createReportResponse = this.wrapper(async (req, res) => {
+    const payload = req.body;
+    await this.#service.createReportResponse(
+      req.user.id,
+      payload.booking_id,
+      payload.questionnaire_id
+    );
+    return this.ok(res, null, "Respon laporan berhasil dibuat");
+  });
+
+  acceptAgreementDocument = this.wrapper(async (req, res) => {
+    await this.#service.checkBookingOwner(req.body.booking_id, req.user.id);
+    await this.#service.acceptAgreementDocument(
+      req.body.booking_id,
+      req.body.document_id
+    );
+    return this.ok(res, null, "Berhasil menerima dokumen persetujuan");
+  });
+
+  getCurrentSchedule = this.wrapper(async (req, res) => {
+    const data = await this.#service.getCurrentSchedule(req.params.id);
+    return this.ok(res, data, "Jadwal terkini berhasil didapatkan");
   });
 }
 

@@ -38,7 +38,7 @@ export const UserValidator = {
   }),
   assignRole: Joi.array().items(
     Joi.object({
-      role_id: Joi.string().external(relationExist("role")).required(),
+      role_id: Joi.number().external(relationExist("role")).required(),
       is_active: Joi.boolean().required(),
     })
   ),

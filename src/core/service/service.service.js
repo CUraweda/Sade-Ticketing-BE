@@ -1,6 +1,7 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { BookingStatus } from "../booking/booking.validator.js";
 
 class ServiceService extends BaseService {
   constructor() {
@@ -11,20 +12,64 @@ class ServiceService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.service.findMany({
       ...q,
-      include: this.select([
-        "category.id",
-        "category.name",
-        "location.id",
-        "location.title",
-        "_count.doctors",
-      ]),
+      include: {
+        ...this.select([
+          "category.id",
+          "category.name",
+          "location.id",
+          "location.title",
+          "entry_fees",
+        ]),
+        schedules: {
+          select: {
+            max_bookings: true,
+            _count: {
+              select: {
+                bookings: {
+                  where: {
+                    status: {
+                      not: BookingStatus.DRAFT,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          where: {
+            is_locked: false,
+            start_date: {
+              gte: moment().toDate(),
+            },
+          },
+        },
+        _count: {
+          select: {
+            doctors: true,
+            schedules: true,
+          },
+        },
+      },
+    });
+
+    const updatedData = data.map((service) => {
+      const filteredSchedules = service.schedules.filter(
+        (schedule) => schedule._count.bookings < schedule.max_bookings
+      );
+
+      return {
+        ...service,
+        _count: {
+          ...service._count,
+          schedules: filteredSchedules.length,
+        },
+      };
     });
 
     if (query.paginate) {
       const countData = await this.db.service.count({ where: q.where });
-      return this.paginate(data, countData, q);
+      return this.paginate(updatedData, countData, q);
     }
-    return data;
+    return updatedData;
   };
 
   findById = async (id) => {
@@ -36,6 +81,14 @@ class ServiceService extends BaseService {
         "questionnaires.id",
         "questionnaires.title",
         "questionnaires._count.questions",
+        "reports.id",
+        "reports.title",
+        "reports._count.questions",
+        "entry_fees.id",
+        "entry_fees.title",
+        "entry_fees.price",
+        "agrement_documents.id",
+        "agrement_documents.title",
       ]),
     });
     return data;
@@ -71,6 +124,51 @@ class ServiceService extends BaseService {
     });
   };
 
+  setReport = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        reports: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.que_id,
+          },
+        },
+      },
+    });
+  };
+
+  setEntryFee = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        entry_fees: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.fee_id,
+          },
+        },
+      },
+    });
+  };
+
+  setAgreementDocument = async (id, payload) => {
+    await this.db.service.update({
+      where: {
+        id,
+      },
+      data: {
+        agrement_documents: {
+          [payload.set == "add" ? "connect" : "disconnect"]: {
+            id: payload.document_id,
+          },
+        },
+      },
+    });
+  };
+
   findAvailableDoctors = async (id) => {
     const data = await this.db.doctorProfile.findMany({
       where: {
@@ -79,13 +177,34 @@ class ServiceService extends BaseService {
             is_locked: false,
             service_id: id,
             start_date: {
-              gte: moment(),
+              gte: moment().toDate(),
+            },
+          },
+        },
+      },
+      include: {
+        schedules: {
+          include: {
+            bookings: {
+              where: {
+                status: {
+                  not: BookingStatus.DRAFT,
+                },
+              },
             },
           },
         },
       },
     });
-    return data;
+
+    return data
+      .map((profile) => ({
+        ...profile,
+        schedules: profile.schedules.filter(
+          (schedule) => schedule.bookings.length < schedule.max_bookings
+        ),
+      }))
+      .filter((profile) => profile.schedules.length > 0);
   };
 }
 

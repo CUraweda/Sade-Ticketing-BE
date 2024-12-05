@@ -46,7 +46,8 @@
     "description": "Layanan bagi anak dengan gangguan kemampuan berkomunikasi, mengunyah maupun menelan.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -55,7 +56,8 @@
     "description": "Layanan bagi anak dengan gangguan keterampilan motorik, keseimbangan, dan koordinasi fisik yang membatasi kemandiriannya melakukan aktivitas sehari-hari.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -64,7 +66,8 @@
     "description": "Layanan bagi anak dengan kesulitan memahami input sensorik (sentuhan, gerakan, penglihatan, au, suara, rasa) sehingga ia terlalu atau kurang sensitif terhadap stimulus sensorik di sekitarnya.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -73,7 +76,8 @@
     "description": "Layanan bagi anak yang belum bisa duduk. berjalan sehingga mengganggu mobilitasnya.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
   },
   {
     "category_id": 2,
@@ -82,6 +86,107 @@
     "description": "Layanan bagi anak yang mengalami kesulitan belajar.",
     "duration": 120,
     "price": 500000,
-    "price_unit": "sesi"
+    "price_unit": "sesi",
+    "billing_type": "monthly"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Paket Human Development (HUMDEV)",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Prenatal Development</li><li>Infancy (0-2 years)</li><li>Early Childhood (2-6 years)</li><li>Middle Childhood (6-12 years)</li><li>Adolescence (12-18 years)</li><li>Early Adulthood (18-40 years)</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Education Phsycology",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Kinerja Otak</li><li>Educational Phsycology</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Intructional Model (SE)",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Engage</li><li>Explore</li><li>Explain</li><li>Elaborate</li><li>Evaluate</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Assesment",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Jenis Penilaian</li><li>Praktek Pembuatan Penilaian</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Display",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Fungsi Display dan apa yang perlu diperhatikan dalam membuatnya</li><li>Jenis Display</li><li>Praktek pembuatan display</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Edugames",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Jenis Edugames dan Membangun Ide</li><li>Praktek Pembuatan Edugame</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Pendidikan Anak Berkebutuhan Khusus",
+    "description": "<h4>Materi Pelatihan</h4><ul><h6>Tahap Persiapan</h6><ul><li>Sesi 1 (infant-toddler)</li><li>Sesi 2 (early childhood-middle childhood)</li><li>Pengertian anak berkebutuhan khusus: jenis, ciri khas, dan cara penanganan secara umum</li></ul><h6>Tahap Strategi Materi Pembelajaran</h6><ul><li>Pengantar tentang segitiga perkembangan</li><li>Penanganan tantrum</li><li>Penanganan bina diri anak</li><li>Melatih konsentrasi dan kemampuan mengikuti instruksi</li><li>Stimulasi pada area motorik kasar dan motorik halus</li><li>Stimulasi pada kemampuan bahasa (bahasa reseptif dan bahasa ekspresif)</li><li>Stimulasi pada area akademik</li><li>Mengenali kelebihan dan potensi anak berkebutuhan khusus</li><li>Pembuatan program pengembangan potensi</li><li>Peran Guru Pendamping dan praktiknya</li><li>Pembuatan dan pelibatan orang tua dalam home program</li></ul><h6>Tahap Asesmen</h6><ul><li>Pembuatan worksheet/project yang menarik/rubik/form observasi untuk tugas anak berkebutuhan khusus</li><li>Pembuatan laporan harian</li><li>Pembuatan Rencana Program Pendidikan Individual/PPI/IEP dan pelaporannya</li></ul></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 3,
+    "location_id": 1,
+    "title": "Pendidkan Inklusi",
+    "description": "<h4>Materi Pelatihan</h4><ul><li>Pengenalan Pendidikan Inklusi</li><li>Identifikasi dan Pemahaman Kebutuhan Siswa</li><li>Strategi Pembelajaran Inklusif</li><li>Kolaborasi dengan Profesional dan Orang Tua</li><li>Penilaian dan Evaluasi</li><li>Implementasi dan Pengembangan Berkelanjutan</li></ul>",
+    "price": 300000,
+    "price_unit": "reservasi"
+  },
+  {
+    "category_id": 4,
+    "location_id": 1,
+    "title": "Paket Harian",
+    "description": "deskripsi sementara",
+    "price": 200000,
+    "price_unit": "hari",
+    "billing_type": "daily",
+    "entry_fees": {
+      "create": [
+        {
+          "title": "Uang pangkal daycare harian depok",
+          "description": "Uang pangkal daycare harian depok",
+          "price": 20000
+        }
+      ]
+    }
+  },
+  {
+    "category_id": 4,
+    "location_id": 1,
+    "title": "Paket Bulanan",
+    "description": "deskripsi sementara",
+    "price": 4000000,
+    "price_unit": "bulan",
+    "billing_type": "monthly",
+    "entry_fees": {
+      "create": [
+        {
+          "title": "Uang pangkal daycare bulanan depok",
+          "description": "Uang pangkal daycare bulanan depok",
+          "price": 400000
+        }
+      ]
+    }
   }
 ]

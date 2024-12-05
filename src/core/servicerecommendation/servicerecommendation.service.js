@@ -16,6 +16,7 @@ class ServiceRecommendationService extends BaseService {
             service: true,
           },
         },
+
         doctor: true,
         client: true,
       },
@@ -97,6 +98,41 @@ class ServiceRecommendationService extends BaseService {
       where: { id },
       include: {
         service_recommendation_items: true,
+      },
+    });
+    return data;
+  };
+
+  findByBookingId = async (booking_id) => {
+    const data = await this.db.serviceRecommendation.findMany({
+      where: { booking_id: booking_id },
+      include: {
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
+      },
+    });
+    return data;
+  };
+
+  markAsRead = async (id) => {
+    const data = await this.db.serviceRecommendation.update({
+      where: { id },
+      data: {
+        is_read: true,
+      },
+      include: {
+        service_recommendation_items: {
+          include: {
+            service: true,
+          },
+        },
+        doctor: true,
+        client: true,
       },
     });
     return data;

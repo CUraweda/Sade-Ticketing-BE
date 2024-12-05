@@ -15,11 +15,12 @@ r.get(
   controller.findAll
 );
 
-r.get("/show-one/:id", controller.findById);
+r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
   validatorMiddleware({ body: validator.create }),
+  authMiddleware(["ADM", "SDM"]),
   controller.create
 );
 
@@ -30,7 +31,7 @@ r.put(
   controller.update
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
 const invoiceRouter = r;
 export default invoiceRouter;

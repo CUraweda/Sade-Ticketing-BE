@@ -30,6 +30,8 @@ r.get(
   controller.invoiceSimulation
 );
 
+r.get("/current-schedule/:id", authMiddleware(), controller.getCurrentSchedule);
+
 r.post(
   "/create",
   authMiddleware(["USR"]),
@@ -37,20 +39,31 @@ r.post(
   controller.create
 );
 
-r.put(
-  "/set-schedules/:id",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.setSchedules }),
-  controller.setSchedules
+r.post(
+  "/create-report-response",
+  authMiddleware(["ASR", "PSI", "TRS", "ADM", "SDM"]),
+  validatorMiddleware({ body: validator.createReportResponse }),
+  controller.createReportResponse
 );
 
 r.put("/confirm/:ids", authMiddleware(["USR"]), controller.userConfirm);
 
-r.put("/admin-confirm/:id", authMiddleware(["ADM"]), controller.adminConfirm);
+r.put(
+  "/admin-confirm/:id",
+  authMiddleware(["ADM", "SDM"]),
+  controller.adminConfirm
+);
+
+r.put(
+  "/accept-agreement-document",
+  authMiddleware(["USR"]),
+  validatorMiddleware({ body: validator.acceptAgreementDocument }),
+  controller.acceptAgreementDocument
+);
 
 r.put(
   "/update/:id",
-  authMiddleware(["ADM", "SDM"]),
+  authMiddleware(),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );

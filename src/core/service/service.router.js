@@ -42,5 +42,23 @@ r.put(
   controller.setQuestionnaire
 );
 
+r.put(
+  "/set-report/:id",
+  validatorMiddleware({ body: validator.setReport }),
+  controller.setReport
+);
+
+r.put(
+  "/set-entry-fee/:id",
+  validatorMiddleware({ body: validator.setEntryFee }),
+  controller.setEntryFee
+);
+
+r.put(
+  "/set-agreement-doc/:id",
+  validatorMiddleware({ body: validator.setAgreementDocument }),
+  controller.setAgreementDocument
+);
+
 const serviceRouter = r;
 export default serviceRouter;
