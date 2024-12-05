@@ -245,6 +245,20 @@ model ClientProfile {
   service_recommendations ServiceRecommendation[]
   schedules               ClientSchedule[]
   daycare_journals        DaycareJournal[]
+  client_privileges       ClientPrivilege[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// CLIENT PRIVILAGE
+model ClientPrivilege {
+  id         Int     @id @default(autoincrement())
+  title      String
+  image_path String?
+  client_id  String
+
+  client ClientProfile @relation(fields: [client_id], references: [id])
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
