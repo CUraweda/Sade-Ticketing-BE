@@ -3435,6 +3435,7 @@
   },
   {
     "title": "Hasil Pemeriksaan Psikologis",
+    "signers": "psikolog,terapis,asesor",
     "description": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)",
     "questions": {
       "create": [

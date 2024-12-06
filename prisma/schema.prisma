@@ -294,15 +294,30 @@ model QuestionnaireResponse {
   note      String?
   is_locked Boolean @default(false)
 
-  user           User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  client         ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  questionnaire  Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
-  booking        Booking?         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
-  booking_report Booking?         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
+  user           User?                            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client         ClientProfile?                   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire  Questionnaire?                   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking        Booking?                         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
+  booking_report Booking?                         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
   answers        QuestionAnswer[]
+  signatures     QuestionnaireResponseSignature[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model QuestionnaireResponseSignature {
+  id          Int    @id @default(autoincrement())
+  response_id String
+
+  name               String
+  role               String
+  signature_img_path String?
+  detail             String?
+  signed_place       String?
+  signed_at          DateTime @default(now())
+
+  response QuestionnaireResponse @relation(fields: [response_id], references: [id], onDelete: Cascade)
 }
 
 model Question {
