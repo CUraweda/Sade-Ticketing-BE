@@ -42,6 +42,7 @@ class SignatureController extends BaseController {
     const prevData = await this.#service.findById(req.params.id, req.user.id);
     if (!prevData) throw new NotFound("Signature tidak ditemukan");
 
+    const payload = req.body;
     if (req.file?.path) {
       if (prevData.signature_img_path)
         fs.unlink(up.path, (err) => {
@@ -52,7 +53,7 @@ class SignatureController extends BaseController {
       payload["signature_img_path"] = req.file?.path ?? null;
     }
 
-    const data = await this.#service.update(req.params.id, req.body);
+    const data = await this.#service.update(req.params.id, payload);
     return this.ok(res, data, "Signature berhasil diperbarui");
   });
 
@@ -61,7 +62,7 @@ class SignatureController extends BaseController {
     if (!prevData) throw new NotFound("Signature tidak ditemukan");
 
     if (prevData.signature_img_path)
-      fs.unlink(up.path, (err) => {
+      fs.unlink(prevData.signature_img_path, (err) => {
         if (err) {
           console.error("ERR(file): ", err);
         }
@@ -69,6 +70,22 @@ class SignatureController extends BaseController {
 
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "Signature berhasil dihapus");
+  });
+
+  download = this.wrapper(async (req, res) => {
+    const data = await this.#service.findById(req.params.id, req.user.id);
+    if (!data) throw new NotFound("Signature tidak ditemukan");
+
+    if (data.signature_img_path && fs.existsSync(data.signature_img_path)) {
+      return res.download(data.signature_img_path, (err) => {
+        if (err) {
+          console.error("Error sending file:", err);
+          return this.serverError(res, "Gagal mendownload file");
+        }
+      });
+    } else {
+      return this.ok(res, null, "Gambar Signature tidak ada");
+    }
   });
 }
 

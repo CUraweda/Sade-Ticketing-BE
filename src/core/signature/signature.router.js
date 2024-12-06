@@ -4,6 +4,8 @@ import SignatureController from "./signature.controller.js";
 import SignatureValidator from "./signature.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import uploader from "../../middlewares/multer.middleware.js";
+
 const r = Router(),
   validator = SignatureValidator,
   controller = new SignatureController();
@@ -16,6 +18,8 @@ r.get(
 );
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
+
+r.get("/image/:id", authMiddleware(), controller.download);
 
 r.post(
   "/create",
