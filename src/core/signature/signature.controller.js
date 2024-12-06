@@ -45,7 +45,7 @@ class SignatureController extends BaseController {
     const payload = req.body;
     if (req.file?.path) {
       if (prevData.signature_img_path)
-        fs.unlink(up.path, (err) => {
+        fs.unlink(prevData.signature_img_path, (err) => {
           if (err) {
             console.error("ERR(file): ", err);
           }
