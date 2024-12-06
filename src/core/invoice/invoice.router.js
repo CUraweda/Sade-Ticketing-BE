@@ -31,6 +31,20 @@ r.put(
   controller.update
 );
 
+r.post(
+  "/create-overtime",
+  validatorMiddleware({ body: validator.createOvertime }),
+  authMiddleware(["ADM", "SDM"]),
+  controller.createOvertime
+);
+
+r.put(
+  "/update-overtime/:id",
+  authMiddleware(["ADM", "SDM"]),
+  validatorMiddleware({ body: validator.updateOvertime }),
+  controller.updateOvertime
+);
+
 r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
 const invoiceRouter = r;
