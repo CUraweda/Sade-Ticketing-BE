@@ -35,6 +35,7 @@ model User {
   chatrooms               ChatRoomMember[]
   chats                   Chat[]
   chat_reads              ChatRead[]
+  signatures              Signature[]
 }
 
 model UserRole {
@@ -55,6 +56,22 @@ model Role {
 
   user_roles    UserRole[]
   notifications Notification[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// SIGNATURE
+model Signature {
+  id      String @id @default(uuid())
+  user_id String
+
+  name               String
+  role               String
+  signature_img_path String?
+  detail             String?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -255,6 +272,7 @@ model Questionnaire {
   id          String  @id @default(uuid())
   title       String  @unique
   description String? @db.LongText
+  signers     String?
 
   questions        Question[]
   responses        QuestionnaireResponse[]
