@@ -30,6 +30,7 @@ import doctorserviceRouter from "./core/doctorservice/doctorservice.router.js";
 import balanceRouter from "./core/balance/balance.router.js";
 import chatroomRouter from "./core/chatroom/chatroom.router.js";
 import chatRouter from "./core/chat/chat.router.js";
+import clientprivilegeRouter from "./core/clientprivilege/clientprivilege.router.js";
 
 const r = Router();
 
@@ -64,6 +65,7 @@ r.use("/doctor-service", doctorserviceRouter);
 r.use("/balance", balanceRouter);
 r.use("/chat-room", chatroomRouter);
 r.use("/chat", chatRouter);
+r.use("/client-privilege", clientprivilegeRouter);
 
 const appRouter = r;
 export default appRouter;

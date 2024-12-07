@@ -201,6 +201,20 @@ model Service {
   schedules                    Schedule[]
   bookings                     Booking[]
   entry_fees                   Fee[]
+  service_prices               ServicePrice[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServicePrice {
+  id           String  @id @default(uuid())
+  service_id   String?
+  privilege_id String?
+  price        Float
+
+  service   Service?         @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  privilege ClientPrivilege? @relation(fields: [privilege_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -253,12 +267,14 @@ model ClientProfile {
 
 // CLIENT PRIVILAGE
 model ClientPrivilege {
-  id         Int     @id @default(autoincrement())
+  id         String  @id @default(uuid())
   title      String
   image_path String?
   client_id  String
 
   client ClientProfile @relation(fields: [client_id], references: [id])
+
+  ServicePrice ServicePrice[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
