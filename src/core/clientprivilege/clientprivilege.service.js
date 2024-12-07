@@ -8,7 +8,12 @@ class clientPrivilegeService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.clientPrivilege.findMany({ ...q });
+    const data = await this.db.clientPrivilege.findMany({
+      ...q,
+      include: {
+        client: true,
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.clientPrivilege.count({ where: q.where });
@@ -28,7 +33,10 @@ class clientPrivilegeService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.clientPrivilege.update({ where: { id }, data: payload });
+    const data = await this.db.clientPrivilege.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +46,4 @@ class clientPrivilegeService extends BaseService {
   };
 }
 
-export default clientPrivilegeService;  
+export default clientPrivilegeService;

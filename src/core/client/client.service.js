@@ -20,6 +20,7 @@ class clientService extends BaseService {
   findById = async (id, user_id) => {
     const data = await this.db.clientProfile.findUnique({
       where: { id, user_id },
+      include: { client_privileges: true },
     });
     return data;
   };

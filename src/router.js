@@ -31,6 +31,7 @@ import balanceRouter from "./core/balance/balance.router.js";
 import chatroomRouter from "./core/chatroom/chatroom.router.js";
 import chatRouter from "./core/chat/chat.router.js";
 import clientprivilegeRouter from "./core/clientprivilege/clientprivilege.router.js";
+import servicePriceRouter from "./core/serviceprice/serviceprice.router.js";
 
 const r = Router();
 
@@ -66,6 +67,7 @@ r.use("/balance", balanceRouter);
 r.use("/chat-room", chatroomRouter);
 r.use("/chat", chatRouter);
 r.use("/client-privilege", clientprivilegeRouter);
+r.use("/service-price", servicePriceRouter);
 
 const appRouter = r;
 export default appRouter;
