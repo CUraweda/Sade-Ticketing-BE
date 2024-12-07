@@ -45,6 +45,7 @@ class QuestionnaireResponseService extends BaseService {
     const data = await this.db.questionnaireResponse.findUnique({
       where: { id },
       include: {
+        signatures: true,
         questionnaire: true,
         user: {
           select: {
@@ -120,6 +121,16 @@ class QuestionnaireResponseService extends BaseService {
       },
     });
 
+  addSignature = async (id, payload) =>
+    this.db.questionnaireResponse.update({
+      where: { id },
+      data: {
+        signatures: {
+          create: payload,
+        },
+      },
+    });
+
   exportResponse = async (id) => {
     const dat = await this.findById(id);
 
@@ -140,7 +151,7 @@ class QuestionnaireResponseService extends BaseService {
     };
 
     const doc = pdfMake.createPdf({
-      pageMargins: [40, 120, 40, 64],
+      pageMargins: [40, 120, 40, 72],
       header: [
         {
           margin: 24,
@@ -185,7 +196,7 @@ class QuestionnaireResponseService extends BaseService {
         layout: "noBorders",
         margin: 24,
         table: {
-          widths: ["80%", "20%"],
+          widths: ["85%", "15%"],
           body: [
             [
               {

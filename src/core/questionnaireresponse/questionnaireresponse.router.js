@@ -19,6 +19,12 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.get("/export/:id", authMiddleware(), controller.export);
 
+r.put(
+  "/add-signature/:id",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.addSignature })
+);
+
 // r.post(
 //   "/create",
 //   validatorMiddleware({ body: validator.create }),

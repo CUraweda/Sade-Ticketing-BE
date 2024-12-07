@@ -1,14 +1,17 @@
 import BaseController from "../../base/controller.base.js";
-import { Forbidden, NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import { RoleCode } from "../role/role.validator.js";
+import SignatureService from "../signature/signature.service.js";
 import QuestionnaireResponseService from "./questionnaireresponse.service.js";
 
 class QuestionnaireResponseController extends BaseController {
   #service;
+  #signatureService;
 
   constructor() {
     super();
     this.#service = new QuestionnaireResponseService();
+    this.#signatureService = new SignatureService();
   }
 
   findAll = this.wrapper(async (req, res) => {
@@ -53,6 +56,32 @@ class QuestionnaireResponseController extends BaseController {
   delete = this.wrapper(async (req, res) => {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "QuestionnaireResponse berhasil dihapus");
+  });
+
+  addSignature = this.wrapper(async (req, res) => {
+    const signature = await this.#signatureService.findById(
+      req.body.signature_id,
+      req.user.id
+    );
+    if (!signature) throw new Forbidden();
+
+    const response = await this.#service.findById(req.params.id);
+    if (
+      !response.questionnaire.signers.split(",").includes(signature.role) &&
+      response.signatures.some((s) => s.role == signature.role)
+    )
+      throw new BadRequest();
+
+    const payload = {
+      name: signature.name,
+      role: signature.role,
+      signature_img_path: signature.signature_img_path ?? null,
+      detail: signature.detail ?? null,
+      signed_place: req.body.signed_place,
+    };
+    const data = await this.#service.addSignature(req.params.id, payload);
+
+    return this.ok(res, data, "Signature berhasil ditambahkan");
   });
 
   export = this.wrapper(async (req, res) => {
