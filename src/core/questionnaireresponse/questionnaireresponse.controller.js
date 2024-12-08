@@ -66,11 +66,10 @@ class QuestionnaireResponseController extends BaseController {
     if (!signature) throw new Forbidden();
 
     const response = await this.#service.findById(req.params.id);
-    if (
-      !response.questionnaire.signers.split(",").includes(signature.role) &&
-      response.signatures.some((s) => s.role == signature.role)
-    )
+    if (!response.questionnaire.signers.split(",").includes(signature.role))
       throw new BadRequest();
+    if (response.signatures.some((s) => s.role == signature.role))
+      throw new BadRequest(`Tanda tangan ${signature.role} sudah ada`);
 
     const payload = {
       name: signature.name,
