@@ -19,7 +19,7 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
-r.get("/image/:id", authMiddleware(), controller.download);
+r.get("/image", authMiddleware(), controller.download);
 
 r.post(
   "/create",

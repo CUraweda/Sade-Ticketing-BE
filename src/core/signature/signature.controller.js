@@ -73,11 +73,8 @@ class SignatureController extends BaseController {
   });
 
   download = this.wrapper(async (req, res) => {
-    const data = await this.#service.findById(req.params.id, req.user.id);
-    if (!data) throw new NotFound("Signature tidak ditemukan");
-
-    if (data.signature_img_path && fs.existsSync(data.signature_img_path)) {
-      return res.download(data.signature_img_path, (err) => {
+    if (fs.existsSync(req.query.path)) {
+      return res.download(req.query.path, (err) => {
         if (err) {
           console.error("Error sending file:", err);
           return this.serverError(res, "Gagal mendownload file");
