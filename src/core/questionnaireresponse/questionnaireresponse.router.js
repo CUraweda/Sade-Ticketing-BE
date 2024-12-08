@@ -22,7 +22,8 @@ r.get("/export/:id", authMiddleware(), controller.export);
 r.put(
   "/add-signature/:id",
   authMiddleware(),
-  validatorMiddleware({ body: validator.addSignature })
+  validatorMiddleware({ body: validator.addSignature }),
+  controller.addSignature
 );
 
 // r.post(
