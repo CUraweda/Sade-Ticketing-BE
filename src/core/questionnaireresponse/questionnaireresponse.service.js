@@ -270,7 +270,9 @@ class QuestionnaireResponseService extends BaseService {
               [
                 { marginBottom: 4, text: "Hubungan" },
                 { text: ": " },
-                { text: `${dat.client.relation} dari ${dat.user.full_name}` },
+                {
+                  text: `${dat.client.relation} dari ${dat.client.user.full_name}`,
+                },
               ],
             ],
           },
