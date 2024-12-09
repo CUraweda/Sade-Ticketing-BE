@@ -147,7 +147,7 @@ class QuestionnaireResponseService extends BaseService {
       marginTop: 8,
       marginBottom: 8,
       border: [0, 0, 0, 1],
-      borderColor: ["", "", "", "#c0c0c0"],
+      borderColor: ["", "", "", "#d0d0d0"],
     };
 
     const doc = pdfMake.createPdf({
@@ -349,12 +349,57 @@ class QuestionnaireResponseService extends BaseService {
 
         // description
         {
-          marginTop: 16,
+          marginTop: 32,
           lineHeight: 1.5,
           color: "#333",
           text: dat.questionnaire.description
             ? htmlToPdfmake(dat.questionnaire.description, { window })
             : "",
+        },
+
+        // signatures
+        dat.signatures.length > 0 && {
+          alignment: "right",
+          color: "#333",
+          marginTop: 32,
+          lineHeight: 1.2,
+          columns: [
+            {
+              width: "*",
+              text: "",
+            },
+            ...dat.signatures.map((sig) => {
+              let image = null;
+
+              if (fs.existsSync(sig.signature_img_path))
+                image = fs.readFileSync(sig.signature_img_path, "base64");
+
+              return {
+                width: "auto",
+                stack: [
+                  `${sig.signed_place}, ${moment(sig.signed_at).locale("id").format("DD MMMM YYYY")}`,
+                  `${sig.role}`,
+                  {
+                    ...(image
+                      ? {
+                          image: `data:image/png;base64,${image}`,
+                        }
+                      : { text: "-" }),
+                    width: 130,
+                    height: 130,
+                  },
+                  {
+                    color: "#000",
+                    fontSize: 12,
+                    text: `${sig.name}, ${sig.role}`,
+                    bold: true,
+                  },
+                  htmlToPdfmake(sig.detail ?? "", { window }),
+                ],
+              };
+            }),
+          ],
+          columnGap: 16,
         },
       ],
     });
