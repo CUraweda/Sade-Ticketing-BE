@@ -22,6 +22,8 @@ app.get("/", async (req, res) => {
     .send(`Congratulations! API is working in port ${process.env.PORT}`);
 });
 app.use("/api", appRouter);
+app.use("/public", express.static("public"));
+
 app.use((req, res, next) => {
   res.status(httpStatus.NOT_FOUND).json({
     message: "Ticketing - path not found",
