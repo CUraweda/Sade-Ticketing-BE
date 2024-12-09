@@ -35,6 +35,7 @@ model User {
   chatrooms               ChatRoomMember[]
   chats                   Chat[]
   chat_reads              ChatRead[]
+  signatures              Signature[]
 }
 
 model UserRole {
@@ -55,6 +56,22 @@ model Role {
 
   user_roles    UserRole[]
   notifications Notification[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// SIGNATURE
+model Signature {
+  id      String @id @default(uuid())
+  user_id String
+
+  name               String
+  role               String
+  signature_img_path String?
+  detail             String?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -255,6 +272,7 @@ model Questionnaire {
   id          String  @id @default(uuid())
   title       String  @unique
   description String? @db.LongText
+  signers     String?
 
   questions        Question[]
   responses        QuestionnaireResponse[]
@@ -276,15 +294,30 @@ model QuestionnaireResponse {
   note      String?
   is_locked Boolean @default(false)
 
-  user           User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  client         ClientProfile?   @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  questionnaire  Questionnaire?   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
-  booking        Booking?         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
-  booking_report Booking?         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
+  user           User?                            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client         ClientProfile?                   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire  Questionnaire?                   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking        Booking?                         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
+  booking_report Booking?                         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
   answers        QuestionAnswer[]
+  signatures     QuestionnaireResponseSignature[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model QuestionnaireResponseSignature {
+  id          Int    @id @default(autoincrement())
+  response_id String
+
+  name               String
+  role               String
+  signature_img_path String?
+  detail             String?
+  signed_place       String?
+  signed_at          DateTime @default(now())
+
+  response QuestionnaireResponse @relation(fields: [response_id], references: [id], onDelete: Cascade)
 }
 
 model Question {

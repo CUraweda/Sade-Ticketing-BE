@@ -453,6 +453,7 @@
   },
   {
     "title": "Orang Tua Klinik Liliput Binar Depok",
+    "description": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
     "questions": {
       "create": [
         {
@@ -1349,6 +1350,7 @@
   },
   {
     "title": "Sensory Devensiveness",
+    "description": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
     "questions": {
       "create": [
         {
@@ -3435,7 +3437,8 @@
   },
   {
     "title": "Hasil Pemeriksaan Psikologis",
-    "description": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)",
+    "signers": "psikolog,terapis,asesor",
+    "description": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)<br><br><strong>Keterangan:</strong> 1 – 2 = kurang 3 – 4 – 5 = cukup 6 – 7 = baik",
     "questions": {
       "create": [
         {
