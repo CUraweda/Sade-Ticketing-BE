@@ -4,6 +4,7 @@ import clientController from "./client.controller.js";
 import clientValidator from "./client.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { uploadPublic } from "../../middlewares/multer.middleware.js";
 
 const r = Router(),
   validator = clientValidator,
@@ -30,6 +31,13 @@ r.put(
   authMiddleware(),
   validatorMiddleware({ body: validator.update }),
   controller.update
+);
+
+r.put(
+  "/update-avatar/:id",
+  authMiddleware(),
+  uploadPublic("/client-avatar", "image", 3000000).single("image"),
+  controller.updateAvatar
 );
 
 r.delete("/delete/:id", controller.delete);
