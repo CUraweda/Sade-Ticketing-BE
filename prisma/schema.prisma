@@ -160,6 +160,7 @@ model DoctorProfile {
   address      String?
   sex          String?
   is_active    Boolean   @default(true)
+  avatar       String?
 
   location                Location?               @relation(fields: [location_id], references: [id], onDelete: SetNull)
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
@@ -255,6 +256,7 @@ model ClientProfile {
   ethnic       String?
   nationality  String?
   is_active    Boolean  @default(true)
+  avatar       String?
 
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   questionnaire_responses QuestionnaireResponse[]
