@@ -39,6 +39,14 @@ class InvoiceController extends BaseController {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "Invoice berhasil dihapus");
   });
+  createOvertime = this.wrapper(async (req, res) => {
+    const data = await this.#service.createOvertime(req.body);
+    return this.created(res, data, "Overtime invoice berhasil dibuat");
+  });
+  updateOvertime = this.wrapper(async (req, res) => {
+    const data = await this.#service.updateOvertime(req.params.id, req.body);
+    return this.ok(res, data, "Update overtime invoice berhasil diperbarui");
+  });
 }
 
 export default InvoiceController;

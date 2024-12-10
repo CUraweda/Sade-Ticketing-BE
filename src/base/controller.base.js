@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import { catchResponse } from "../lib/response/catch.js";
 import { RoleCode } from "../core/role/role.validator.js";
+import fs from "fs";
 
 class BaseController {
   constructor() {}
@@ -97,6 +98,17 @@ class BaseController {
     [RoleCode.PSIKOLOG, RoleCode.ASESOR, RoleCode.TERAPIS].includes(
       req.user.role_code
     );
+
+  isFilePathExist = (path) => path && fs.existsSync(path);
+
+  deleteFileByPath = (path) => {
+    if (this.isFilePathExist(path))
+      fs.unlink(path, (err) => {
+        if (err) {
+          console.error("ERR(file): ", err);
+        }
+      });
+  };
 
   /**
    * @param {any} data

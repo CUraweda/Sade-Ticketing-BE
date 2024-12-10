@@ -205,6 +205,51 @@ class InvoiceService extends BaseService {
 
     return { items, total };
   };
+
+  createOvertime = async (payload) => {
+    const data = await this.db.invoice.create({
+      data: {
+        title: payload.title,
+        status: payload.status,
+        user_id: payload.user_id,
+        total: payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+        expiry_date: payload.expiry_date,
+        bookings: {
+          connect: { id: payload.booking_id },
+        },
+        fees: {
+          createMany: {
+            data: payload.fees,
+          },
+        },
+      },
+    });
+
+    return data;
+  };
+
+  updateOvertime = async (id, payload) => {
+    const data = await this.db.invoice.update({
+      where: { id },
+      data: {
+        title: payload.title,
+        status: payload.status,
+        user_id: payload.user_id,
+        total: payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+        expiry_date: payload.expiry_date,
+        bookings: {
+          connect: { id: payload.booking_id },
+        },
+        fees: {
+          deleteMany: {},
+          createMany: {
+            data: payload.fees,
+          },
+        },
+      },
+    });
+    return data;
+  };
 }
 
 export default InvoiceService;

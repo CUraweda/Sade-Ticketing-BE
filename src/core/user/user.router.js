@@ -4,6 +4,7 @@ import UserController from "./user.controller.js";
 import UserValidator from "./user.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { uploadPublic } from "../../middlewares/multer.middleware.js";
 const r = Router(),
   validator = UserValidator,
   controller = new UserController();
@@ -45,6 +46,13 @@ r.put(
 );
 
 r.put("/switch-role/:id", authMiddleware(), controller.switchRole);
+
+r.put(
+  "/update-avatar",
+  authMiddleware(),
+  uploadPublic("/user-avatar", "image", 3000000).single("image"),
+  controller.updateAvatar
+);
 
 r.delete("/delete/:id", authMiddleware(["SDM"]), controller.delete);
 

@@ -4,6 +4,7 @@ import DoctorController from "./doctor.controller.js";
 import DoctorValidator from "./doctor.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { uploadPublic } from "../../middlewares/multer.middleware.js";
 const r = Router(),
   validator = DoctorValidator,
   controller = new DoctorController();
@@ -35,6 +36,13 @@ r.put(
   authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
+);
+
+r.put(
+  "/update-avatar/:id",
+  authMiddleware(["ADM", "SDM"]),
+  uploadPublic("/doctor-avatar", "image", 3000000).single("image"),
+  controller.updateAvatar
 );
 
 r.put(
