@@ -25,6 +25,7 @@ class BookingService extends BaseService {
         include: this.select([
           "client.first_name",
           "client.last_name",
+          "client.avatar",
           "client.category",
           "client.dob",
         ]),

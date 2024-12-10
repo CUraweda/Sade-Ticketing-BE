@@ -33,6 +33,7 @@ import chatRouter from "./core/chat/chat.router.js";
 import clientprivilegeRouter from "./core/clientprivilege/clientprivilege.router.js";
 import servicePriceRouter from "./core/serviceprice/serviceprice.router.js";
 import privilegeRouter from "./core/privilege/privilege.router.js";
+import signatureRouter from "./core/signature/signature.router.js";
 
 const r = Router();
 
@@ -70,6 +71,7 @@ r.use("/chat", chatRouter);
 r.use("/client-privilege", clientprivilegeRouter);
 r.use("/service-price", servicePriceRouter);
 r.use("/privilege", privilegeRouter);
+r.use("/signature", signatureRouter);
 
 const appRouter = r;
 export default appRouter;

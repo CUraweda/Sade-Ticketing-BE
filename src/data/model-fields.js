@@ -45,6 +45,7 @@ export const doctorFields = {
     pob: ["USR"],
     dob: ["USR"],
     address: ["USR"],
+    avatar: [],
     sex: [],
     grade_id: [],
     is_active: [],

@@ -4,13 +4,14 @@ import Setting from "../config/multer.js";
 
 /**
  * Creates a multer storage engine with the given upload path.
+ * @param {string} prefixPath
  * @param {string} uploadPath
  * @returns {multer.StorageEngine}
  */
-const createStorage = (uploadPath) => {
+const createStorage = (prefixPath, uploadPath) => {
   return multer.diskStorage({
     destination: function (req, file, cb) {
-      const fullPath = "./uploads" + uploadPath;
+      const fullPath = prefixPath + uploadPath;
       if (!fs.existsSync(fullPath)) {
         fs.mkdirSync(fullPath, { recursive: true });
       }
@@ -76,7 +77,29 @@ const uploader = (
   fileType = "image",
   limitSize = Setting.defaultLimitSize
 ) => {
-  const storage = createStorage(uploadPath);
+  const storage = createStorage("./uploads", uploadPath);
+  const fileFilter = createFilter(fileType);
+
+  return multer({
+    storage,
+    fileFilter,
+    limits: { fileSize: limitSize },
+  });
+};
+
+/**
+ * Creates a multer uploader to public middleware with the given options.
+ * @param {string} uploadPath
+ * @param {'image' | 'file' | 'video' | '*'} fileType
+ * @param {number} [limitSize=Setting.defaultLimitSize]
+ * @returns {multer.Multer}
+ */
+const uploadPublic = (
+  uploadPath = "/others",
+  fileType = "image",
+  limitSize = Setting.defaultLimitSize
+) => {
+  const storage = createStorage("./public", uploadPath);
   const fileFilter = createFilter(fileType);
 
   return multer({
@@ -87,3 +110,4 @@ const uploader = (
 };
 
 export default uploader;
+export { uploadPublic };
