@@ -249,7 +249,7 @@ class AuthService extends BaseService {
     return "Email dikirim!";
   };
   resetPass = async (payload) => {
-    const encodedToken = payload.encoded_token;
+    const encodedToken = payload.encoded_email;
     const resetToken = base64url.decode(encodedToken);
 
     let decoded;
