@@ -12,6 +12,7 @@ class clientPrivilegeService extends BaseService {
       ...q,
       include: {
         client: true,
+        privilege: true,
       },
     });
 
@@ -23,7 +24,13 @@ class clientPrivilegeService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.clientPrivilege.findUnique({ where: { id } });
+    const data = await this.db.clientPrivilege.findUnique({
+      where: { id },
+      include: {
+        client: true,
+        privilege: true,
+      },
+    });
     return data;
   };
 

@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Silver Member",
+    "image_path": "/images/silver.png",
+    "description": "Diskon 10% untuk semua layanan."
+  },
+  {
+    "title": "Gold Member",
+    "image_path": "/images/gold.png",
+    "description": "Diskon 20% untuk semua layanan."
+  },
+  {
+    "title": "Platinum Member",
+    "image_path": "/images/platinum.png",
+    "description": "Diskon 30% untuk semua layanan."
+  }
+]

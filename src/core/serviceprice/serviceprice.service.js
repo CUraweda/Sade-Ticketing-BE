@@ -11,7 +11,11 @@ class servicePriceService extends BaseService {
     const data = await this.db.servicePrice.findMany({
       ...q,
       include: {
-        privilege: true,
+        privilege: {
+          include: {
+            privileges: true,
+          },
+        },
         service: true,
       },
     });
@@ -29,7 +33,7 @@ class servicePriceService extends BaseService {
       include: {
         privilege: {
           include: {
-            client: true,
+            privileges: true,
           },
         },
         service: true,
