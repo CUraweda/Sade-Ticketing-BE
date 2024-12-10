@@ -64,6 +64,13 @@ const releaseInvoiceDaily = async () => {
           },
         },
         daycare_journals: {
+          include: {
+            logtime: {
+              include: {
+                fee: true,
+              },
+            },
+          },
           where: {
             date: {
               gte: moment().subtract(1, "day").startOf("day").toDate(),
@@ -83,7 +90,8 @@ const releaseInvoiceDaily = async () => {
       }, {});
 
       Object.entries(bookingByUser).forEach(([userId, bookings]) => {
-        const items = [];
+        const items = [],
+          fees = [];
 
         bookings.forEach((b) => {
           const service = parseJson(b.service_data, {
@@ -100,16 +108,29 @@ const releaseInvoiceDaily = async () => {
 
           if (service.category?.name == "Daycare") {
             quantity = b.daycare_journals.length;
+
+            const logs = b.daycare_journals
+              .map((dj) => dj.logtime.filter((lt) => lt.fee_id != null))
+              .flat();
+            if (logs.length)
+              logs.forEach((l) => {
+                fees.push({
+                  fee_id: l.fee_id,
+                  name: l.fee.title,
+                  quantity: 1,
+                  price: l.fee.price,
+                });
+              });
           } else {
             quantity = schedules.length;
           }
 
           if (quantity > 0) {
             items.push({
-              start_date: schedules[0].start_date,
+              start_date: schedules[0]?.start_date,
               end_date:
-                schedules[schedules.length - 1].end_date ??
-                schedules[schedules.length - 1].start_date,
+                schedules[schedules.length - 1]?.end_date ??
+                schedules[schedules.length - 1]?.start_date,
               name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
               quantity,
               quantity_unit: service.price_unit,
@@ -119,15 +140,20 @@ const releaseInvoiceDaily = async () => {
           }
         });
 
-        if (items.length) {
+        if (items.length || fees.length) {
           invoices.push({
             user_id: userId,
             title: `Tagihan layanan harian - ${moment().subtract(1, "day").format("DD MMMM YYYY")}`,
-            total: items.reduce((a, c) => (a += c.quantity * c.price), 0),
+            total:
+              items.reduce((a, c) => (a += c.quantity * c.price), 0) +
+              fees.reduce((a, c) => (a += c.quantity * c.price), 0),
             status: InvoiceStatus.ISSUED,
             expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
             items: {
               create: items,
+            },
+            fees: {
+              create: fees,
             },
             bookings: {
               connect: bookings.map((b) => ({ id: b.id })),
@@ -204,6 +230,13 @@ const releaseInvoiceMonthly = async () => {
           },
         },
         daycare_journals: {
+          include: {
+            logtime: {
+              include: {
+                fee: true,
+              },
+            },
+          },
           where: {
             date: {
               gte: moment().subtract(1, "month").startOf("month").toDate(),
@@ -223,7 +256,8 @@ const releaseInvoiceMonthly = async () => {
       }, {});
 
       Object.entries(bookingByUser).forEach(([userId, bookings]) => {
-        const items = [];
+        const items = [],
+          fees = [];
 
         bookings.forEach((b) => {
           const service = parseJson(b.service_data, {
@@ -240,16 +274,29 @@ const releaseInvoiceMonthly = async () => {
 
           if (service.category?.name == "Daycare") {
             quantity = 1;
+
+            const logs = b.daycare_journals
+              .map((dj) => dj.logtime.filter((lt) => lt.fee_id != null))
+              .flat();
+            if (logs.length)
+              logs.forEach((l) => {
+                fees.push({
+                  fee_id: l.fee_id,
+                  name: l.fee.title,
+                  quantity: 1,
+                  price: l.fee.price,
+                });
+              });
           } else {
             quantity = schedules.length;
           }
 
           if (quantity > 0) {
             items.push({
-              start_date: schedules[0].start_date,
+              start_date: schedules[0]?.start_date,
               end_date:
-                schedules[schedules.length - 1].end_date ??
-                schedules[schedules.length - 1].start_date,
+                schedules[schedules.length - 1]?.end_date ??
+                schedules[schedules.length - 1]?.start_date,
               name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
               quantity,
               quantity_unit: service.price_unit,
@@ -259,15 +306,20 @@ const releaseInvoiceMonthly = async () => {
           }
         });
 
-        if (items.length) {
+        if (items.length || fees.length) {
           invoices.push({
             user_id: userId,
             title: `Tagihan layanan bulanan - ${moment().subtract(1, "month").format("MMMM YYYY")}`,
-            total: items.reduce((a, c) => (a += c.quantity * c.price), 0),
+            total:
+              items.reduce((a, c) => (a += c.quantity * c.price), 0) +
+              fees.reduce((a, c) => (a += c.quantity * c.price), 0),
             status: InvoiceStatus.ISSUED,
             expiry_date: moment().add({ day: 3 }).endOf("day").toDate(),
             items: {
               create: items,
+            },
+            fees: {
+              create: fees,
             },
             bookings: {
               connect: bookings.map((b) => ({ id: b.id })),
