@@ -30,6 +30,9 @@ import doctorserviceRouter from "./core/doctorservice/doctorservice.router.js";
 import balanceRouter from "./core/balance/balance.router.js";
 import chatroomRouter from "./core/chatroom/chatroom.router.js";
 import chatRouter from "./core/chat/chat.router.js";
+import clientprivilegeRouter from "./core/clientprivilege/clientprivilege.router.js";
+import servicePriceRouter from "./core/serviceprice/serviceprice.router.js";
+import privilegeRouter from "./core/privilege/privilege.router.js";
 import signatureRouter from "./core/signature/signature.router.js";
 
 const r = Router();
@@ -65,6 +68,9 @@ r.use("/doctor-service", doctorserviceRouter);
 r.use("/balance", balanceRouter);
 r.use("/chat-room", chatroomRouter);
 r.use("/chat", chatRouter);
+r.use("/client-privilege", clientprivilegeRouter);
+r.use("/service-price", servicePriceRouter);
+r.use("/privilege", privilegeRouter);
 r.use("/signature", signatureRouter);
 
 const appRouter = r;
