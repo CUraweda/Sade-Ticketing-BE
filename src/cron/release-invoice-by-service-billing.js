@@ -148,6 +148,7 @@ const releaseInvoiceDaily = async () => {
           const servicePrices =
             schedules?.[schedules.length - 1]?.service?.service_prices || [];
 
+          let usedPrivileges = null;
           const lowestPrice = servicePrices.reduce((minPrice, item) => {
             const isMatched = clientPrivileges.some(
               (clientPrivilege) =>
@@ -155,6 +156,7 @@ const releaseInvoiceDaily = async () => {
             );
 
             if (isMatched && (minPrice === null || item.price < minPrice)) {
+              usedPrivileges = item.privilege;
               return item.price;
             }
 
@@ -172,6 +174,10 @@ const releaseInvoiceDaily = async () => {
               quantity_unit: service.price_unit,
               price: lowestPrice ? lowestPrice : service.price,
               service_id: service.id,
+              note:
+                usedPrivileges && lowestPrice
+                  ? `Biaya khusus ${usedPrivileges.title}`
+                  : undefined,
             });
           }
         });
@@ -349,6 +355,7 @@ const releaseInvoiceMonthly = async () => {
           const servicePrices =
             schedules?.[schedules.length - 1]?.service?.service_prices || [];
 
+          let usedPrivileges = null;
           const lowestPrice = servicePrices.reduce((minPrice, item) => {
             const isMatched = clientPrivileges.some(
               (clientPrivilege) =>
@@ -356,6 +363,7 @@ const releaseInvoiceMonthly = async () => {
             );
 
             if (isMatched && (minPrice === null || item.price < minPrice)) {
+              usedPrivileges = item.privilege;
               return item.price;
             }
 
@@ -373,6 +381,10 @@ const releaseInvoiceMonthly = async () => {
               quantity_unit: service.price_unit,
               price: lowestPrice ? lowestPrice : service.price,
               service_id: service.id,
+              note:
+                usedPrivileges && lowestPrice
+                  ? `Biaya khusus ${usedPrivileges.title}`
+                  : undefined,
             });
           }
         });
