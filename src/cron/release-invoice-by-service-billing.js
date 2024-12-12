@@ -55,12 +55,30 @@ const releaseInvoiceDaily = async () => {
                 },
               },
             },
+            service: {
+              include: {
+                service_prices: {
+                  include: {
+                    privilege: {
+                      include: {
+                        privileges: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           where: {
             start_date: {
               lte: moment().subtract(1, "day").endOf("day").toDate(),
               gte: moment().subtract(1, "day").startOf("day").toDate(),
             },
+          },
+        },
+        client: {
+          include: {
+            client_privileges: true,
           },
         },
         daycare_journals: {
@@ -125,6 +143,26 @@ const releaseInvoiceDaily = async () => {
             quantity = schedules.length;
           }
 
+          const clientPrivileges = b?.client?.client_privileges || [];
+
+          const servicePrices =
+            schedules?.[schedules.length - 1]?.service?.service_prices || [];
+
+          let usedPrivileges = null;
+          const lowestPrice = servicePrices.reduce((minPrice, item) => {
+            const isMatched = clientPrivileges.some(
+              (clientPrivilege) =>
+                clientPrivilege.privilege_id === item.privilege.id
+            );
+
+            if (isMatched && (minPrice === null || item.price < minPrice)) {
+              usedPrivileges = item.privilege;
+              return item.price;
+            }
+
+            return minPrice;
+          }, null);
+
           if (quantity > 0) {
             items.push({
               start_date: schedules[0]?.start_date,
@@ -134,8 +172,12 @@ const releaseInvoiceDaily = async () => {
               name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
               quantity,
               quantity_unit: service.price_unit,
-              price: service.price,
+              price: lowestPrice ? lowestPrice : service.price,
               service_id: service.id,
+              note:
+                usedPrivileges && lowestPrice
+                  ? `Biaya khusus ${usedPrivileges.title}`
+                  : undefined,
             });
           }
         });
@@ -177,7 +219,6 @@ const releaseInvoiceDaily = async () => {
 
 const releaseInvoiceMonthly = async () => {
   console.log("\n[CRON] Create Monthly Invoices");
-
   try {
     const invoices = [];
 
@@ -221,12 +262,30 @@ const releaseInvoiceMonthly = async () => {
                 },
               },
             },
+            service: {
+              include: {
+                service_prices: {
+                  include: {
+                    privilege: {
+                      include: {
+                        privileges: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           where: {
             start_date: {
               lte: moment().subtract(1, "month").endOf("month").toDate(),
               gte: moment().subtract(1, "month").startOf("month").toDate(),
             },
+          },
+        },
+        client: {
+          include: {
+            client_privileges: true,
           },
         },
         daycare_journals: {
@@ -291,6 +350,26 @@ const releaseInvoiceMonthly = async () => {
             quantity = schedules.length;
           }
 
+          const clientPrivileges = b?.client?.client_privileges || [];
+
+          const servicePrices =
+            schedules?.[schedules.length - 1]?.service?.service_prices || [];
+
+          let usedPrivileges = null;
+          const lowestPrice = servicePrices.reduce((minPrice, item) => {
+            const isMatched = clientPrivileges.some(
+              (clientPrivilege) =>
+                clientPrivilege.privilege_id === item.privilege.id
+            );
+
+            if (isMatched && (minPrice === null || item.price < minPrice)) {
+              usedPrivileges = item.privilege;
+              return item.price;
+            }
+
+            return minPrice;
+          }, null);
+
           if (quantity > 0) {
             items.push({
               start_date: schedules[0]?.start_date,
@@ -300,8 +379,12 @@ const releaseInvoiceMonthly = async () => {
               name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
               quantity,
               quantity_unit: service.price_unit,
-              price: service.price,
+              price: lowestPrice ? lowestPrice : service.price,
               service_id: service.id,
+              note:
+                usedPrivileges && lowestPrice
+                  ? `Biaya khusus ${usedPrivileges.title}`
+                  : undefined,
             });
           }
         });
