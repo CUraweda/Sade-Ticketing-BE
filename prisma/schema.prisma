@@ -219,6 +219,20 @@ model Service {
   schedules                    Schedule[]
   bookings                     Booking[]
   entry_fees                   Fee[]
+  service_prices               ServicePrice[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServicePrice {
+  id           String  @id @default(uuid())
+  service_id   String?
+  privilege_id String?
+  price        Float
+
+  service   Service?   @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  privilege Privilege? @relation(fields: [privilege_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -264,6 +278,34 @@ model ClientProfile {
   service_recommendations ServiceRecommendation[]
   schedules               ClientSchedule[]
   daycare_journals        DaycareJournal[]
+  client_privileges       ClientPrivilege[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// CLIENT PRIVILAGE
+model ClientPrivilege {
+  id           String @id @default(uuid())
+  client_id    String
+  privilege_id String
+
+  client    ClientProfile @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  privilege Privilege     @relation(fields: [privilege_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// CLIENT PRIVILAGE
+model Privilege {
+  id          String  @id @default(uuid())
+  title       String
+  image_path  String?
+  description String? @db.LongText
+
+  servicePrices ServicePrice[]
+  privileges    ClientPrivilege[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
