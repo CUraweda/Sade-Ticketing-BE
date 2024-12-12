@@ -290,8 +290,8 @@ model ClientPrivilege {
   client_id    String
   privilege_id String
 
-  client    ClientProfile @relation(fields: [client_id], references: [id])
-  privilege Privilege     @relation(fields: [privilege_id], references: [id])
+  client    ClientProfile @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  privilege Privilege     @relation(fields: [privilege_id], references: [id], onDelete: Cascade)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
