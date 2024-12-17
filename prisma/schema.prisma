@@ -561,9 +561,9 @@ model ServiceRecommendation {
 }
 
 model ServiceRecommendationItem {
-  id                        Int    @id @default(autoincrement())
+  id                        Int     @id @default(autoincrement())
   quantity                  Int
-  note                      String
+  note                      String?
   service_id                String
   service_recommendation_id String
 

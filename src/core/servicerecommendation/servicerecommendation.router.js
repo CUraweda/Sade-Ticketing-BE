@@ -19,19 +19,23 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
-  authMiddleware(["SDM", "ASR"]),
+  authMiddleware(["SDM", "ASR", "PSI", "ADM", "TRS"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
-  authMiddleware(["SDM", "ASR"]),
+  authMiddleware(["SDM", "ASR", "PSI", "ADM", "TRS"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.delete("/delete/:id", authMiddleware(["SDM", "ASR"]), controller.delete);
+r.delete(
+  "/delete/:id",
+  authMiddleware(["SDM", "ASR", "PSI", "ADM", "TRS"]),
+  controller.delete
+);
 
 r.get(
   "/recommendation-by-booking/:booking_id",
