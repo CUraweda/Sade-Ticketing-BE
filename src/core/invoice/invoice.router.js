@@ -47,5 +47,7 @@ r.put(
 
 r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
+r.get("/export/:id", authMiddleware(), controller.export);
+
 const invoiceRouter = r;
 export default invoiceRouter;

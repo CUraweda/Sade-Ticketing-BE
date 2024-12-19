@@ -47,6 +47,18 @@ class InvoiceController extends BaseController {
     const data = await this.#service.updateOvertime(req.params.id, req.body);
     return this.ok(res, data, "Update overtime invoice berhasil diperbarui");
   });
+
+  export = this.wrapper(async (req, res) => {
+    const result = await this.#service.export(req.params.id);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${`${result?.data?.title}-${result?.data?.user?.full_name}` ?? "Invoice"}.pdf`
+    );
+    result.doc.getBuffer((buffer) => {
+      res.send(Buffer.from(buffer));
+    });
+  });
 }
 
 export default InvoiceController;
