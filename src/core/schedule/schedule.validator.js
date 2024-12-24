@@ -16,8 +16,15 @@ export const ScheduleRecurring = {
 export const ScheduleValidator = {
   create: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
-    start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+    dates: Joi.array()
+      .items(
+        Joi.object({
+          start_date: Joi.date().required(),
+          end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+        })
+      )
+      .min(1)
+      .required(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     doctors: Joi.array()

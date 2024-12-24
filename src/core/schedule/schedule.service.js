@@ -78,15 +78,18 @@ class ScheduleService extends BaseService {
   };
 
   create = async (payload) => {
-    const { doctors = [], clients = [], ...rest } = payload;
+    const payloads = Array.isArray(payload) ? payload : [payload];
+    const dataToCreate = [];
 
-    if (rest.recurring && Array.isArray(rest.recurring))
-      rest["recurring"] = rest.recurring.length
-        ? rest.recurring.join(",")
-        : null;
+    payloads.forEach((payload) => {
+      const { doctors = [], clients = [], ...rest } = payload;
 
-    const data = await this.db.schedule.create({
-      data: {
+      if (rest.recurring && Array.isArray(rest.recurring))
+        rest["recurring"] = rest.recurring.length
+          ? rest.recurring.join(",")
+          : null;
+
+      dataToCreate.push({
         ...rest,
         doctors: {
           connect: doctors.map((d) => ({ id: d })),
@@ -98,9 +101,13 @@ class ScheduleService extends BaseService {
             })),
           },
         },
-      },
+      });
     });
-    return data;
+
+    const result = await this.db.$transaction(async (db) => {
+      for (const data of dataToCreate) await db.schedule.create({ data });
+    });
+    return result;
   };
 
   update = async (id, payload) => {

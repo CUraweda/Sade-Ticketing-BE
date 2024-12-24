@@ -104,7 +104,14 @@ class ScheduleController extends BaseController {
       else payload["doctors"] = [doctor.id];
     }
 
-    const data = await this.#service.create(payload);
+    const { dates, ...restPayload } = payload;
+    const payloads = dates.map((date) => ({
+      ...restPayload,
+      start_date: date.start_date,
+      end_date: date.end_date,
+    }));
+
+    const data = await this.#service.create(payloads);
     return this.created(res, data, "Jadwal berhasil dibuat");
   });
 
