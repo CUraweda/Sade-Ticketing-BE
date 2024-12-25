@@ -21,6 +21,15 @@ class ScheduleService extends BaseService {
               start_date: {
                 lte: this.getQueryValue(query, "gte", "start_date"),
               },
+              doctors: {
+                some: {
+                  id: {
+                    in: this.getQueryValue(query, "in_", "doctors.id")?.split(
+                      ","
+                    ),
+                  },
+                },
+              },
             },
             { ...q.where },
           ],
