@@ -285,6 +285,20 @@ class BaseService {
       }
     });
   };
+
+  getQueryValue = (query = {}, key, col) => {
+    if (query.hasOwnProperty(key)) {
+      const colvals = query[key].split("+");
+      const findMatchCol = colvals.find((cv) => cv.includes(col));
+      if (findMatchCol) {
+        let val = findMatchCol.split(":")[1];
+
+        if (isDateAble(val)) val = moment(val).toDate();
+
+        return val;
+      }
+    }
+  };
 }
 
 export default BaseService;

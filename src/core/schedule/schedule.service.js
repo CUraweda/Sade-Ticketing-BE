@@ -12,6 +12,19 @@ class ScheduleService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.schedule.findMany({
       ...q,
+      ...(!query.paginate && {
+        where: {
+          OR: [
+            {
+              repeat: { not: null },
+              start_date: {
+                lte: this.getQueryValue(query, "gte", "start_date"),
+              },
+            },
+            { ...q.where },
+          ],
+        },
+      }),
       include: {
         ...this.select([
           "service.category_id",
