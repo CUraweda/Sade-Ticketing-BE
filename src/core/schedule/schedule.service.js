@@ -146,7 +146,7 @@ class ScheduleService extends BaseService {
   detach = async (id, payload, mode) => {
     const { repeat, repeat_end, ...rest } = await this.db.schedule.findUnique({
       where: { id },
-      include: this.select(["bookings.id", "clients.id", "doctors.id"]),
+      include: this.select(["bookings.id", "clients.client_id", "doctors.id"]),
     });
 
     const data = { ...rest, ...payload };
@@ -159,7 +159,7 @@ class ScheduleService extends BaseService {
     }
 
     delete data.id;
-    data.clients = rest.clients?.map((c) => c.id);
+    data.clients = rest.clients?.map((c) => c.client_id);
     data.doctors = rest.doctors?.map((d) => d.id);
     data.bookings = rest.bookings?.map((b) => b.id);
 
