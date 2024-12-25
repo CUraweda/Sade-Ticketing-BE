@@ -66,6 +66,11 @@ export const ScheduleValidator = {
       .optional(),
     repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
   }),
+  detach: Joi.object({
+    start_date: Joi.date().required(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+    mode: Joi.string().valid("with_parent", "leave_parent").required(),
+  }),
   setClient: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
     set: Joi.string().valid("add", "remove").required(),

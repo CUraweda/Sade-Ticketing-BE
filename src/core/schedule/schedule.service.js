@@ -97,7 +97,7 @@ class ScheduleService extends BaseService {
     const dataToCreate = [];
 
     payloads.forEach((payload) => {
-      const { doctors = [], clients = [], ...rest } = payload;
+      const { doctors = [], clients = [], bookings = [], ...rest } = payload;
 
       if (rest.recurring && Array.isArray(rest.recurring))
         rest["recurring"] = rest.recurring.length
@@ -108,6 +108,9 @@ class ScheduleService extends BaseService {
         ...rest,
         doctors: {
           connect: doctors.map((d) => ({ id: d })),
+        },
+        bookings: {
+          connect: bookings.map((b) => ({ id: b })),
         },
         clients: {
           createMany: {
@@ -136,6 +139,28 @@ class ScheduleService extends BaseService {
       data: payload,
     });
     return data;
+  };
+
+  detach = async (id, payload, mode) => {
+    const { repeat, repeat_end, ...rest } = await this.db.schedule.findUnique({
+      where: { id },
+      include: this.select(["bookings.id", "clients.id", "doctors.id"]),
+    });
+
+    const data = { ...rest, ...payload };
+    if (mode == "with_parent") data.parent_id = id;
+    else if (mode == "leave_parent") {
+      await this.update(id, { repeat_end: payload.start_date });
+      data.repeat = repeat;
+    }
+
+    delete data.id;
+    data.clients = rest.clients?.map((c) => c.id);
+    data.doctors = rest.doctors?.map((d) => d.id);
+    data.bookings = rest.bookings?.map((b) => b.id);
+
+    const result = await this.create(data);
+    return result;
   };
 
   delete = async (id) => {

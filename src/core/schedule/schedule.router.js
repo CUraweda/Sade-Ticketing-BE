@@ -51,6 +51,13 @@ r.put(
   controller.update
 );
 
+r.put(
+  "/detach/:id",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.detach }),
+  controller.detach
+);
+
 r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 r.put(
