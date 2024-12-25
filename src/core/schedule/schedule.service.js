@@ -86,7 +86,8 @@ class ScheduleService extends BaseService {
         "bookings.status",
         "parent.id",
         "parent.start_date",
-        "parent.recurring",
+        "parent.repeat",
+        "parent.repeat_end",
       ]),
     });
     return data;
