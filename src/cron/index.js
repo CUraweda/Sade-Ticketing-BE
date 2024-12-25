@@ -5,14 +5,13 @@ import {
   releaseInvoiceDaily,
   releaseInvoiceMonthly,
 } from "./release-invoice-by-service-billing.js";
-import { generateRecurringSchedule } from "./recurring-schedule.js";
 import { releaseSpecialistSalary } from "./release-specialist-salary.js";
 
 // set ongoing bookings to be completed every 30 min between 1:00 - 11:00 (8:00 - 18:00 in ID)
 cron.schedule("*/30 1-11 * * *", updateBookingComplete);
 
 // generate recurring schedule everyday at 23:00 (6:00 in ID)
-cron.schedule("0 23 * * *", generateRecurringSchedule);
+// cron.schedule("0 23 * * *", generateRecurringSchedule);
 
 // release daily invoices every day at 0:10 (7:10 in ID)
 cron.schedule("10 0 * * *", releaseInvoiceDaily);

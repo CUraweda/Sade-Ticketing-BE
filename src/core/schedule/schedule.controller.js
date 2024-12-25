@@ -109,6 +109,8 @@ class ScheduleController extends BaseController {
       ...restPayload,
       start_date: date.start_date,
       end_date: date.end_date,
+      repeat: date.repeat,
+      repeat_end: date.repeat_end,
     }));
 
     const data = await this.#service.create(payloads);

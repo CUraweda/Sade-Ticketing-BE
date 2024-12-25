@@ -15,12 +15,14 @@ class ScheduleService extends BaseService {
       include: {
         ...this.select([
           "service.category_id",
+          "service.category.hex_color",
           "creator.full_name",
           "creator.avatar",
           "_count.bookings",
         ]),
         _count: {
           select: {
+            children: true,
             bookings: {
               where: {
                 status: {

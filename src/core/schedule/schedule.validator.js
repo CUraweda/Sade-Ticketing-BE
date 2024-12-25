@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { relationExist, Workday } from "../../base/validator.base.js";
+import { relationExist } from "../../base/validator.base.js";
 
 export const ClientScheduleStatus = {
   PRESENT: "present",
@@ -7,7 +7,7 @@ export const ClientScheduleStatus = {
   PERMITTED: "permitted",
 };
 
-export const ScheduleRecurring = {
+export const ScheduleRepeat = {
   MONTHLY: "monthly",
   DAILY: "daily",
   WEEKLY: "weekly",
@@ -21,6 +21,10 @@ export const ScheduleValidator = {
         Joi.object({
           start_date: Joi.date().required(),
           end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+          repeat: Joi.string()
+            .valid(...Object.values(ScheduleRepeat))
+            .optional(),
+          repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
         })
       )
       .min(1)
@@ -34,9 +38,6 @@ export const ScheduleValidator = {
       .items(Joi.string().external(relationExist("clientProfile")).required())
       .optional(),
     max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.array()
-      .items(Joi.string().valid(...Object.values(Workday)))
-      .optional(),
   }),
   createByDoctor: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -45,9 +46,10 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.array()
-      .items(Joi.string().valid(...Object.values(Workday)))
+    repeat: Joi.string()
+      .valid(...Object.values(ScheduleRepeat))
       .optional(),
+    repeat_end: Joi.date().greater(Joi.ref("end_date")).required(),
   }),
   setOvertime: Joi.object({
     minutes: Joi.number().min(1).required(),
@@ -59,9 +61,10 @@ export const ScheduleValidator = {
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
     max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.array()
-      .items(Joi.string().valid(...Object.values(Workday)))
+    repeat: Joi.string()
+      .valid(...Object.values(ScheduleRepeat))
       .optional(),
+    repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
   }),
   setClient: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
