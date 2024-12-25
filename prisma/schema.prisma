@@ -582,6 +582,8 @@ model Schedule {
   overtime_minutes Int?      @default(0)
   max_bookings     Int?      @default(1)
   recurring        String?
+  repeat           String?
+  repeat_end       DateTime?
 
   parent_id  String?
   creator_id String?
