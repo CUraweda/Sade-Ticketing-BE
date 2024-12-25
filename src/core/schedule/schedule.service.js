@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { Forbidden } from "../../lib/response/catch.js";
@@ -151,7 +152,9 @@ class ScheduleService extends BaseService {
     const data = { ...rest, ...payload };
     if (mode == "with_parent") data.parent_id = id;
     else if (mode == "leave_parent") {
-      await this.update(id, { repeat_end: payload.start_date });
+      await this.update(id, {
+        repeat_end: moment(payload.start_date).subtract(1, "day").toDate(),
+      });
       data.repeat = repeat;
     }
 
