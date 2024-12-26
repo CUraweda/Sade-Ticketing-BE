@@ -443,9 +443,14 @@ class BookingService extends BaseService {
       data: {
         agreed_documents: {
           update: {
-            where: { id: document_id },
+            where: {
+              booking_id_document_id: {
+                booking_id: id,
+                document_id: document_id,
+              },
+            },
+            data: payload,
           },
-          data: payload,
         },
       },
     });
