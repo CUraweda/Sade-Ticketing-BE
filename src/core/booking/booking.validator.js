@@ -18,8 +18,8 @@ export const BookingValidator = {
   }),
   update: Joi.object({
     compliant: Joi.string().max(100).optional(),
+    quantity: Joi.number().precision(0).min(1).optional(),
     status: Joi.valid(...Object.values(BookingStatus)).optional(),
-    compliant: Joi.string().max(100).optional(),
     start_date: Joi.date().optional(),
     end_date: Joi.date().min(Joi.ref("start_date")).when("start_date", {
       is: Joi.date().required(),
@@ -43,9 +43,8 @@ export const BookingValidator = {
       .external(relationExist("questionnaire"))
       .required(),
   }),
-  acceptAgreementDocument: Joi.object({
-    booking_id: Joi.string().external(relationExist("booking")).required(),
-    document_id: Joi.string().external(relationExist("document")).required(),
+  updateAgreementDocument: Joi.object({
+    is_agreed: Joi.bool().required(),
   }),
 };
 

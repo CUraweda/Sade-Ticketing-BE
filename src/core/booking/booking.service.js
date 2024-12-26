@@ -437,16 +437,16 @@ class BookingService extends BaseService {
     });
   };
 
-  acceptAgreementDocument = async (booking_id, document_id) => {
-    await this.db.bookingAgreedDocuments.update({
-      where: {
-        booking_id_document_id: {
-          booking_id,
-          document_id,
-        },
-      },
+  updateAgreementDocument = async (id, document_id, payload) => {
+    await this.db.booking.update({
+      where: { id },
       data: {
-        is_agreed: true,
+        agreed_documents: {
+          update: {
+            where: { id: document_id },
+          },
+          data: payload,
+        },
       },
     });
   };

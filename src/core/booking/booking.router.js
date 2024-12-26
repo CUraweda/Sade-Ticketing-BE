@@ -55,10 +55,10 @@ r.put(
 );
 
 r.put(
-  "/accept-agreement-document",
-  authMiddleware(["USR"]),
-  validatorMiddleware({ body: validator.acceptAgreementDocument }),
-  controller.acceptAgreementDocument
+  "/update/:id/agreement-document/:document_id",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.updateAgreementDocument }),
+  controller.updateAgreementDocument
 );
 
 r.put(
