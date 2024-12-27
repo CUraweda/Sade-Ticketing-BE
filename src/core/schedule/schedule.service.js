@@ -90,6 +90,11 @@ class ScheduleService extends BaseService {
             repeat_end: true,
           },
         },
+        _count: {
+          select: {
+            attendees: { where: { is_blocked: false } },
+          },
+        },
       },
     });
     return data;

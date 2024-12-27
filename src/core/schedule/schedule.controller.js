@@ -91,6 +91,11 @@ class ScheduleController extends BaseController {
       delete payload["repeat_end"];
     }
 
+    if (payload.max_attendees && payload.max_attendees < data._count.attendees)
+      throw new BadRequest(
+        `Sudah ada ${data._count.attendees} klien di jadwal`
+      );
+
     const result = await this.#service.update(req.params.id, payload);
     return this.ok(res, result, "Jadwal berhasil diperbarui");
   });
