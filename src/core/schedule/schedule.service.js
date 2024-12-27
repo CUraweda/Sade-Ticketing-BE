@@ -93,6 +93,7 @@ class ScheduleService extends BaseService {
         _count: {
           select: {
             attendees: { where: { is_blocked: false } },
+            children: true,
           },
         },
       },
@@ -166,9 +167,13 @@ class ScheduleService extends BaseService {
     return result;
   };
 
-  delete = async (id) => {
-    const data = await this.db.schedule.delete({ where: { id } });
-    return data;
+  delete = async (id, withChildren) => {
+    if (withChildren == "true")
+      await this.db.schedule.deleteMany({
+        where: { parent_id: id },
+      });
+
+    await this.db.schedule.delete({ where: { id } });
   };
 
   checkAuthorized = async (id, user_id, client = true, doctor = true) => {

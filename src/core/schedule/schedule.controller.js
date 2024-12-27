@@ -114,7 +114,7 @@ class ScheduleController extends BaseController {
     if (!data) throw new NotFound();
     if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
 
-    await this.#service.delete(req.params.id);
+    await this.#service.delete(req.params.id, req.query.with_children);
     return this.noContent(res, "Jadwal berhasil dihapus");
   });
 
