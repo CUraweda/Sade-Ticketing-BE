@@ -11,6 +11,10 @@ class ScheduleService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
+
+    const filterDoctors = this.getQueryValue(query, "in_", "doctors.id"),
+      filterGteStartDate = this.getQueryValue(query, "gte", "start_date");
+
     const data = await this.db.schedule.findMany({
       ...q,
       ...(!query.paginate && {
@@ -18,18 +22,14 @@ class ScheduleService extends BaseService {
           OR: [
             {
               repeat: { not: null },
-              start_date: {
-                lte: this.getQueryValue(query, "gte", "start_date"),
-              },
-              doctors: {
-                some: {
-                  id: {
-                    in: this.getQueryValue(query, "in_", "doctors.id")?.split(
-                      ","
-                    ),
-                  },
+              ...(filterGteStartDate && {
+                start_date: { lte: filterGteStartDate },
+              }),
+              ...(filterDoctors && {
+                doctors: {
+                  some: { id: { in: filterDoctors?.split(",") } },
                 },
-              },
+              }),
             },
             { ...q.where },
           ],
@@ -107,11 +107,6 @@ class ScheduleService extends BaseService {
     payloads.forEach((payload) => {
       const { doctors = [], ...rest } = payload;
 
-      if (rest.recurring && Array.isArray(rest.recurring))
-        rest["recurring"] = rest.recurring.length
-          ? rest.recurring.join(",")
-          : null;
-
       dataToCreate.push({
         ...rest,
         doctors: {
@@ -120,18 +115,27 @@ class ScheduleService extends BaseService {
       });
     });
 
+    const ids = [];
     const result = await this.db.$transaction(async (db) => {
-      for (const data of dataToCreate) await db.schedule.create({ data });
+      for (const data of dataToCreate) {
+        const res = await db.schedule.create({ data });
+        ids.push(res.id);
+      }
     });
+
+    try {
+      await this.createRepeats(ids);
+    } catch (err) {
+      console.log(
+        "\n\x1b[31m[ERR]\x1b[0m Failed to create repeats of created schedule"
+      );
+      console.error(err);
+    }
+
     return result;
   };
 
   update = async (id, payload) => {
-    if (payload.recurring && Array.isArray(payload.recurring))
-      payload["recurring"] = rest.recurring.length
-        ? payload.recurring.join(",")
-        : null;
-
     const data = await this.db.schedule.update({
       where: { id },
       data: payload,
@@ -216,6 +220,64 @@ class ScheduleService extends BaseService {
       where: { id },
       data: { doctors: { disconnect: { id: doctor_id } } },
     });
+
+  createRepeats = async (
+    ids = [],
+    start = moment().startOf("month").startOf("day"),
+    end = moment().endOf("month").endOf("day")
+  ) => {
+    const repeatedSchedules = await this.db.schedule.findMany({
+      where: {
+        ...(ids.length && { id: { in: ids } }),
+        repeat: { not: null },
+        OR: [{ repeat_end: { gte: start.toDate() } }, { repeat_end: null }],
+      },
+      include: {
+        doctors: { select: { id: true } },
+      },
+    });
+
+    const schedulesToCreate = repeatedSchedules
+      .map((rsc) => {
+        const temp = [];
+        const repeatEnd = rsc.repeat_end ? moment(rsc.repeat_end) : end;
+
+        let current = moment(rsc.start_date),
+          duration = "";
+
+        if (rsc.repeat == "weekly") duration = "week";
+
+        while (current.add(1, duration).isSameOrBefore(repeatEnd)) {
+          const newStart = moment(rsc.start_date).set("date", current.date()),
+            newEnd = moment(rsc.end_date).set("date", current.date());
+
+          if (newStart.isBefore(start)) continue;
+
+          temp.push({
+            id: rsc.id,
+            start_date: newStart.toDate(),
+            end_date: newEnd.toDate(),
+          });
+        }
+
+        return temp;
+      })
+      .flat();
+
+    if (!schedulesToCreate.length) return;
+
+    let countCreated = 0;
+    for (const { id, start_date, end_date } of schedulesToCreate) {
+      try {
+        await this.detach(id, { start_date, end_date }, "with_parent");
+        countCreated++;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    return countCreated;
+  };
 
   generateRepeats = (schedules, end = moment().endOf("month").endOf("day")) =>
     schedules
