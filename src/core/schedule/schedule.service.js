@@ -240,7 +240,9 @@ class ScheduleService extends BaseService {
     const schedulesToCreate = repeatedSchedules
       .map((rsc) => {
         const temp = [];
-        const repeatEnd = rsc.repeat_end ? moment(rsc.repeat_end) : end;
+        const repeatEnd = rsc.repeat_end
+          ? moment(rsc.repeat_end).endOf("day")
+          : end;
 
         let current = moment(rsc.start_date),
           duration = "";
@@ -248,8 +250,14 @@ class ScheduleService extends BaseService {
         if (rsc.repeat == "weekly") duration = "week";
 
         while (current.add(1, duration).isSameOrBefore(repeatEnd)) {
-          const newStart = moment(rsc.start_date).set("date", current.date()),
-            newEnd = moment(rsc.end_date).set("date", current.date());
+          const newStart = moment(rsc.start_date).add(
+              current.diff(moment(rsc.start_date), duration),
+              duration
+            ),
+            newEnd = moment(rsc.end_date).add(
+              current.diff(moment(rsc.start_date), duration),
+              duration
+            );
 
           if (newStart.isBefore(start)) continue;
 
@@ -272,7 +280,7 @@ class ScheduleService extends BaseService {
         await this.detach(id, { start_date, end_date }, "with_parent");
         countCreated++;
       } catch (error) {
-        throw error;
+        if (error?.code != "P2002") throw error;
       }
     }
 
