@@ -272,6 +272,39 @@ class ScheduleService extends BaseService {
         },
       },
     });
+
+  generateRepeats = (schedules, end = moment().endOf("month").endOf("day")) =>
+    schedules
+      .map((sc) => {
+        const temp = [sc];
+
+        let currentStart = moment(sc.start_date);
+        const repeatEnd = sc.repeat_end
+          ? moment(sc.repeat_end).endOf("day")
+          : end;
+
+        if (sc.repeat === "weekly") {
+          const interval = 7;
+          while (currentStart.add(interval, "days").isSameOrBefore(repeatEnd)) {
+            temp.push({
+              ...sc,
+              id: undefined,
+              repeat: undefined,
+              repeat_end: undefined,
+              parent_id: sc.id,
+              start_date: moment(sc.start_date)
+                .set("date", currentStart.date())
+                .toDate(),
+              end_date: moment(sc.end_date)
+                .set("date", currentStart.date())
+                .toDate(),
+            });
+          }
+        }
+
+        return temp;
+      })
+      .flat();
 }
 
 export default ScheduleService;

@@ -5,9 +5,14 @@ import { BookingStatus } from "../booking/booking.validator.js";
 import { ServiceBillingType } from "../service/service.validator.js";
 import { parseJson } from "../../utils/transform.js";
 import fs from "fs";
+import ScheduleService from "../schedule/schedule.service.js";
+
 class InvoiceService extends BaseService {
+  #scheduleService;
+
   constructor() {
     super(prism);
+    this.#scheduleService = new ScheduleService();
   }
 
   findAll = async (query) => {
@@ -135,13 +140,12 @@ class InvoiceService extends BaseService {
           id: {
             in: bookingIds,
           },
-          service: {
-            billing_type: ServiceBillingType.ONE_TIME,
-          },
         },
         include: {
           schedules: {
             select: {
+              repeat: true,
+              repeat_end: true,
               start_date: true,
               end_date: true,
             },
@@ -154,17 +158,30 @@ class InvoiceService extends BaseService {
     ).map((b) => {
       const service = parseJson(b.service_data);
 
-      const start = b.schedules.length ? b.schedules[0].start_date : null,
-        end = b.schedules.length
-          ? (b.schedules[b.schedules.length - 1].end_date ??
-            b.schedules[b.schedules.length - 1].start_date)
-          : null;
+      const endOfMonth = moment().endOf("month").endOf("day");
+      const schedules = this.#scheduleService.generateRepeats(
+        b.schedules,
+        endOfMonth
+      );
+
+      const bookedSchedules = [];
+      const start = moment();
+
+      while (
+        start.isSameOrBefore(endOfMonth) &&
+        bookedSchedules.length < b.quantity
+      ) {
+        const match = schedules.filter((sc) =>
+          moment(sc.start_date).isSame(start, "day")
+        );
+        match.forEach((m) => bookedSchedules.push(m));
+        start.add(1, "day");
+      }
 
       return {
-        start_date: start,
-        end_date: end,
+        dates: bookedSchedules.map((bsc) => bsc.start_date).join(","),
         name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
-        quantity: b.quantity ?? b.schedules.length,
+        quantity: bookedSchedules.length,
         quantity_unit: service.price_unit,
         price: service.price,
         service_id: service.id,
