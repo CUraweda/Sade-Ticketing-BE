@@ -25,8 +25,6 @@ model User {
   clients                 ClientProfile[]
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
-  user_file               UserFile[]
-  schedules               Schedule[]
   payments                Payments[]
   reschedule_requests     RescheduleRequest[]
   invoices                Invoice[]
@@ -276,7 +274,7 @@ model ClientProfile {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   service_recommendations ServiceRecommendation[]
-  schedules               ClientSchedule[]
+  schedules               ScheduleAttendee[]
   daycare_journals        DaycareJournal[]
   client_privileges       ClientPrivilege[]
 
@@ -429,13 +427,13 @@ model Booking {
   client                  ClientProfile?           @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user                    User?                    @relation(fields: [user_id], references: [id], onDelete: SetNull)
   service                 Service?                 @relation(fields: [service_id], references: [id], onDelete: SetNull)
-  schedules               Schedule[]
   questionnaire_responses QuestionnaireResponse[]  @relation("BookingQuestionnaires")
   reports                 QuestionnaireResponse[]  @relation("BookingReports")
   invoices                Invoice[]
   service_recommendations ServiceRecommendation[]
   daycare_journals        DaycareJournal[]
   agreed_documents        BookingAgreedDocuments[]
+  schedules               ScheduleAttendee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -573,31 +571,26 @@ model ServiceRecommendationItem {
 
 // SCHEDULE
 model Schedule {
-  id               String    @id @default(uuid())
-  start_date       DateTime
-  end_date         DateTime?
-  title            String
-  description      String?
-  is_locked        Boolean   @default(false)
-  overtime_minutes Int?      @default(0)
-  max_bookings     Int?      @default(1)
-  recurring        String?
-  repeat           String?
-  repeat_end       DateTime?
-
+  id         String  @id @default(uuid())
   parent_id  String?
-  creator_id String?
   service_id String?
 
-  clients               ClientSchedule[]
-  doctors               DoctorProfile[]
-  creator               User?               @relation(fields: [creator_id], references: [id], onDelete: Cascade)
+  start_date    DateTime
+  end_date      DateTime?
+  title         String
+  description   String?
+  is_locked     Boolean   @default(false)
+  max_attendees Int?      @default(1)
+  repeat        String?
+  repeat_end    DateTime?
+
+  parent                Schedule?           @relation("NestedSchedule", fields: [parent_id], references: [id])
   service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  children              Schedule[]          @relation("NestedSchedule")
   reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
   new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
-  bookings              Booking[]
-  parent                Schedule?           @relation("ScheduleParent", fields: [parent_id], references: [id])
-  children              Schedule[]          @relation("ScheduleParent")
+  doctors               DoctorProfile[]
+  attendees             ScheduleAttendee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -605,15 +598,23 @@ model Schedule {
   @@unique([start_date, end_date, parent_id])
 }
 
-model ClientSchedule {
-  id          Int     @id @default(autoincrement())
-  schedule_id String
-  client_id   String
-  status      String? // present, sick, permit, etc.
-  note        String?
+model ScheduleAttendee {
+  id          String  @id @default(uuid())
+  schedule_id String?
+  client_id   String?
+  booking_id  String?
 
-  client   ClientProfile @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  schedule Schedule      @relation(fields: [schedule_id], references: [id], onDelete: Cascade)
+  status     String? // present, sick, excused, null (absent)
+  note       String?
+  overtime   Int? // in second
+  is_blocked Boolean? @default(true)
+
+  schedule Schedule?      @relation(fields: [schedule_id], references: [id], onDelete: SetNull)
+  client   ClientProfile? @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  booking  Booking?       @relation(fields: [booking_id], references: [id], onDelete: SetNull)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
   @@unique([schedule_id, client_id])
 }
@@ -634,19 +635,6 @@ model RescheduleRequest {
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
-}
-
-// USER FILE / ATTACHMENT
-model UserFile {
-  id         String   @id @default(uuid())
-  filename   String
-  mimetype   String
-  size       Int
-  url        String
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  user_id    String
-  user       User     @relation(fields: [user_id], references: [id])
 }
 
 // DAYCARE
