@@ -54,37 +54,43 @@ class ScheduleService extends BaseService {
   findById = async (id) => {
     const data = await this.db.schedule.findUnique({
       where: { id },
-      include: this.select([
-        "creator.avatar",
-        "creator.full_name",
-        "doctors.id",
-        "doctors.first_name",
-        "doctors.last_name",
-        "doctors.category",
-        "doctors.avatar",
-        "clients.note",
-        "clients.status",
-        "clients.client.id",
-        "clients.client.avatar",
-        "clients.client.first_name",
-        "clients.client.last_name",
-        "clients.client.category",
-        "clients.client.dob",
-        "service.id",
-        "service.title",
-        "service.category.name",
-        "bookings.id",
-        "bookings.title",
-        "bookings.user_id",
-        "bookings.client.first_name",
-        "bookings.client.avatar",
-        "bookings.client.last_name",
-        "bookings.status",
-        "parent.id",
-        "parent.start_date",
-        "parent.repeat",
-        "parent.repeat_end",
-      ]),
+      include: {
+        service: {
+          select: {
+            title: true,
+            category: true,
+          },
+        },
+        doctors: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            category: true,
+            avatar: true,
+          },
+        },
+        attendees: {
+          include: {
+            client: {
+              select: {
+                first_name: true,
+                last_name: true,
+                category: true,
+                dob: true,
+                avatar: true,
+              },
+            },
+          },
+        },
+        parent: {
+          select: {
+            start_date: true,
+            repeat: true,
+            repeat_end: true,
+          },
+        },
+      },
     });
     return data;
   };
@@ -94,7 +100,7 @@ class ScheduleService extends BaseService {
     const dataToCreate = [];
 
     payloads.forEach((payload) => {
-      const { doctors = [], attendees = [], ...rest } = payload;
+      const { doctors = [], ...rest } = payload;
 
       if (rest.recurring && Array.isArray(rest.recurring))
         rest["recurring"] = rest.recurring.length
@@ -105,9 +111,6 @@ class ScheduleService extends BaseService {
         ...rest,
         doctors: {
           connect: doctors.map((d) => ({ id: d })),
-        },
-        attendees: {
-          connect: attendees.map((a) => ({ id: a })),
         },
       });
     });
@@ -134,12 +137,13 @@ class ScheduleService extends BaseService {
   detach = async (id, payload, mode) => {
     const { repeat, repeat_end, ...rest } = await this.db.schedule.findUnique({
       where: { id },
-      include: this.select(["bookings.id", "clients.client_id", "doctors.id"]),
+      include: { doctors: { select: { id: true } } },
     });
 
     const data = { ...rest, ...payload };
-    if (mode == "with_parent") data.parent_id = id;
-    else if (mode == "leave_parent") {
+    if (mode == "with_parent") {
+      data.parent_id = id;
+    } else if (mode == "leave_parent") {
       await this.update(id, {
         repeat_end: moment(payload.start_date).subtract(1, "day").toDate(),
       });
@@ -147,9 +151,7 @@ class ScheduleService extends BaseService {
     }
 
     delete data.id;
-    data.clients = rest.clients?.map((c) => c.client_id);
     data.doctors = rest.doctors?.map((d) => d.id);
-    data.bookings = rest.bookings?.map((b) => b.id);
 
     const result = await this.create(data);
     return result;
