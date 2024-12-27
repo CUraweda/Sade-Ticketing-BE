@@ -117,16 +117,23 @@ class ScheduleController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound();
+
     if (!this.isAdmin(req)) {
       await this.#service.checkCreator(req.params.id, req.user.id);
-
-      const data = await this.#service.findById(req.params.id);
-      if (!data) throw new NotFound();
       if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
     }
 
-    const data = await this.#service.update(req.params.id, req.body);
-    return this.ok(res, data, "Jadwal berhasil diperbarui");
+    const payload = req.body;
+
+    if (data.parent_id != null) {
+      delete payload["repeat"];
+      delete payload["repeat_end"];
+    }
+
+    const result = await this.#service.update(req.params.id, payload);
+    return this.ok(res, result, "Jadwal berhasil diperbarui");
   });
 
   detach = this.wrapper(async (req, res) => {
