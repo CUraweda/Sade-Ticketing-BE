@@ -37,13 +37,6 @@ r.post(
   controller.create
 );
 
-r.post(
-  "/create-by-doctor",
-  authMiddleware(["ASR", "PSI", "TRS"]),
-  validatorMiddleware({ body: validator.createByDoctor }),
-  controller.createByDoctor
-);
-
 r.put(
   "/update/:id",
   authMiddleware(),

@@ -36,23 +36,9 @@ class ScheduleService extends BaseService {
         },
       }),
       include: {
-        ...this.select([
-          "service.category_id",
-          "service.category.hex_color",
-          "creator.full_name",
-          "creator.avatar",
-          "_count.bookings",
-        ]),
-        _count: {
+        service: {
           select: {
-            children: true,
-            bookings: {
-              where: {
-                status: {
-                  not: BookingStatus.DRAFT,
-                },
-              },
-            },
+            category: { select: { id: true, hex_color: true } },
           },
         },
       },
@@ -108,7 +94,7 @@ class ScheduleService extends BaseService {
     const dataToCreate = [];
 
     payloads.forEach((payload) => {
-      const { doctors = [], clients = [], bookings = [], ...rest } = payload;
+      const { doctors = [], attendees = [], ...rest } = payload;
 
       if (rest.recurring && Array.isArray(rest.recurring))
         rest["recurring"] = rest.recurring.length
@@ -120,15 +106,8 @@ class ScheduleService extends BaseService {
         doctors: {
           connect: doctors.map((d) => ({ id: d })),
         },
-        bookings: {
-          connect: bookings.map((b) => ({ id: b })),
-        },
-        clients: {
-          createMany: {
-            data: clients.map((id) => ({
-              client_id: id,
-            })),
-          },
+        attendees: {
+          connect: attendees.map((a) => ({ id: a })),
         },
       });
     });

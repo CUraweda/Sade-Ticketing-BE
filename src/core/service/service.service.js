@@ -13,40 +13,23 @@ class ServiceService extends BaseService {
     const data = await this.db.service.findMany({
       ...q,
       include: {
-        ...this.select([
-          "category.id",
-          "category.name",
-          "location.id",
-          "location.title",
-          "entry_fees",
-        ]),
+        category: { select: { name: true, hex_color: true } },
+        location: { select: { title: true } },
+        entry_fees: true,
         schedules: {
           select: {
-            max_bookings: true,
+            max_attendees: true,
             _count: {
-              select: {
-                bookings: {
-                  where: {
-                    status: {
-                      not: BookingStatus.DRAFT,
-                    },
-                  },
-                },
-              },
+              select: { attendees: { where: { is_blocked: false } } },
             },
           },
           where: {
             is_locked: false,
-            start_date: {
-              gte: moment().toDate(),
-            },
+            start_date: { gte: moment().toDate() },
           },
         },
         _count: {
-          select: {
-            doctors: true,
-            schedules: true,
-          },
+          select: { doctors: true, schedules: true },
         },
       },
     });
