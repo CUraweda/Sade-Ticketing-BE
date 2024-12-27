@@ -19,16 +19,10 @@ r.get(
   "/show-mine",
   authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
-  controller.mine
+  controller.findMine
 );
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
-
-r.get(
-  "/show-one/:id/questionnaires",
-  authMiddleware(),
-  controller.findQuestionnaires
-);
 
 r.post(
   "/create",
@@ -39,32 +33,19 @@ r.post(
 
 r.put(
   "/update/:id",
-  authMiddleware(),
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
 r.put(
   "/detach/:id",
-  authMiddleware(),
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.detach }),
   controller.detach
 );
 
-r.delete("/delete/:id", authMiddleware(), controller.delete);
-
-r.put(
-  "/toggle-lock/:id/:lock",
-  authMiddleware(["ADM", "SDM"]),
-  controller.toggleLock
-);
-
-r.put(
-  "/set-client/:id",
-  authMiddleware(),
-  validatorMiddleware({ body: validator.setClient }),
-  controller.setClient
-);
+r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
 r.put(
   "/set-doctor/:id",
@@ -74,17 +55,9 @@ r.put(
 );
 
 r.put(
-  "/set-overtime/:id",
-  authMiddleware(["PSI", "ADM", "SDM"]),
-  validatorMiddleware({ body: validator.setOvertime }),
-  controller.setOvertime
-);
-
-r.put(
-  "/set-client-status/:id",
-  authMiddleware(["PSI", "ADM", "SDM"]),
-  validatorMiddleware({ body: validator.setClientStatus }),
-  controller.setClientStatus
+  "/toggle-lock/:id/:lock",
+  authMiddleware(["ADM", "SDM"]),
+  controller.toggleLock
 );
 
 const scheduleRouter = r;

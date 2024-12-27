@@ -1,20 +1,17 @@
 import BaseController from "../../base/controller.base.js";
 import { BadRequest, NotFound } from "../../lib/response/catch.js";
 import DoctorService from "../doctor/doctor.service.js";
-import QuestionnaireResponseService from "../questionnaireresponse/questionnaireresponse.service.js";
 import { RoleCode } from "../role/role.validator.js";
 import ScheduleService from "./schedule.service.js";
 
 class ScheduleController extends BaseController {
   #service;
   #doctorService;
-  #questionnaireResponseService;
 
   constructor() {
     super();
     this.#service = new ScheduleService();
     this.#doctorService = new DoctorService();
-    this.#questionnaireResponseService = new QuestionnaireResponseService();
   }
 
   findAll = this.wrapper(async (req, res) => {
@@ -28,7 +25,7 @@ class ScheduleController extends BaseController {
     return this.ok(res, data, "Banyak Schedule berhasil didapatkan");
   });
 
-  mine = this.wrapper(async (req, res) => {
+  findMine = this.wrapper(async (req, res) => {
     let q = req.query,
       role = req.user.role_code,
       uid = req.user.id;
@@ -55,40 +52,6 @@ class ScheduleController extends BaseController {
     if (!data) throw new NotFound("Jadwal tidak ditemukan");
 
     return this.ok(res, data, "Jadwal berhasil didapatkan");
-  });
-
-  findQuestionnaires = this.wrapper(async (req, res) => {
-    if (!this.isAdmin(req))
-      await this.#service.checkAuthorized(req.params.id, req.user.id);
-
-    const role_code = req.user.role_code,
-      uid = req.user.id;
-
-    const bookings = (await this.#service.findById(req.params.id)).bookings;
-
-    const patient = await this.#questionnaireResponseService.findAll(
-      {
-        paginate: false,
-        in_: `booking_id:${bookings?.map((b) => b.id)}`,
-      },
-      uid
-    );
-    const reports = await this.#questionnaireResponseService.findAll(
-      {
-        paginate: false,
-        in_: `booking_report_id:${bookings?.map((b) => b.id).join(",")}`,
-      },
-      uid
-    );
-
-    return this.ok(
-      res,
-      {
-        patient,
-        reports,
-      },
-      "Jadwal berhasil didapatkan"
-    );
   });
 
   create = this.wrapper(async (req, res) => {
@@ -119,11 +82,7 @@ class ScheduleController extends BaseController {
   update = this.wrapper(async (req, res) => {
     const data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound();
-
-    if (!this.isAdmin(req)) {
-      await this.#service.checkCreator(req.params.id, req.user.id);
-      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
-    }
+    if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
 
     const payload = req.body;
 
@@ -140,42 +99,18 @@ class ScheduleController extends BaseController {
     const data = await this.#service.findById(req.params.id);
     if (!data) throw new NotFound();
 
-    if (!this.isAdmin(req)) {
-      await this.#service.checkCreator(req.params.id, req.user.id);
-      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
-    }
-
     const { mode, ...restPayload } = req.body;
     const result = await this.#service.detach(req.params.id, restPayload, mode);
     return this.ok(res, result, "Jadwal berhasil dilepaskan dari jadwal induk");
   });
 
   delete = this.wrapper(async (req, res) => {
-    if (!this.isAdmin(req)) {
-      await this.#service.checkCreator(req.params.id, req.user.id);
-
-      const data = await this.#service.findById(req.params.id);
-      if (!data) throw new NotFound();
-      if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
-    }
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound();
+    if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
 
     await this.#service.delete(req.params.id);
     return this.noContent(res, "Jadwal berhasil dihapus");
-  });
-
-  setClient = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
-      await this.#service.checkCreator(req.params.id, req.user.id);
-
-    if (req.body.set == "add")
-      await this.#service.addClient(req.params.id, req.body.client_id);
-    else await this.#service.removeClient(req.params.id, req.body.client_id);
-
-    return this.ok(
-      res,
-      null,
-      `Klien berhasil ${req.body.set == "add" ? "ditambahkan ke" : "dikeluarkan dari"} jadwal`
-    );
   });
 
   setDoctor = this.wrapper(async (req, res) => {
@@ -195,32 +130,8 @@ class ScheduleController extends BaseController {
 
   toggleLock = this.wrapper(async (req, res) => {
     const lock = req.params.lock == "lock";
-    const data = await this.#service.setLock(req.params.id, lock);
+    const data = await this.#service.update(req.params.id, { is_locked: lock });
     return this.ok(res, data, `Jadwal berhasil di${lock ? "kunci" : "buka"}`);
-  });
-
-  setOvertime = this.wrapper(async (req, res) => {
-    if (!this.isAdmin(req))
-      await this.#service.checkAuthorized(
-        req.params.id,
-        req.user.id,
-        false,
-        true
-      );
-
-    const payload = {};
-    payload["overtime_minutes"] = req.body.minutes;
-
-    const data = await this.#service.update(req.params.id, payload);
-    return this.ok(res, data, "Overtime jadwal berhasil diperbarui");
-  });
-
-  setClientStatus = this.wrapper(async (req, res) => {
-    await this.#service.setClientStatus(req.params.id, req.body.client_id, {
-      status: req.body.status,
-      note: req.body.note,
-    });
-    return this.ok(res, null, "Status kehadiran klien berhasil diperbaharui");
   });
 }
 

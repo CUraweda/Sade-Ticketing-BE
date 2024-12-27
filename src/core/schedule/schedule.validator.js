@@ -41,41 +41,26 @@ export const ScheduleValidator = {
       .optional(),
     max_attendees: Joi.number().min(1).optional(),
   }),
-  setOvertime: Joi.object({
-    minutes: Joi.number().min(1).required(),
-  }),
   update: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
     start_date: Joi.date().optional(),
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
-    max_bookings: Joi.number().min(1).optional(),
     repeat: Joi.string()
       .valid(...Object.values(ScheduleRepeat))
       .optional(),
     repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
+    max_attendees: Joi.number().min(1).optional(),
   }),
   detach: Joi.object({
     start_date: Joi.date().required(),
     end_date: Joi.date().greater(Joi.ref("start_date")).required(),
     mode: Joi.string().valid("with_parent", "leave_parent").required(),
   }),
-  setClient: Joi.object({
-    client_id: Joi.string().external(relationExist("clientProfile")).required(),
-    set: Joi.string().valid("add", "remove").required(),
-  }),
   setDoctor: Joi.object({
     doctor_id: Joi.string().external(relationExist("doctorProfile")).required(),
     set: Joi.string().valid("add", "remove").required(),
-  }),
-  setClientStatus: Joi.object({
-    client_id: Joi.string().external(relationExist("clientProfile")).required(),
-    status: Joi.string()
-      .valid(...Object.values(ClientScheduleStatus))
-      .required()
-      .allow(""),
-    note: Joi.string().max(50).optional(),
   }),
 };
 

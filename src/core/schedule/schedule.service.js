@@ -162,13 +162,6 @@ class ScheduleService extends BaseService {
     return data;
   };
 
-  checkCreator = async (id, user_id) => {
-    const data = await this.db.schedule.count({
-      where: { id, creator_id: user_id },
-    });
-    if (!data) throw new Forbidden();
-  };
-
   checkAuthorized = async (id, user_id, client = true, doctor = true) => {
     const ors = [
       {
@@ -213,45 +206,10 @@ class ScheduleService extends BaseService {
       },
     });
 
-  addClient = (id, client_id) =>
-    this.db.schedule.update({
-      where: { id },
-      data: {
-        clients: { create: { client_id } },
-      },
-    });
-
   removeDoctor = (id, doctor_id) =>
     this.db.schedule.update({
       where: { id },
       data: { doctors: { disconnect: { id: doctor_id } } },
-    });
-
-  removeClient = (id, client_id) =>
-    this.db.schedule.update({
-      where: { id },
-      data: { clients: { deleteMany: { client_id } } },
-    });
-
-  setLock = (id, lock) =>
-    this.db.schedule.update({ where: { id }, data: { is_locked: lock } });
-
-  setClientStatus = (id, client_id, data) =>
-    this.db.schedule.update({
-      where: { id },
-      data: {
-        clients: {
-          update: {
-            where: {
-              schedule_id_client_id: {
-                client_id,
-                schedule_id: id,
-              },
-            },
-            data,
-          },
-        },
-      },
     });
 
   generateRepeats = (schedules, end = moment().endOf("month").endOf("day")) =>
