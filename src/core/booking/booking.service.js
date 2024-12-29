@@ -56,14 +56,6 @@ class BookingService extends BaseService {
         reports: {
           include: this.select(["questionnaire.title"]),
         },
-        schedules: {
-          include: {
-            doctors: {
-              select: this.select(doctorFields.full("USR")),
-            },
-          },
-        },
-        invoices: true,
       },
     });
     return data;
@@ -75,34 +67,35 @@ class BookingService extends BaseService {
         id: payload.service_id,
         is_active: true,
       },
-      include: this.select([
-        "category.name",
-        "location.title",
-        "questionnaires",
-        "agrement_documents",
-        "entry_fees.id",
-      ]),
+      select: {
+        id: true,
+        category: true,
+        location: true,
+        title: true,
+        price: true,
+        price_unit: true,
+        questionnaires: true,
+        agrement_documents: true,
+      },
     });
+    const { agrement_documents, questionnaires, ...rest } = service;
 
     const data = await this.db.booking.create({
       data: {
         ...payload,
-        price: service.price,
-        service_data:
-          JSON.stringify(
-            this.exclude(service, ["questionnaires", "agrement_documents"])
-          ) ?? "",
+        price: rest.price,
+        service_data: JSON.stringify(rest) ?? "",
         status: BookingStatus.DRAFT,
-        title: `${service.category?.name ?? ""} - ${service.title}`,
+        title: `${rest.category?.name ?? ""} - ${rest.title}`,
         questionnaire_responses: {
-          create: service.questionnaires?.map((que) => ({
+          create: questionnaires?.map((que) => ({
             user_id: payload.user_id,
             client_id: payload.client_id,
             questionnaire_id: que.id,
           })),
         },
         agreed_documents: {
-          create: service.agrement_documents?.map((doc) => ({
+          create: agrement_documents?.map((doc) => ({
             document_id: doc.id,
           })),
         },
