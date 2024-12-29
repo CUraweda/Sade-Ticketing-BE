@@ -123,6 +123,87 @@ class InvoiceService extends BaseService {
     return data;
   };
 
+  generateItems = async (userId, bookingIds = []) => {
+    const items = [];
+
+    // collect any invoice-able from bookings
+    const bookings = await this.db.booking.findMany({
+      where: {
+        ...(bookingIds.length && { id: { in: bookingIds } }),
+        user_id: userId,
+      },
+      include: {
+        schedules: {
+          where: {
+            is_blocked: true,
+            invoices: { none: {} },
+            schedule_id: { not: null },
+          },
+          include: {
+            schedule: { select: { start_date: true } },
+          },
+        },
+      },
+    });
+
+    bookings.forEach((b) => {
+      const service = parseJson(b.service_data);
+
+      items.push({
+        attendees: b.schedules.map((sc) => sc.id),
+        dates: b.schedules.map((sc) => sc.schedule.start_date).join(","),
+        name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
+        quantity: b.schedules.length,
+        quantity_unit: service.price_unit,
+        price: service.price,
+        service_id: service.id,
+      });
+    });
+
+    const total = {
+      quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
+      price: items.reduce((a, c) => (a += c.price * c.quantity), 0),
+    };
+
+    return { items, total };
+  };
+
+  generateFees = async (userId, bookingIds = []) => {
+    const items = [];
+
+    // collect any entry fees from bookings
+    const bookings = await this.db.booking.findMany({
+      where: {
+        ...(bookingIds.length && { id: { in: bookingIds } }),
+        user_id: userId,
+        status: BookingStatus.DRAFT,
+      },
+      include: {
+        service: { include: { entry_fees: true } },
+        _count: {
+          select: {
+            schedules: {
+              where: { invoices: { some: {} } },
+            },
+          },
+        },
+      },
+    });
+    bookings.forEach((b) => {
+      if (b._count.schedules == 0)
+        b.service.entry_fees.forEach((ef) =>
+          items.push({ ...ef, quantity: 1 })
+        );
+    });
+
+    const total = {
+      quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
+      price: items.reduce((a, c) => (a += c.price * c.quantity), 0),
+    };
+
+    return { items, total };
+  };
+
   getItems = async (invoice_id, booking_ids) => {
     let bookingIds = booking_ids ? [...booking_ids] : [];
 

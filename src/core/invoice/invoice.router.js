@@ -17,10 +17,12 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
+r.get("/generate-simulation", authMiddleware(), controller.generateSimulation);
+
 r.post(
   "/create",
-  validatorMiddleware({ body: validator.create }),
   authMiddleware(["ADM", "SDM"]),
+  validatorMiddleware({ body: validator.create }),
   controller.create
 );
 

@@ -59,6 +59,27 @@ class InvoiceController extends BaseController {
       res.send(Buffer.from(buffer));
     });
   });
+
+  generateSimulation = this.wrapper(async (req, res) => {
+    const bookingIds = req.query?.booking_ids?.split("+") ?? [];
+    const data = {};
+
+    // items, main
+    const items = await this.#service.generateItems(req.user.id, bookingIds);
+    data["items"] = items.items;
+    data["items_total"] = items.total;
+
+    // fees, additional
+
+    const fees = await this.#service.generateFees(req.user.id, bookingIds);
+    data["fees"] = fees.items;
+    data["fees_total"] = fees.total;
+
+    // accumulation
+    data["total"] = data.fees_total.price + data.items_total.price;
+
+    return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
+  });
 }
 
 export default InvoiceController;

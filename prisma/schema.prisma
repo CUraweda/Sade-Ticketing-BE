@@ -485,15 +485,15 @@ model InvoiceItem {
   invoice_id String
   service_id String?
 
-  start_date    DateTime?
-  end_date      DateTime?
+  dates         DateTime?
   name          String
   quantity      Int
   quantity_unit String?
   price         Float
   note          String?
 
-  invoice Invoice? @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  invoice   Invoice?           @relation(fields: [invoice_id], references: [id], onDelete: Cascade)
+  attendees ScheduleAttendee[]
 }
 
 model Invoice {
@@ -613,6 +613,7 @@ model ScheduleAttendee {
   schedule Schedule?      @relation(fields: [schedule_id], references: [id], onDelete: SetNull)
   client   ClientProfile? @relation(fields: [client_id], references: [id], onDelete: SetNull)
   booking  Booking?       @relation(fields: [booking_id], references: [id], onDelete: SetNull)
+  invoices InvoiceItem[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
