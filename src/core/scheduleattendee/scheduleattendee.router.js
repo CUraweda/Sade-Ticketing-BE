@@ -24,7 +24,7 @@ r.post(
 );
 
 r.post(
-  "/auto-create-by-booking/booking_id",
+  "/auto-create-by-booking/:booking_id",
   authMiddleware(),
   controller.autoCreate
 );

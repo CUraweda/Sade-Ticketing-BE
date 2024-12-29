@@ -3,6 +3,7 @@ import { BadRequest, NotFound } from "../../lib/response/catch.js";
 import BookingService from "../booking/booking.service.js";
 import ScheduleService from "../schedule/schedule.service.js";
 import ScheduleAttendeeService from "./scheduleattendee.service.js";
+import moment from "moment";
 
 class ScheduleAttendeeController extends BaseController {
   #service;
@@ -67,15 +68,17 @@ class ScheduleAttendeeController extends BaseController {
   // date format expected YYYY-MM-DD
   autoCreate = this.wrapper(async (req, res) => {
     if (!req.query.date) throw new BadRequest("Mohon sertakan tanggal");
-    if (!req.query.quantity) throw new BadRequest("Mohon sertakan jumlah");
     if (!this.isAdmin(req))
       await this.#bookingService.checkBookingOwner(
         req.params.booking_id,
         req.user.id
       );
 
-    const start = moment(req.query.date),
-      end = moment(req.query.date).endOf("month").endOf("day");
+    const start = moment(req.query.date).format("YYYY-MM-DD"),
+      end = moment(req.query.date)
+        .endOf("month")
+        .endOf("day")
+        .format("YYYY-MM-DD");
 
     const schedules = await this.#scheduleService.findAll({
       paginate: true,
@@ -83,18 +86,28 @@ class ScheduleAttendeeController extends BaseController {
       lte: `start_date:${end}`,
       order: "start_date:asc",
     });
-    const unavailable = await this.#scheduleService.checkAvailability(
-      schedules.map((sc) => sc.items.id)
-    );
+    const unavailable = (
+      await this.#scheduleService.checkAvailability(
+        schedules.items.map((sc) => sc.id)
+      )
+    ).map((sc) => sc.id);
     const available = schedules.items.filter(
       (sc) => !unavailable.includes(sc.id)
     );
+
+    const scheduleQuota = await this.#bookingService.getScheduleQuota(
+      req.params.booking_id
+    );
+
     const payload = {
       booking_id: req.params.booking_id,
       schedules: available
         .map((sc) => ({ schedule_id: sc.id }))
-        .filter((_, i) => i < +req.query.quantity),
+        .filter((_, i) => i < scheduleQuota.remaining),
     };
+
+    if (payload.schedules.length <= 0)
+      throw new BadRequest("Tidak ada jadwal yang tersedia");
 
     const data = await this.#service.create(payload);
     return this.created(res, data, "ScheduleAttendee berhasil dibuat");
