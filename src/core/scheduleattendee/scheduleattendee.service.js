@@ -35,7 +35,10 @@ class ScheduleAttendeeService extends BaseService {
       ...sc,
       booking_id: payload.booking_id,
     }));
-    const result = await this.db.scheduleAttendee.createMany({ data });
+    const result = await this.db.scheduleAttendee.createMany({
+      data,
+      skipDuplicates: true,
+    });
     return result;
   };
 

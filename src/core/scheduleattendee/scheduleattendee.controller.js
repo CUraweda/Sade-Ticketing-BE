@@ -84,7 +84,7 @@ class ScheduleAttendeeController extends BaseController {
       paginate: true,
       gte: `start_date:${start}`,
       lte: `start_date:${end}`,
-      order: "start_date:asc",
+      order: "created_at:desc",
     });
     const unavailable = (
       await this.#scheduleService.checkAvailability(
@@ -109,15 +109,8 @@ class ScheduleAttendeeController extends BaseController {
     if (payload.schedules.length <= 0)
       throw new BadRequest("Tidak ada lagi jadwal yang tersedia");
 
-    try {
-      const data = await this.#service.create(payload);
-      return this.created(res, data, "ScheduleAttendee berhasil dibuat");
-    } catch (err) {
-      if (err.code == "P2002")
-        throw new BadRequest("Tidak ada lagi jadwal yang tersedia");
-
-      throw err;
-    }
+    const data = await this.#service.create(payload);
+    return this.created(res, data, "ScheduleAttendee berhasil dibuat");
   });
 
   update = this.wrapper(async (req, res) => {
