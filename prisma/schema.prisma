@@ -617,7 +617,7 @@ model ScheduleAttendee {
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 
-  @@unique([schedule_id, client_id])
+  @@unique([schedule_id, booking_id])
 }
 
 model RescheduleRequest {

@@ -107,10 +107,17 @@ class ScheduleAttendeeController extends BaseController {
     };
 
     if (payload.schedules.length <= 0)
-      throw new BadRequest("Tidak ada jadwal yang tersedia");
+      throw new BadRequest("Tidak ada lagi jadwal yang tersedia");
 
-    const data = await this.#service.create(payload);
-    return this.created(res, data, "ScheduleAttendee berhasil dibuat");
+    try {
+      const data = await this.#service.create(payload);
+      return this.created(res, data, "ScheduleAttendee berhasil dibuat");
+    } catch (err) {
+      if (err.code == "P2002")
+        throw new BadRequest("Tidak ada lagi jadwal yang tersedia");
+
+      throw err;
+    }
   });
 
   update = this.wrapper(async (req, res) => {
@@ -133,7 +140,8 @@ class ScheduleAttendeeController extends BaseController {
     if (isDone) throw new BadRequest("Jadwal sudah selesai");
 
     const data = await this.#service.findById(req.params.id);
-    if (!this.isAdmin(req)) await this.#bookingService(data.booking_id);
+    if (!this.isAdmin(req))
+      await this.#bookingService.checkBookingOwner(data.booking_id);
 
     await this.#service.delete(req.params.id);
     return this.noContent(res, "ScheduleAttendee berhasil dihapus");
