@@ -67,8 +67,9 @@ class BookingController extends BaseController {
           "Booking Anda sudah dikunci dan tidak bisa diubah lagi"
         );
 
-      // user cant update status field
-      if (req.body.status) delete req.body.status;
+      // user cant update these fields
+      delete req.body.status;
+      delete req.body.is_locked;
     }
 
     const data = await this.#service.update(req.params.id, req.body);

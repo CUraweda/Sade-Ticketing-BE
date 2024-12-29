@@ -20,15 +20,8 @@ export const BookingValidator = {
     compliant: Joi.string().max(100).optional(),
     quantity: Joi.number().precision(0).min(1).optional(),
     status: Joi.valid(...Object.values(BookingStatus)).optional(),
-    start_date: Joi.date().optional(),
-    end_date: Joi.date().min(Joi.ref("start_date")).when("start_date", {
-      is: Joi.date().required(),
-      then: Joi.required(),
-      otherwise: Joi.optional(),
-    }),
-    schedule_ids: Joi.array()
-      .items(Joi.string().external(relationExist("schedule")).optional())
-      .optional(),
+    title: Joi.string().max(100).optional(),
+    is_locked: Joi.bool().optional(),
   }),
   setSchedules: Joi.object({
     quantity: Joi.number().min(1).required(),

@@ -129,127 +129,17 @@ class BookingService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const booking = await this.findById(id),
-      serviceData = this.extractServiceData(booking.service_data);
-
-    // daycare booking can create its own schedule
-    if (
-      serviceData.category_id == 4 &&
-      payload.start_date &&
-      payload.end_date
-    ) {
-      const start = payload.start_date,
-        end = payload.end_date;
-
-      payload = {
-        ...payload,
-        schedules: {
-          deleteMany: {},
-          create: [
-            {
-              title: `Daycare - ${booking.client?.first_name ?? ""} ${booking.client?.last_name ?? ""}`,
-              start_date: start,
-              end_date: end,
-              service_id: booking.service_id,
-            },
-          ],
-        },
-      };
-
-      if (serviceData.billing_type == ServiceBillingType.DAILY)
-        payload["quantity"] = moment(end).diff(start, "days") + 1;
-      else if (serviceData.billing_type == ServiceBillingType.DAILY)
-        payload["quantity"] = moment(end).diff(start, "months") + 1;
-
-      // for training, psikolog, therapy
-    } else if (payload.schedule_ids?.length) {
-      // check schedule availability
-      const schedules = await this.db.schedule.findMany({
-        where: {
-          id: {
-            in: payload.schedule_ids,
-          },
-          bookings: {
-            none: {
-              id,
-            },
-          },
-        },
-        select: {
-          start_date: true,
-          max_bookings: true,
-          _count: {
-            select: {
-              bookings: {
-                where: {
-                  status: {
-                    not: BookingStatus.DRAFT,
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
-
-      if (schedules.filter((s) => s._count.bookings >= s.max_bookings).length)
-        throw new BadRequest(
-          `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
-        );
-
-      const prevScheduleIds = (
-        await this.db.schedule.findMany({
-          where: {
-            bookings: {
-              some: {
-                id,
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        })
-      ).map((sc) => sc.id);
-
-      payload = {
-        ...payload,
-        quantity: payload.schedule_ids.length,
-        schedules: {
-          disconnect: prevScheduleIds.map((id) => ({ id })),
-          connect: payload.schedule_ids.map((id) => ({ id })),
-        },
-      };
+    if (payload.quantity) {
+      const data = await this.findById(id);
+      payload["quantity"] =
+        payload.quantity < data.quantity ? data.quantity : payload.quantity;
     }
 
-    delete payload.start_date;
-    delete payload.end_date;
-    delete payload.schedule_ids;
-
-    await this.db.booking.update({
-      where: {
-        id,
-      },
+    const result = await this.db.booking.update({
+      where: { id },
       data: payload,
     });
-
-    if (payload.status == BookingStatus.COMPLETED) {
-      await this.db.booking.update({
-        where: {
-          id,
-        },
-        data: {
-          schedules: {
-            updateMany: {
-              where: {},
-              data: {
-                recurring: null,
-              },
-            },
-          },
-        },
-      });
-    }
+    return result;
   };
 
   delete = async (id) => {
