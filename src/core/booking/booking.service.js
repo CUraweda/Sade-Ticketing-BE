@@ -474,6 +474,19 @@ class BookingService extends BaseService {
       ]),
     });
   };
+
+  getScheduleQuota = async (id) => {
+    const booking = await this.db.booking.findFirst({
+      where: { id },
+      select: { quantity: true, _count: { select: { schedules: true } } },
+    });
+
+    return {
+      target: booking.quantity,
+      used: booking._count.schedules,
+      remaining: booking.quantity - booking._count.schedules,
+    };
+  };
 }
 
 export default BookingService;

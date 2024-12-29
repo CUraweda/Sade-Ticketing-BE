@@ -51,6 +51,15 @@ class ScheduleAttendeeController extends BaseController {
       (sc) => !unavailableSchedules.includes(sc.schedule_id)
     );
 
+    // align with booking quantity
+    const quota = await this.#bookingService.getScheduleQuota(
+      payload.booking_id
+    );
+    if (payload.schedules.length > quota.remaining)
+      throw new BadRequest(
+        "Banyak jadwal yang dipilih melebihi saldo jadwal tersisa"
+      );
+
     const data = await this.#service.create(payload);
     return this.created(res, data, "ScheduleAttendee berhasil dibuat");
   });
@@ -58,6 +67,7 @@ class ScheduleAttendeeController extends BaseController {
   // date format expected YYYY-MM-DD
   autoCreate = this.wrapper(async (req, res) => {
     if (!req.query.date) throw new BadRequest("Mohon sertakan tanggal");
+    if (!req.query.quantity) throw new BadRequest("Mohon sertakan jumlah");
     if (!this.isAdmin(req))
       await this.#bookingService.checkBookingOwner(
         req.params.booking_id,
@@ -71,6 +81,7 @@ class ScheduleAttendeeController extends BaseController {
       paginate: true,
       gte: `start_date:${start}`,
       lte: `start_date:${end}`,
+      order: "start_date:asc",
     });
     const unavailable = await this.#scheduleService.checkAvailability(
       schedules.map((sc) => sc.items.id)
@@ -80,7 +91,9 @@ class ScheduleAttendeeController extends BaseController {
     );
     const payload = {
       booking_id: req.params.booking_id,
-      schedules: available.map((sc) => ({ schedule_id: sc.id })),
+      schedules: available
+        .map((sc) => ({ schedule_id: sc.id }))
+        .filter((_, i) => i < +req.query.quantity),
     };
 
     const data = await this.#service.create(payload);
