@@ -79,7 +79,7 @@ class InvoiceService extends BaseService {
           payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
         items: {
           createMany: {
-            data: payload.items,
+            data: payload,
           },
         },
         fees: {
