@@ -31,6 +31,13 @@ r.post(
   controller.create
 );
 
+r.post(
+  "/check-availability",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.checkAvailability }),
+  controller.checkAvailability
+);
+
 r.put(
   "/update/:id",
   authMiddleware(["ADM", "SDM"]),

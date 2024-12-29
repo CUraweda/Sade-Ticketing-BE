@@ -62,6 +62,11 @@ export const ScheduleValidator = {
     doctor_id: Joi.string().external(relationExist("doctorProfile")).required(),
     set: Joi.string().valid("add", "remove").required(),
   }),
+  checkAvailability: Joi.array().items(
+    Joi.object({
+      schedule_id: Joi.string().external(relationExist("schedule")).required(),
+    })
+  ),
 };
 
 export default ScheduleValidator;
