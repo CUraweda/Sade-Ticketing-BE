@@ -12,29 +12,8 @@ class ScheduleService extends BaseService {
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
 
-    const filterDoctors = this.getQueryValue(query, "in_", "doctors.id"),
-      filterGteStartDate = this.getQueryValue(query, "gte", "start_date");
-
     const data = await this.db.schedule.findMany({
       ...q,
-      ...(!query.paginate && {
-        where: {
-          OR: [
-            {
-              repeat: { not: null },
-              ...(filterGteStartDate && {
-                start_date: { lte: filterGteStartDate },
-              }),
-              ...(filterDoctors && {
-                doctors: {
-                  some: { id: { in: filterDoctors?.split(",") } },
-                },
-              }),
-            },
-            { ...q.where },
-          ],
-        },
-      }),
       include: {
         service: {
           select: {
