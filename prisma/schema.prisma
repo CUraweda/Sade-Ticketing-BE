@@ -485,7 +485,7 @@ model InvoiceItem {
   invoice_id String
   service_id String?
 
-  dates         DateTime?
+  dates         String?
   name          String
   quantity      Int
   quantity_unit String?

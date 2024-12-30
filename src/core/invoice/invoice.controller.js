@@ -1,6 +1,8 @@
+import moment from "moment";
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
 import InvoiceService from "./invoice.service.js";
+import { InvoiceStatus } from "./invoice.validator.js";
 
 class InvoiceController extends BaseController {
   #service;
@@ -79,6 +81,30 @@ class InvoiceController extends BaseController {
     data["total"] = data.fees_total.price + data.items_total.price;
 
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
+  });
+
+  generateCreate = this.wrapper(async (req, res) => {
+    const bookingIds = req.query?.booking_ids?.split("+") ?? [];
+    const payload = {
+      user_id: req.user.id,
+      title: `Tagihan ${moment().format("MMMM YYYY")}`,
+      status: InvoiceStatus.ISSUED,
+      expiry_date: moment().add(1, "day").toDate(),
+    };
+
+    // items, main
+    const items = await this.#service.generateItems(req.user.id, bookingIds);
+    payload["items"] = items.items;
+
+    // fees, additional
+    const fees = await this.#service.generateFees(req.user.id, bookingIds);
+    payload["fees"] = fees.items;
+
+    // accumulation
+    payload["total"] = fees.total.price + items.total.price;
+
+    const result = await this.#service.create(payload);
+    return this.ok(res, result, "Invoice berhasil dibuat");
   });
 }
 

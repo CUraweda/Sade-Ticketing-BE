@@ -71,26 +71,40 @@ class InvoiceService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.invoice.create({
-      data: {
-        ...payload,
-        total:
-          payload.items.reduce((a, c) => (a += c.price * c.quantity), 0) +
-          payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
-        items: {
-          createMany: {
-            data: payload,
+    const { items, ...rest } = payload;
+    const result = await this.db.$transaction(async (db) => {
+      // create invoice and fees
+      const data = await db.invoice.create({
+        data: {
+          ...rest,
+          total:
+            items.reduce((a, c) => (a += c.price * c.quantity), 0) +
+            rest.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+          fees: {
+            createMany: {
+              data: rest.fees,
+            },
           },
         },
-        fees: {
-          createMany: {
-            data: payload.fees,
+      });
+
+      // create items
+      for (const item of items) {
+        await db.invoiceItem.create({
+          data: {
+            ...item,
+            invoice_id: data.id,
+            attendees: {
+              connect: item.attendees.map((id) => ({ id })),
+            },
           },
-        },
-      },
+        });
+      }
+
+      return data;
     });
 
-    return data;
+    return result;
   };
 
   update = async (id, payload) => {
@@ -192,7 +206,12 @@ class InvoiceService extends BaseService {
     bookings.forEach((b) => {
       if (b._count.schedules == 0)
         b.service.entry_fees.forEach((ef) =>
-          items.push({ ...ef, quantity: 1 })
+          items.push({
+            fee_id: ef.id,
+            name: ef.title,
+            quantity: 1,
+            price: ef.price,
+          })
         );
     });
 

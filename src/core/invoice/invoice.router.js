@@ -26,6 +26,8 @@ r.post(
   controller.create
 );
 
+r.post("/generate-create", authMiddleware(), controller.generateCreate);
+
 r.put(
   "/update/:id",
   authMiddleware(["ADM", "SDM"]),
