@@ -7,9 +7,10 @@ import {
 } from "./release-invoice-by-service-billing.js";
 import { releaseSpecialistSalary } from "./release-specialist-salary.js";
 import { createRepeatSchedules } from "./create-repeat-schedules.js";
+import updateBookingStatus from "./update-booking-status.js";
 
 // set ongoing bookings to be completed every 30 min between 1:00 - 11:00 (8:00 - 18:00 in ID)
-cron.schedule("*/30 1-11 * * *", updateBookingComplete);
+cron.schedule("*/30 1-11 * * *", updateBookingStatus);
 
 // create repeats schedule in a new month every first day of month at 0:05 (6:00 in ID)
 cron.schedule("5 0 1 * *", createRepeatSchedules);
