@@ -80,6 +80,8 @@ class InvoiceController extends BaseController {
     // accumulation
     data["total"] = data.fees_total.price + data.items_total.price;
 
+    if (data["total"] <= 0) return this.noContent(res, "Tidak ada invoice");
+
     return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
   });
 

@@ -163,15 +163,17 @@ class InvoiceService extends BaseService {
     bookings.forEach((b) => {
       const service = parseJson(b.service_data);
 
-      items.push({
-        attendees: b.schedules.map((sc) => sc.id),
-        dates: b.schedules.map((sc) => sc.schedule.start_date).join(","),
-        name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
-        quantity: b.schedules.length,
-        quantity_unit: service.price_unit,
-        price: service.price,
-        service_id: service.id,
-      });
+      if (b.schedules.length) {
+        items.push({
+          attendees: b.schedules.map((sc) => sc.id),
+          dates: b.schedules.map((sc) => sc.schedule.start_date).join(","),
+          name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
+          quantity: b.schedules.length,
+          quantity_unit: service.price_unit,
+          price: service.price,
+          service_id: service.id,
+        });
+      }
     });
 
     const total = {
