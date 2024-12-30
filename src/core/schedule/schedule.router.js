@@ -56,7 +56,7 @@ r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
 r.put(
   "/set-doctor/:id",
-  authMiddleware(),
+  authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.setDoctor }),
   controller.setDoctor
 );

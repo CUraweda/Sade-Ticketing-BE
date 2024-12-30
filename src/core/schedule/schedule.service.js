@@ -51,9 +51,7 @@ class ScheduleService extends BaseService {
         },
         attendees: {
           where: {
-            ...(userId && {
-              is_blocked: false,
-            }),
+            is_blocked: false,
           },
           include: {
             client: {

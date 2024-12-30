@@ -39,10 +39,12 @@ class BookingController extends BaseController {
   });
 
   findById = this.wrapper(async (req, res) => {
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound("Reservasi tidak ditemukan");
+
     if (req.user?.role_code == "USR")
       await this.#service.checkBookingOwner(req.params.id, req.user.id);
-    const data = await this.#service.findById(req.params.id);
-    if (!data) throw new NotFound("Booking tidak ditemukan");
+
     data["service_data"] = this.#service.extractServiceData(data.service_data);
 
     return this.ok(res, data, "Booking berhasil didapatkan");

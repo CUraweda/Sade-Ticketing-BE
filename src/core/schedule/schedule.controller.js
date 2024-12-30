@@ -118,14 +118,16 @@ class ScheduleController extends BaseController {
     if (!data) throw new NotFound();
     if (data.is_locked) throw new BadRequest("Jadwal sudah terkunci");
 
+    if (data._count.attendees > 0)
+      throw new BadRequest(
+        `Jadwal tidak dapat dihapus karena sudah memiliki ${data._count.attendees} klien terdaftar.`
+      );
+
     await this.#service.delete(req.params.id, req.query.with_children);
     return this.noContent(res, "Jadwal berhasil dihapus");
   });
 
   setDoctor = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM")
-      await this.#service.checkCreator(req.params.id, req.user.id);
-
     if (req.body.set == "add")
       await this.#service.addDoctor(req.params.id, req.body.doctor_id);
     else await this.#service.removeDoctor(req.params.id, req.body.doctor_id);
