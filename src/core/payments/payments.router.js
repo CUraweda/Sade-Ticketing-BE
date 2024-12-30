@@ -19,30 +19,12 @@ r.get(
 
 r.get("/show-by-id/:id", authMiddleware(), controller.findById);
 
-r.get("/show-by-booking-id/:id", controller.findByBookingId);
-
-r.post(
-  "/create",
-  authMiddleware(["SDM"]),
-  validatorMiddleware({ body: validator.create }),
-  controller.create
-);
-
-r.put(
-  "/upload-payment/:id",
-  authMiddleware(),
-  uploader("./uploads/payments/", "image", 5000000).single("file"),
-  controller.uploadPayment
-);
-
 r.put(
   "/update/:id",
   authMiddleware(["ADM", "SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
-
-r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
 
 r.get("/download/:id", authMiddleware(), controller.downloadPaymentProof);
 
