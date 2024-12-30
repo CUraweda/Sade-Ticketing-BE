@@ -72,7 +72,6 @@ class InvoiceController extends BaseController {
     data["items_total"] = items.total;
 
     // fees, additional
-
     const fees = await this.#service.generateFees(req.user.id, bookingIds);
     data["fees"] = fees.items;
     data["fees_total"] = fees.total;
@@ -89,7 +88,7 @@ class InvoiceController extends BaseController {
     const bookingIds = req.query?.booking_ids?.split("+") ?? [];
     const payload = {
       user_id: req.user.id,
-      title: `Tagihan ${moment().format("MMMM YYYY")}`,
+      title: `Tagihan ${moment().locale("id").format("MMMM YYYY")}`,
       status: InvoiceStatus.ISSUED,
       expiry_date: moment().add(1, "day").toDate(),
     };

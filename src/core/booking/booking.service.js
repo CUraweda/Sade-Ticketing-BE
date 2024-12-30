@@ -63,6 +63,11 @@ class BookingService extends BaseService {
                 service_data: true,
               },
             },
+            invoices: {
+              include: {
+                invoice: true,
+              },
+            },
             schedule: {
               select: {
                 start_date: true,

@@ -31,9 +31,14 @@ class ScheduleAttendeeService extends BaseService {
   };
 
   create = async (payload) => {
+    const booking = await this.db.booking.findUnique({
+      where: { id: payload.booking_id },
+      select: { client_id: true },
+    });
     const data = payload.schedules.map((sc) => ({
       ...sc,
       booking_id: payload.booking_id,
+      client_id: booking.client_id,
     }));
     const result = await this.db.scheduleAttendee.createMany({
       data,

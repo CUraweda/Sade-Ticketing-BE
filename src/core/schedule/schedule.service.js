@@ -30,7 +30,7 @@ class ScheduleService extends BaseService {
     return data;
   };
 
-  findById = async (id) => {
+  findById = async (id, userId) => {
     const data = await this.db.schedule.findUnique({
       where: { id },
       include: {
@@ -50,6 +50,11 @@ class ScheduleService extends BaseService {
           },
         },
         attendees: {
+          where: {
+            ...(userId && {
+              is_blocked: false,
+            }),
+          },
           include: {
             client: {
               select: {
@@ -156,11 +161,7 @@ class ScheduleService extends BaseService {
   };
 
   checkAuthorized = async (id, user_id, client = true, doctor = true) => {
-    const ors = [
-      {
-        creator_id: user_id,
-      },
-    ];
+    const ors = [];
 
     if (doctor)
       ors.push({
@@ -171,9 +172,9 @@ class ScheduleService extends BaseService {
         },
       });
 
-    if (client)
+    if (client) {
       ors.push({
-        clients: {
+        attendees: {
           some: {
             client: {
               user_id,
@@ -181,6 +182,16 @@ class ScheduleService extends BaseService {
           },
         },
       });
+      ors.push({
+        attendees: {
+          some: {
+            booking: {
+              user_id,
+            },
+          },
+        },
+      });
+    }
 
     const data = await this.db.schedule.count({
       where: {
