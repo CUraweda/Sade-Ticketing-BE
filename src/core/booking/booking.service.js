@@ -46,6 +46,15 @@ class BookingService extends BaseService {
     const data = await this.db.booking.findUnique({
       where: { id },
       include: {
+        _count: {
+          select: {
+            agreed_documents: true,
+            questionnaire_responses: true,
+            reports: true,
+            schedules: true,
+          },
+        },
+        user: { select: { avatar: true, full_name: true, email: true } },
         client: true,
         agreed_documents: {
           include: this.select(["document.title"]),

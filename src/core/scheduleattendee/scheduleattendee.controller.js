@@ -124,8 +124,19 @@ class ScheduleAttendeeController extends BaseController {
       delete payload["is_blocked"];
     }
 
-    const data = await this.#service.update(req.params.id, payload);
-    return this.ok(res, data, "ScheduleAttendee berhasil diperbarui");
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound();
+
+    if (payload["schedule_id"] && payload["schedule_id"] != data.schedule_id) {
+      const unavailable = await this.#scheduleService.checkAvailability([
+        payload.schedule_id,
+      ]);
+      if (unavailable.length)
+        throw new BadRequest("Jadwal yang dipilih sudah penuh");
+    }
+
+    const result = await this.#service.update(req.params.id, payload);
+    return this.ok(res, result, "ScheduleAttendee berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {

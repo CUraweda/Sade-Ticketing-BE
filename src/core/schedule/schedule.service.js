@@ -15,6 +15,9 @@ class ScheduleService extends BaseService {
     const data = await this.db.schedule.findMany({
       ...q,
       include: {
+        _count: {
+          select: { attendees: { where: { is_blocked: false } } },
+        },
         service: {
           select: {
             category: { select: { id: true, hex_color: true } },
