@@ -66,6 +66,7 @@ class BookingService extends BaseService {
           include: this.select(["questionnaire.title"]),
         },
         schedules: {
+          orderBy: { created_at: "desc" },
           include: {
             booking: {
               select: {
