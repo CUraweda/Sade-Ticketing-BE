@@ -26,7 +26,7 @@ class BookingController extends BaseController {
         q = this.joinBrowseQuery(
           q,
           "in_",
-          `schedules.some.doctors.user_id:${uid}`
+          `schedules.some.schedule.doctors.user_id:${uid}`
         );
       } else if (role == RoleCode.ASESOR) {
         q = this.joinBrowseQuery(q, "where", `status.not:draft`);

@@ -38,7 +38,11 @@ class ScheduleController extends BaseController {
     ) {
       q = this.joinBrowseQuery(q, "in_", `doctors.user_id:${uid}`);
     } else if (role == RoleCode.USER) {
-      q = this.joinBrowseQuery(q, "in_", `clients.some.client.user_id:${uid}`);
+      q = this.joinBrowseQuery(
+        q,
+        "in_",
+        `attendees.some.client.user_id:${uid}`
+      );
     }
 
     const data = await this.#service.findAll(q);
