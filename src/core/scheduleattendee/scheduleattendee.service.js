@@ -1,6 +1,7 @@
 import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { AttendeeStatus } from "./scheduleattendee.validator.js";
 
 class ScheduleAttendeeService extends BaseService {
   constructor() {
@@ -75,7 +76,10 @@ class ScheduleAttendeeService extends BaseService {
       moment(result.schedule.end_date),
       "days"
     );
-    return daysDifference >= -1;
+    return (
+      daysDifference >= -1 &&
+      (result.status == AttendeeStatus.PRESENT || result.status == null)
+    );
   };
 }
 
