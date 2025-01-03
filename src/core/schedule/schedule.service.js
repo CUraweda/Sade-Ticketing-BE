@@ -23,6 +23,13 @@ class ScheduleService extends BaseService {
             category: { select: { id: true, hex_color: true } },
           },
         },
+        parent: {
+          select: {
+            start_date: true,
+            repeat: true,
+            repeat_end: true,
+          },
+        },
       },
     });
 
