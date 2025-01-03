@@ -20,7 +20,7 @@ class ServiceService extends BaseService {
           select: {
             max_attendees: true,
             _count: {
-              select: { attendees: { where: { is_blocked: false } } },
+              select: { attendees: { where: { is_active: true } } },
             },
           },
           where: {

@@ -149,7 +149,7 @@ class InvoiceService extends BaseService {
       include: {
         schedules: {
           where: {
-            is_blocked: true,
+            is_active: false,
             invoices: { none: {} },
             schedule_id: { not: null },
           },

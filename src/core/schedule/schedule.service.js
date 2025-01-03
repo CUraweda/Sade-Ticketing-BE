@@ -16,7 +16,7 @@ class ScheduleService extends BaseService {
       ...q,
       include: {
         _count: {
-          select: { attendees: { where: { is_blocked: false } } },
+          select: { attendees: { where: { is_active: true } } },
         },
         service: {
           select: {
@@ -54,7 +54,7 @@ class ScheduleService extends BaseService {
         },
         attendees: {
           where: {
-            is_blocked: false,
+            is_active: true,
           },
           include: {
             client: {
@@ -77,7 +77,7 @@ class ScheduleService extends BaseService {
         },
         _count: {
           select: {
-            attendees: { where: { is_blocked: false } },
+            attendees: { where: { is_active: true } },
             children: true,
           },
         },
@@ -291,7 +291,7 @@ class ScheduleService extends BaseService {
         start_date: true,
         max_attendees: true,
         _count: {
-          select: { attendees: { where: { is_blocked: false } } },
+          select: { attendees: { where: { is_active: true } } },
         },
       },
     });

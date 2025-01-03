@@ -21,7 +21,7 @@ const updateBookingComplete = async () => {
         _count: {
           select: {
             schedules: {
-              where: { is_blocked: false },
+              where: { is_active: true },
             },
           },
         },

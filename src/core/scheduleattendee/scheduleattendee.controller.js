@@ -121,7 +121,7 @@ class ScheduleAttendeeController extends BaseController {
       delete payload["schedule_id"];
       delete payload["booking_id"];
       delete payload["group_label"];
-      delete payload["is_blocked"];
+      delete payload["is_active"];
     }
 
     const data = await this.#service.findById(req.params.id);

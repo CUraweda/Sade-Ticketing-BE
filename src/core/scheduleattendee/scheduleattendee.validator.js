@@ -28,7 +28,7 @@ export const ScheduleAttendeeValidator = {
     note: Joi.string().max(230).optional(),
     group_label: Joi.string().max(50).optional(),
     overtime: Joi.number().integer().optional(),
-    is_blocked: Joi.boolean().optional(),
+    is_active: Joi.boolean().optional(),
   }),
 };
 

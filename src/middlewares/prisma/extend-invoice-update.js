@@ -23,7 +23,7 @@ const extendInvoiceUpdate = async ({ args, query, operation }) => {
             select: {
               max_attendees: true,
               _count: {
-                select: { attendees: { where: { is_blocked: false } } },
+                select: { attendees: { where: { is_active: true } } },
               },
             },
           },
@@ -52,7 +52,7 @@ const extendInvoiceUpdate = async ({ args, query, operation }) => {
         await db.scheduleAttendee.updateMany({
           where: { id: { in: getIn } },
           data: {
-            is_blocked: false,
+            is_active: true,
           },
         });
 
@@ -61,7 +61,7 @@ const extendInvoiceUpdate = async ({ args, query, operation }) => {
           where: { id: { in: getIn } },
           data: {
             schedule_id: null,
-            is_blocked: false,
+            is_active: true,
           },
         });
 

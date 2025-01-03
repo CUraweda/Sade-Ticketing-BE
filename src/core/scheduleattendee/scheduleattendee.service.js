@@ -69,7 +69,7 @@ class ScheduleAttendeeService extends BaseService {
 
   isDone = async (id) => {
     const result = await this.findById(id);
-    if (!result.schedule || result.is_blocked) return false;
+    if (!result.schedule || !result.is_active) return false;
 
     const daysDifference = moment().diff(
       moment(result.schedule.end_date),

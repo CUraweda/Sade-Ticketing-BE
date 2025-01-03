@@ -23,7 +23,7 @@ const updateBookingStatus = async () => {
         schedules: {
           select: {
             status: true,
-            is_blocked: true,
+            is_active: true,
             schedule: { select: { start_date: true, end_date: true } },
             _count: { select: { invoices: true } },
           },
@@ -37,16 +37,14 @@ const updateBookingStatus = async () => {
     bookings.forEach((b) => {
       if (
         b.status == BookingStatus.DRAFT &&
-        b.schedules.some(
-          (sa) => !sa.is_blocked || sa._count.invoices.length > 0
-        )
+        b.schedules.some((sa) => sa.is_active || sa._count.invoices.length > 0)
       )
         toOngoing.push(b.id);
       else if (
         b.status == BookingStatus.ONGOING &&
         b.schedules.filter(
           (sa) =>
-            !sa.is_blocked &&
+            sa.is_active &&
             sa.schedule &&
             moment(sa.schedule.end_date ?? sa.schedule.start_date).isBefore(
               current
