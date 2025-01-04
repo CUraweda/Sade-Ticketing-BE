@@ -332,7 +332,7 @@ class BookingService extends BaseService {
       ...q,
       where: {
         ...q.where,
-        booking_id,
+        OR: [{ booking_id: booking_id }, { booking_report_id: booking_id }],
       },
       include: this.select(["questionnaire.title"]),
     });
@@ -353,7 +353,7 @@ class BookingService extends BaseService {
       },
     });
 
-    await this.db.questionnaireResponse.create({
+    const result = await this.db.questionnaireResponse.create({
       data: {
         user_id: uid,
         booking_report_id: booking_id,
@@ -361,6 +361,7 @@ class BookingService extends BaseService {
         questionnaire_id,
       },
     });
+    return result;
   };
 
   updateAgreementDocument = async (id, document_id, payload) => {

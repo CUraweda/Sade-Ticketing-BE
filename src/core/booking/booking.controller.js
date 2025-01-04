@@ -148,12 +148,12 @@ class BookingController extends BaseController {
 
   createReportResponse = this.wrapper(async (req, res) => {
     const payload = req.body;
-    await this.#service.createReportResponse(
+    const result = await this.#service.createReportResponse(
       req.user.id,
       payload.booking_id,
       payload.questionnaire_id
     );
-    return this.ok(res, null, "Respon laporan berhasil dibuat");
+    return this.ok(res, result, "Respon laporan berhasil dibuat");
   });
 
   updateAgreementDocument = this.wrapper(async (req, res) => {
