@@ -36,6 +36,13 @@ r.put(
   controller.update
 );
 
+r.put(
+  "/bulk-update",
+  authMiddleware(["ADM", "SDM", "PSI", "ASR", "TRS"]),
+  validatorMiddleware({ body: validator.bulkUpdate }),
+  controller.bulkUpdate
+);
+
 r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const scheduleattendeeRouter = r;

@@ -56,6 +56,16 @@ class ScheduleAttendeeService extends BaseService {
     return data;
   };
 
+  bulkUpdate = async (scheduleId, items = []) => {
+    await this.db.$transaction(async (db) => {
+      for (const { id, ...data } of items)
+        await db.scheduleAttendee.update({
+          where: { id: id, schedule_id: scheduleId },
+          data: data,
+        });
+    });
+  };
+
   delete = async (id) => {
     const data = await this.db.scheduleAttendee.delete({ where: { id } });
     return data;

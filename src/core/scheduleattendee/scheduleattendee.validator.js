@@ -30,6 +30,19 @@ export const ScheduleAttendeeValidator = {
     overtime: Joi.number().integer().optional(),
     is_active: Joi.boolean().optional(),
   }),
+  bulkUpdate: Joi.object({
+    schedule_id: Joi.string().external(relationExist("schedule")).required(),
+    items: Joi.array().items(
+      Joi.object({
+        id: Joi.string().required(),
+        status: Joi.string()
+          .valid(...Object.values(AttendeeStatus))
+          .optional(),
+        note: Joi.string().max(230).optional(),
+        overtime: Joi.number().integer().optional(),
+      })
+    ),
+  }),
 };
 
 export default ScheduleAttendeeValidator;

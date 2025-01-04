@@ -1,5 +1,5 @@
 import BaseController from "../../base/controller.base.js";
-import { BadRequest, NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import BookingService from "../booking/booking.service.js";
 import ScheduleService from "../schedule/schedule.service.js";
 import ScheduleAttendeeService from "./scheduleattendee.service.js";
@@ -137,6 +137,20 @@ class ScheduleAttendeeController extends BaseController {
 
     const result = await this.#service.update(req.params.id, payload);
     return this.ok(res, result, "ScheduleAttendee berhasil diperbarui");
+  });
+
+  bulkUpdate = this.wrapper(async (req, res) => {
+    if (this.isDoctor(req)) {
+      await this.#scheduleService.checkAuthorized(
+        req.body.schedule_id,
+        req.user.id,
+        false,
+        true
+      );
+    }
+
+    await this.#service.bulkUpdate(req.body.schedule_id, req.body.items);
+    return this.ok(res, null, "ScheduleAttendee berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
