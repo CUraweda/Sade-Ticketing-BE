@@ -30,14 +30,22 @@ class ScheduleService extends BaseService {
             repeat_end: true,
           },
         },
+        attendees: {
+          select: { overtime: true },
+        },
       },
     });
 
+    const updatedData = data.map((d) => ({
+      ...d,
+      overtime: d.attendees.reduce((a, c) => (a += c.overtime ?? 0), 0),
+    }));
+
     if (query.paginate) {
       const countData = await this.db.schedule.count({ where: q.where });
-      return this.paginate(data, countData, q);
+      return this.paginate(updatedData, countData, q);
     }
-    return data;
+    return updatedData;
   };
 
   findById = async (id, userId) => {
@@ -71,6 +79,7 @@ class ScheduleService extends BaseService {
                 category: true,
                 dob: true,
                 avatar: true,
+                user_id: true,
               },
             },
           },
