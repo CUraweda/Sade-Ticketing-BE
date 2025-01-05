@@ -6,8 +6,8 @@ const createRepeatSchedules = async () => {
 
   const scheduleService = new ScheduleService();
 
-  const start = moment().startOf("month").startOf("day"),
-    end = moment().endOf("month").endOf("day");
+  const start = moment().add(1, "month").startOf("month").startOf("day"),
+    end = moment().add(1, "month").endOf("month").endOf("day");
 
   try {
     const count = await scheduleService.createRepeats([], start, end);
