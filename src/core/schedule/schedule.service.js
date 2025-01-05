@@ -19,6 +19,7 @@ class ScheduleService extends BaseService {
         parent_id: true,
         service_id: true,
         start_date: true,
+        end_date: true,
         title: true,
         is_locked: true,
         max_attendees: true,
