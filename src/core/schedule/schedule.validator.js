@@ -13,6 +13,15 @@ export const ScheduleRepeat = {
   WEEKLY: "weekly",
 };
 
+export const ScheduleDays = {
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
+  SATURDAY: "saturday",
+};
+
 export const ScheduleValidator = {
   create: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -21,8 +30,8 @@ export const ScheduleValidator = {
         Joi.object({
           start_date: Joi.date().required(),
           end_date: Joi.date().greater(Joi.ref("start_date")).required(),
-          repeat: Joi.string()
-            .valid(...Object.values(ScheduleRepeat))
+          repeat: Joi.array()
+            .items(Joi.string().valid(...Object.values(ScheduleDays)))
             .optional(),
           repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
         })
@@ -47,8 +56,8 @@ export const ScheduleValidator = {
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
-    repeat: Joi.string()
-      .valid(...Object.values(ScheduleRepeat))
+    repeat: Joi.array()
+      .items(Joi.string().valid(...Object.values(ScheduleDays)))
       .optional(),
     repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
     max_attendees: Joi.number().min(1).optional(),

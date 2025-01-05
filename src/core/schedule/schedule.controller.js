@@ -79,7 +79,7 @@ class ScheduleController extends BaseController {
       ...restPayload,
       start_date: date.start_date,
       end_date: date.end_date,
-      repeat: date.repeat,
+      repeat: date.repeat ? date.repeat.join(",") : null,
       repeat_end: date.repeat_end,
     }));
 
@@ -98,6 +98,8 @@ class ScheduleController extends BaseController {
       delete payload["repeat"];
       delete payload["repeat_end"];
     }
+
+    if (payload["repeat"]) payload["repeat"] = payload.repeat.join(",");
 
     if (payload.max_attendees && payload.max_attendees < data._count.attendees)
       throw new BadRequest(

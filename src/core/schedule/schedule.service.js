@@ -263,23 +263,24 @@ class ScheduleService extends BaseService {
     const schedulesToCreate = repeatedSchedules
       .map((rsc) => {
         const temp = [];
-        const repeatEnd = rsc.repeat_end
-          ? moment(rsc.repeat_end).endOf("day")
-          : end;
+        const repeats = rsc.repeat.split(",");
+        const repeatEnd =
+          rsc.repeat_end && moment(rsc.repeat_end).isSameOrBefore(end)
+            ? moment(rsc.repeat_end).endOf("day")
+            : end;
 
-        let current = moment(rsc.start_date),
-          duration = "";
+        let current = moment(rsc.start_date);
 
-        if (rsc.repeat == "weekly") duration = "week";
+        while (current.add(1, "days").isSameOrBefore(repeatEnd)) {
+          if (!repeats.includes(current.format("dddd").toLowerCase())) continue;
 
-        while (current.add(1, duration).isSameOrBefore(repeatEnd)) {
           const newStart = moment(rsc.start_date).add(
-              current.diff(moment(rsc.start_date), duration),
-              duration
+              current.diff(moment(rsc.start_date), "days"),
+              "days"
             ),
             newEnd = moment(rsc.end_date).add(
-              current.diff(moment(rsc.start_date), duration),
-              duration
+              current.diff(moment(rsc.start_date), "days"),
+              "days"
             );
 
           if (newStart.isBefore(start)) continue;
