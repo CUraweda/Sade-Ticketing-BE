@@ -317,6 +317,7 @@ class ScheduleService extends BaseService {
         id: true,
         start_date: true,
         max_attendees: true,
+        is_locked: true,
         _count: {
           select: { attendees: { where: { is_active: true } } },
         },
@@ -324,7 +325,7 @@ class ScheduleService extends BaseService {
     });
 
     const unavailable = schedules
-      .filter((sc) => sc._count.attendees >= sc.max_attendees)
+      .filter((sc) => sc._count.attendees >= sc.max_attendees || sc.is_locked)
       .map(({ id, start_date }) => ({ id, start_date }));
 
     return unavailable;

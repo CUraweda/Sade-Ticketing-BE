@@ -1,6 +1,6 @@
 import moment from "moment";
 import BaseController from "../../base/controller.base.js";
-import { BadRequest, NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import DoctorService from "../doctor/doctor.service.js";
 import { RoleCode } from "../role/role.validator.js";
 import ScheduleService from "./schedule.service.js";
@@ -144,9 +144,22 @@ class ScheduleController extends BaseController {
   });
 
   toggleLock = this.wrapper(async (req, res) => {
-    const lock = req.params.lock == "lock";
-    const data = await this.#service.update(req.params.id, { is_locked: lock });
-    return this.ok(res, data, `Jadwal berhasil di${lock ? "kunci" : "buka"}`);
+    if (!this.isAdmin(req))
+      if (this.isDoctor(req))
+        await this.#service.checkAuthorized(
+          req.params.id,
+          req.user.id,
+          false,
+          true
+        );
+      else throw new Forbidden();
+
+    const data = await this.#service.update(req.params.id, req.body);
+    return this.ok(
+      res,
+      data,
+      `Jadwal berhasil di${data.is_locked ? "tutup" : "buka"}`
+    );
   });
 
   checkAvailability = this.wrapper(async (req, res) => {

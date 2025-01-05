@@ -62,8 +62,9 @@ r.put(
 );
 
 r.put(
-  "/toggle-lock/:id/:lock",
-  authMiddleware(["ADM", "SDM"]),
+  "/toggle-lock/:id",
+  authMiddleware(["ADM", "SDM", "TRS", "ASR", "PSI"]),
+  validatorMiddleware({ body: validator.toggleLock }),
   controller.toggleLock
 );
 

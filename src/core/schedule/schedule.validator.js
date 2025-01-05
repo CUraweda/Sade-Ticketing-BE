@@ -67,6 +67,9 @@ export const ScheduleValidator = {
       schedule_id: Joi.string().external(relationExist("schedule")).required(),
     })
   ),
+  toggleLock: Joi.object({
+    is_locked: Joi.boolean().required(),
+  }),
 };
 
 export default ScheduleValidator;
