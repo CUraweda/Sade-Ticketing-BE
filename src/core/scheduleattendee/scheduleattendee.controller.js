@@ -80,10 +80,12 @@ class ScheduleAttendeeController extends BaseController {
         .endOf("day")
         .format("YYYY-MM-DD");
 
+    const booking = await this.#bookingService.findById(req.params.booking_id);
     const schedules = await this.#scheduleService.findAll({
       paginate: true,
       gte: `start_date:${start}`,
       lte: `start_date:${end}`,
+      where: `service_id:${booking.service_id}`,
       order: "created_at:desc",
     });
     const unavailable = (
