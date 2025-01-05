@@ -400,7 +400,7 @@ class DashboardService extends BaseService {
             },
           },
           include: {
-            bookings: {
+            attendees: {
               select: {
                 status: true,
               },
@@ -412,7 +412,9 @@ class DashboardService extends BaseService {
 
     return services.map((s) => {
       const scheduleComplete = s.schedules.filter((sc) =>
-        sc.bookings.every((b) => b.status == BookingStatus.COMPLETED)
+        sc.attendees.some(
+          (b) => b.status == AttendeeStatus.PRESENT || b.status == null
+        )
       ).length;
 
       return {
