@@ -1,6 +1,7 @@
 import BaseController from "../../base/controller.base.js";
 import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import BookingService from "../booking/booking.service.js";
+import { WeeklyFrequency } from "../booking/booking.validator.js";
 import ScheduleService from "../schedule/schedule.service.js";
 import ScheduleAttendeeService from "./scheduleattendee.service.js";
 import moment from "moment";
@@ -104,6 +105,27 @@ class ScheduleAttendeeController extends BaseController {
     const payload = {
       booking_id: req.params.booking_id,
       schedules: available
+        .reduce((a, c) => {
+          let freq = null;
+
+          if (booking.weekly_frequency == WeeklyFrequency.ONCE) freq = 1;
+          if (booking.weekly_frequency == WeeklyFrequency.TWICE) freq = 2;
+
+          if (freq) {
+            if (
+              a.filter(
+                (s) =>
+                  moment(s.start_date).startOf("week").format("YYYY-MM-DD") ==
+                    moment(c.start_date).startOf("week").format("YYYY-MM-DD") &&
+                  moment(s.start_date).endOf("week").format("YYYY-MM-DD") ==
+                    moment(c.start_date).endOf("week").format("YYYY-MM-DD")
+              ).length < freq
+            )
+              a.push(c);
+          } else a.push(c);
+
+          return a;
+        }, [])
         .map((sc) => ({ schedule_id: sc.id }))
         .filter((_, i) => i < scheduleQuota.remaining),
     };
