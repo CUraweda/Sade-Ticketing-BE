@@ -43,6 +43,7 @@ class ScheduleController extends BaseController {
         "in_",
         `attendees.some.client.user_id:${uid}`
       );
+      q = this.joinBrowseQuery(q, "where", `attendees.every.is_active:true`);
     }
 
     const data = await this.#service.findAll(q);
