@@ -416,13 +416,14 @@ model Booking {
   user_id    String?
   service_id String?
 
-  compliant    String?
-  quantity     Int
-  price        Float
-  service_data String? @db.LongText
-  status       String // draft, pending_payment, waiting, ongoing, completed
-  title        String?
-  is_locked    Boolean @default(false)
+  compliant        String?
+  quantity         Int
+  price            Float
+  service_data     String? @db.LongText
+  status           String // draft, pending_payment, waiting, ongoing, completed
+  title            String?
+  is_locked        Boolean @default(false)
+  weekly_frequency String?
 
   client                  ClientProfile?           @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user                    User?                    @relation(fields: [user_id], references: [id], onDelete: SetNull)

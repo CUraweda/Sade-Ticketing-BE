@@ -9,12 +9,20 @@ export const BookingStatus = {
   COMPLETED: "completed",
 };
 
+export const WeeklyFrequency = {
+  ONCE: "once",
+  TWICE: "twice",
+};
+
 export const BookingValidator = {
   create: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
     service_id: Joi.string().external(relationExist("service")).required(),
     compliant: Joi.string().max(100).optional(),
     quantity: Joi.number().precision(0).min(1).required(),
+    weekly_frequency: Joi.string()
+      .valid(...Object.values(WeeklyFrequency))
+      .optional(),
   }),
   update: Joi.object({
     compliant: Joi.string().max(100).optional(),
@@ -22,6 +30,9 @@ export const BookingValidator = {
     status: Joi.valid(...Object.values(BookingStatus)).optional(),
     title: Joi.string().max(100).optional(),
     is_locked: Joi.bool().optional(),
+    weekly_frequency: Joi.string()
+      .valid(...Object.values(WeeklyFrequency))
+      .optional(),
   }),
   setSchedules: Joi.object({
     quantity: Joi.number().min(1).required(),
