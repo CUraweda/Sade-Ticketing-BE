@@ -6,6 +6,7 @@ import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
 import { BalanceType } from "@prisma/client";
+import { AttendeeStatus } from "../scheduleattendee/scheduleattendee.validator.js";
 
 class DashboardService extends BaseService {
   constructor() {
@@ -289,9 +290,9 @@ class DashboardService extends BaseService {
   doctorWorkTime = async (doctorId, start, end) => {
     const data = await this.db.schedule.findMany({
       where: {
-        clients: {
+        attendees: {
           some: {
-            status: ClientScheduleStatus.PRESENT,
+            status: AttendeeStatus.PRESENT,
           },
         },
         doctors: {
@@ -327,7 +328,6 @@ class DashboardService extends BaseService {
   doctorCompletedSchedules = async (doctorId, start, end) => {
     const total = await this.db.schedule.count({
       where: {
-        is_locked: true,
         doctors: {
           some: {
             id: doctorId,
@@ -344,12 +344,9 @@ class DashboardService extends BaseService {
     });
     const completed = await this.db.schedule.count({
       where: {
-        bookings: {
-          every: {
-            status: BookingStatus.COMPLETED,
-          },
+        attendees: {
+          some: { status: AttendeeStatus.PRESENT },
         },
-        is_locked: true,
         doctors: {
           some: {
             id: doctorId,
@@ -403,7 +400,7 @@ class DashboardService extends BaseService {
             },
           },
           include: {
-            bookings: {
+            attendees: {
               select: {
                 status: true,
               },
@@ -415,7 +412,9 @@ class DashboardService extends BaseService {
 
     return services.map((s) => {
       const scheduleComplete = s.schedules.filter((sc) =>
-        sc.bookings.every((b) => b.status == BookingStatus.COMPLETED)
+        sc.attendees.some(
+          (b) => b.status == AttendeeStatus.PRESENT || b.status == null
+        )
       ).length;
 
       return {
@@ -445,11 +444,11 @@ class DashboardService extends BaseService {
 
   schedulePresence = async (clientIds = []) => {
     const whole = await this.db.schedule.count({
-      where: { clients: { some: { client_id: { in: clientIds } } } },
+      where: { attendees: { some: { client_id: { in: clientIds } } } },
     });
     const part = await this.db.schedule.count({
       where: {
-        clients: {
+        attendees: {
           some: {
             client_id: { in: clientIds },
             status: ClientScheduleStatus.PRESENT,
@@ -464,7 +463,7 @@ class DashboardService extends BaseService {
     this.db.schedule.count({
       where: {
         start_date: { lte: moment() },
-        clients: { some: { client_id: { in: clientIds }, status: null } },
+        attendees: { some: { client_id: { in: clientIds }, status: null } },
       },
     });
 
@@ -472,7 +471,7 @@ class DashboardService extends BaseService {
     this.db.schedule.count({
       where: {
         start_date: { lte: moment() },
-        clients: {
+        attendees: {
           some: {
             client_id: { in: clientIds },
             status: ClientScheduleStatus.SICK,
@@ -485,7 +484,7 @@ class DashboardService extends BaseService {
     this.db.schedule.count({
       where: {
         start_date: { lte: moment() },
-        clients: {
+        attendees: {
           some: {
             client_id: { in: clientIds },
             status: ClientScheduleStatus.PERMITTED,
@@ -498,8 +497,26 @@ class DashboardService extends BaseService {
     this.db.schedule.count({
       where: {
         start_date: { gte: moment().toDate() },
-        clients: { some: { client_id: { in: clientIds } } },
+        attendees: { some: { client_id: { in: clientIds } } },
       },
+    });
+
+  totalScheduleQuota = async (clientIds = []) => {
+    const res = await this.db.booking.aggregate({
+      _sum: { quantity: true },
+      where: { client_id: { in: clientIds } },
+    });
+    return res._sum.quantity;
+  };
+
+  inactiveScheduleQuota = async (clientIds = []) =>
+    this.db.scheduleAttendee.count({
+      where: { client_id: { in: clientIds }, is_active: false },
+    });
+
+  activeScheduleQuota = async (clientIds = []) =>
+    this.db.scheduleAttendee.count({
+      where: { client_id: { in: clientIds }, is_active: true },
     });
 }
 

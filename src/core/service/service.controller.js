@@ -1,17 +1,31 @@
 import BaseController from "../../base/controller.base.js";
 import { doctorFields } from "../../data/model-fields.js";
 import { NotFound } from "../../lib/response/catch.js";
+import DoctorService from "../doctor/doctor.service.js";
 import ServiceService from "./service.service.js";
 
 class ServiceController extends BaseController {
   #service;
+  #doctorService;
 
   constructor() {
     super();
     this.#service = new ServiceService();
+    this.#doctorService = new DoctorService();
   }
 
   findAll = this.wrapper(async (req, res) => {
+    let q = req.query;
+
+    if (this.isDoctor(req)) {
+      const doctor = await this.#doctorService.findByUser(req.user.id);
+      q = this.joinBrowseQuery(
+        q,
+        "in_",
+        `doctors.doctor_id:${doctor?.id ?? ""}`
+      );
+    }
+
     const data = await this.#service.findAll(req.query);
     return this.ok(res, data, "Banyak Service berhasil didapatkan");
   });

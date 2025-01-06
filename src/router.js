@@ -34,6 +34,7 @@ import clientprivilegeRouter from "./core/clientprivilege/clientprivilege.router
 import servicePriceRouter from "./core/serviceprice/serviceprice.router.js";
 import privilegeRouter from "./core/privilege/privilege.router.js";
 import signatureRouter from "./core/signature/signature.router.js";
+import scheduleattendeeRouter from "./core/scheduleattendee/scheduleattendee.router.js";
 
 const r = Router();
 
@@ -72,6 +73,7 @@ r.use("/client-privilege", clientprivilegeRouter);
 r.use("/service-price", servicePriceRouter);
 r.use("/privilege", privilegeRouter);
 r.use("/signature", signatureRouter);
+r.use("/schedule-attendee", scheduleattendeeRouter);
 
 const appRouter = r;
 export default appRouter;

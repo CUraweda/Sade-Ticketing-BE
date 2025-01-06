@@ -4,10 +4,15 @@ import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
 import { ServiceBillingType } from "../service/service.validator.js";
 import { parseJson } from "../../utils/transform.js";
+import fs from "fs";
+import ScheduleService from "../schedule/schedule.service.js";
 
 class InvoiceService extends BaseService {
+  #scheduleService;
+
   constructor() {
     super(prism);
+    this.#scheduleService = new ScheduleService();
   }
 
   findAll = async (query) => {
@@ -54,6 +59,11 @@ class InvoiceService extends BaseService {
         user: {
           select: this.select(["email", "full_name", "id"]),
         },
+        bookings: {
+          include: {
+            client: true,
+          },
+        },
       },
     });
 
@@ -61,26 +71,40 @@ class InvoiceService extends BaseService {
   };
 
   create = async (payload) => {
-    const data = await this.db.invoice.create({
-      data: {
-        ...payload,
-        total:
-          payload.items.reduce((a, c) => (a += c.price * c.quantity), 0) +
-          payload.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
-        items: {
-          createMany: {
-            data: payload.items,
+    const { items, ...rest } = payload;
+    const result = await this.db.$transaction(async (db) => {
+      // create invoice and fees
+      const data = await db.invoice.create({
+        data: {
+          ...rest,
+          total:
+            items.reduce((a, c) => (a += c.price * c.quantity), 0) +
+            rest.fees.reduce((a, c) => (a += c.price * c.quantity), 0),
+          fees: {
+            createMany: {
+              data: rest.fees,
+            },
           },
         },
-        fees: {
-          createMany: {
-            data: payload.fees,
+      });
+
+      // create items
+      for (const item of items) {
+        await db.invoiceItem.create({
+          data: {
+            ...item,
+            invoice_id: data.id,
+            attendees: {
+              connect: item.attendees.map((id) => ({ id })),
+            },
           },
-        },
-      },
+        });
+      }
+
+      return data;
     });
 
-    return data;
+    return result;
   };
 
   update = async (id, payload) => {
@@ -113,6 +137,110 @@ class InvoiceService extends BaseService {
     return data;
   };
 
+  generateItems = async (
+    userId,
+    bookingIds = [],
+    { startDate, endDate } = {}
+  ) => {
+    const items = [];
+
+    // collect any invoice-able from bookings
+    const bookings = await this.db.booking.findMany({
+      where: {
+        ...(bookingIds.length && { id: { in: bookingIds } }),
+        user_id: userId,
+      },
+      include: {
+        schedules: {
+          where: {
+            is_active: false,
+            invoices: { none: {} },
+            schedule_id: { not: null },
+          },
+          include: {
+            schedule: { select: { start_date: true } },
+          },
+        },
+      },
+    });
+
+    bookings.forEach((b) => {
+      const service = parseJson(b.service_data);
+
+      const schedules = b.schedules
+        .filter((sc) =>
+          startDate
+            ? moment(sc.schedule?.start_date).isSameOrAfter(moment(startDate))
+            : true
+        )
+        .filter((sc) =>
+          endDate
+            ? moment(sc.schedule?.start_date).isSameOrBefore(moment(endDate))
+            : true
+        );
+
+      if (schedules.length) {
+        items.push({
+          attendees: schedules.map((sc) => sc.id),
+          dates: schedules.map((sc) => sc.schedule.start_date).join(","),
+          name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
+          quantity: schedules.length,
+          quantity_unit: service.price_unit,
+          price: service.price,
+          service_id: service.id,
+        });
+      }
+    });
+
+    const total = {
+      quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
+      price: items.reduce((a, c) => (a += c.price * c.quantity), 0),
+    };
+
+    return { items, total };
+  };
+
+  generateFees = async (userId, bookingIds = []) => {
+    const items = [];
+
+    // collect any entry fees from bookings
+    const bookings = await this.db.booking.findMany({
+      where: {
+        ...(bookingIds.length && { id: { in: bookingIds } }),
+        user_id: userId,
+        status: BookingStatus.DRAFT,
+      },
+      include: {
+        service: { include: { entry_fees: true } },
+        _count: {
+          select: {
+            schedules: {
+              where: { invoices: { some: {} } },
+            },
+          },
+        },
+      },
+    });
+    bookings.forEach((b) => {
+      if (b._count.schedules == 0)
+        b.service.entry_fees.forEach((ef) =>
+          items.push({
+            fee_id: ef.id,
+            name: ef.title,
+            quantity: 1,
+            price: ef.price,
+          })
+        );
+    });
+
+    const total = {
+      quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),
+      price: items.reduce((a, c) => (a += c.price * c.quantity), 0),
+    };
+
+    return { items, total };
+  };
+
   getItems = async (invoice_id, booking_ids) => {
     let bookingIds = booking_ids ? [...booking_ids] : [];
 
@@ -130,13 +258,12 @@ class InvoiceService extends BaseService {
           id: {
             in: bookingIds,
           },
-          service: {
-            billing_type: ServiceBillingType.ONE_TIME,
-          },
         },
         include: {
           schedules: {
             select: {
+              repeat: true,
+              repeat_end: true,
               start_date: true,
               end_date: true,
             },
@@ -149,17 +276,30 @@ class InvoiceService extends BaseService {
     ).map((b) => {
       const service = parseJson(b.service_data);
 
-      const start = b.schedules.length ? b.schedules[0].start_date : null,
-        end = b.schedules.length
-          ? (b.schedules[b.schedules.length - 1].end_date ??
-            b.schedules[b.schedules.length - 1].start_date)
-          : null;
+      const endOfMonth = moment().endOf("month").endOf("day");
+      const schedules = this.#scheduleService.generateRepeats(
+        b.schedules,
+        endOfMonth
+      );
+
+      const bookedSchedules = [];
+      const start = moment();
+
+      while (
+        start.isSameOrBefore(endOfMonth) &&
+        bookedSchedules.length < b.quantity
+      ) {
+        const match = schedules.filter((sc) =>
+          moment(sc.start_date).isSame(start, "day")
+        );
+        match.forEach((m) => bookedSchedules.push(m));
+        start.add(1, "day");
+      }
 
       return {
-        start_date: start,
-        end_date: end,
+        dates: bookedSchedules.map((bsc) => bsc.start_date).join(","),
         name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
-        quantity: b.quantity ?? b.schedules.length,
+        quantity: bookedSchedules.length,
         quantity_unit: service.price_unit,
         price: service.price,
         service_id: service.id,
@@ -249,6 +389,282 @@ class InvoiceService extends BaseService {
       },
     });
     return data;
+  };
+
+  export = async (id) => {
+    const dat = await this.findById(id);
+    const logoBinar = fs.readFileSync(
+      "src/assets/images/logo-binar.png",
+      "base64"
+    );
+
+    // common styles
+    const tdStyle = {
+      marginTop: 8,
+      marginBottom: 8,
+      border: [0, 0, 0, 1],
+      borderColor: ["", "", "", "#d0d0d0"],
+    };
+    const thStyle = {
+      marginTop: 8,
+      marginBottom: 8,
+      border: [0, 0, 0, 1],
+      borderColor: ["", "", "", "#d0d0d0"],
+      fontWeight: "bold",
+    };
+
+    const itemsTable = [
+      [
+        { text: "Tanggal", marginLeft: 8, ...thStyle },
+        {
+          text: "Pembayaran",
+          ...thStyle,
+        },
+        { text: "Jumlah", ...thStyle },
+        { text: "Biaya", ...thStyle },
+        { text: "Total Biaya", ...thStyle },
+      ],
+    ];
+
+    const doc = pdfMake.createPdf({
+      pageMargins: [40, 120, 40, 72],
+      header: [
+        {
+          margin: 24,
+          table: {
+            widths: ["25%", "75%"],
+            body: [
+              [
+                {
+                  image: `data:image/png;base64,${logoBinar}`,
+                  borderColor: ["", "", "", "#c0c0c0"],
+                  border: [false, false, false, true],
+                  width: 130,
+                  marginBottom: 8,
+                },
+                {
+                  borderColor: ["", "", "", "#c0c0c0"],
+                  border: [false, false, false, true],
+                  marginBottom: 8,
+                  stack: [
+                    {
+                      width: "auto",
+                      marginTop: 12,
+                      marginBottom: 4,
+                      text: "Binar Harmoni Indonesia",
+                      fontSize: 18,
+                      bold: true,
+                    },
+                    {
+                      text: "Together We Achieve More",
+                      fontSize: 12,
+                      italics: true,
+                      color: "#666",
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+      ],
+      footer: (page, totalPage) => ({
+        layout: "noBorders",
+        margin: 24,
+        table: {
+          widths: ["85%", "15%"],
+          body: [
+            [
+              {
+                fontSize: 10,
+                lineHeight: 1.2,
+                text: `Jl Bungsan No. 80. Bedahan, Sawangan, Kota Depok. Telp. 087812066496\nJl Gemini Blok A No. I9/10 Kel. Mekarsari, Kec. Tambun Selatan, Kab. Bekasi. Telp. 087812066496`,
+                color: "#666",
+              },
+              {
+                text: `${page} dari ${totalPage}`,
+                color: "#666",
+                alignment: "right",
+              },
+            ],
+          ],
+        },
+      }),
+      content: [
+        // title
+        {
+          fontSize: 14,
+          bold: true,
+          alignment: "center",
+          text: dat?.title,
+          marginBottom: 4,
+        },
+        {
+          fontSize: 12,
+          color: "#666",
+          bold: true,
+          alignment: "center",
+          text: `${moment(dat.updated_at).format("DD/MM/YYYY")} [${dat.status == "paid" ? "Lunas" : "Belum dibayar"}]`,
+        },
+
+        // client information
+        {
+          layout: "noBorders",
+          marginTop: 24,
+          marginBottom: 16,
+          fontSize: 12,
+          color: "#333",
+          table: {
+            widths: ["20%", "3%", "77%"],
+            body: [
+              [
+                { marginBottom: 4, text: "Nama" },
+                { text: ": " },
+                {
+                  text: `${dat?.bookings?.[0]?.client?.first_name} ${dat?.bookings?.[0]?.client?.last_name ?? ""}`,
+                },
+              ],
+              [
+                { marginBottom: 4, text: "Tanggal lahir" },
+                { text: ": " },
+                {
+                  text: `${moment(dat?.bookings?.[0]?.client?.dob).locale("id").format("dddd, DD MMMM YYYY")} (${moment().diff(dat?.bookings?.[0]?.client?.dob, "years")} tahun)`,
+                },
+              ],
+              [
+                { marginBottom: 4, text: "Jenis kelamin" },
+                { text: ": " },
+                {
+                  text: `${dat?.bookings?.[0]?.client?.sex == "L" ? "Laki-laki" : "perempuan"}`,
+                },
+              ],
+              [
+                { marginBottom: 4, text: "Kategori" },
+                { text: ": " },
+                { text: dat?.bookings?.[0]?.client?.category },
+              ],
+              [
+                { marginBottom: 4, text: "Hubungan" },
+                { text: ": " },
+                {
+                  text: `${dat?.bookings?.[0]?.client?.relation} dari ${dat?.user.full_name}`,
+                },
+              ],
+              ...(dat?.payment
+                ? [
+                    [
+                      { marginBottom: 4, text: "Rekening Tujuan" },
+                      { text: ": " },
+                      {
+                        text: `${dat.payment.bank_account.provider} - ${dat.payment.bank_account.account_number} - ${dat.payment.bank_account.in_name} - Transfer manual`,
+                      },
+                    ],
+                  ]
+                : []),
+            ],
+          },
+        },
+
+        // // table
+        {
+          fontSize: 12,
+          table: {
+            widths: ["20%", "20%", "20%", "20%", "20%"],
+            body:
+              dat?.items?.length || dat?.fees?.length
+                ? (dat.items.forEach((item) => {
+                    itemsTable.push([
+                      {
+                        text: item?.start_date
+                          ? moment(item?.start_date).format("DD/MM/YYYY")
+                          : "-",
+                        marginLeft: 8,
+                        ...tdStyle,
+                      },
+                      {
+                        text: item?.name || "-",
+                        ...tdStyle,
+                      },
+                      {
+                        text: item?.quantity
+                          ? `${item.quantity} ${item.quantity_unit}`
+                          : "-",
+                        ...tdStyle,
+                      },
+                      {
+                        text: item?.price
+                          ? new Intl.NumberFormat("id-ID").format(item.price)
+                          : "-",
+                        ...tdStyle,
+                      },
+                      {
+                        text:
+                          item?.price && item?.quantity
+                            ? new Intl.NumberFormat("id-ID").format(
+                                item.price * item.quantity
+                              )
+                            : "-",
+                        ...tdStyle,
+                      },
+                    ]);
+                  }),
+                  dat.fees.forEach((fee) => {
+                    itemsTable.push([
+                      {
+                        text: "-",
+                        marginLeft: 8,
+                        ...tdStyle,
+                      },
+                      {
+                        text: fee?.name || "-",
+                        ...tdStyle,
+                      },
+                      {
+                        text: `${fee?.quantity} Biaya` || "-",
+                        ...tdStyle,
+                      },
+                      {
+                        text: fee?.price
+                          ? new Intl.NumberFormat("id-ID").format(fee.price)
+                          : "-",
+                        ...tdStyle,
+                      },
+                      {
+                        text:
+                          fee?.price && fee?.quantity
+                            ? new Intl.NumberFormat("id-ID").format(
+                                fee.price * fee.quantity
+                              )
+                            : "-",
+                        ...tdStyle,
+                      },
+                    ]);
+                  }),
+                  itemsTable)
+                : [[]],
+          },
+        },
+      ],
+    });
+    itemsTable.push([
+      { text: "", marginLeft: 8, ...thStyle },
+      {
+        text: "",
+        ...thStyle,
+      },
+      { text: "", ...thStyle },
+      { text: "Total Tagihan", color: "#FF995A", bold: true, ...thStyle },
+      {
+        text: dat?.total
+          ? new Intl.NumberFormat("id-ID").format(dat.total)
+          : "-",
+        ...thStyle,
+        color: "#FF995A",
+        bold: true,
+      },
+    ]);
+
+    return { data: dat, doc };
   };
 }
 

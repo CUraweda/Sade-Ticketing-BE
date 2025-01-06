@@ -10,7 +10,7 @@ export const ServiceRecommendationValidator = {
       .items(
         Joi.object({
           quantity: Joi.number().integer().required(),
-          note: Joi.string().required(),
+          note: Joi.string().allow("").optional(),
           service_id: Joi.string().required(),
         })
       )
@@ -25,7 +25,7 @@ export const ServiceRecommendationValidator = {
       .items(
         Joi.object({
           quantity: Joi.number().integer().required(),
-          note: Joi.string().required(),
+          note: Joi.string().allow("").optional(),
           service_id: Joi.string().required(),
         })
       )

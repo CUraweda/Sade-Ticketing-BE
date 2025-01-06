@@ -26,7 +26,7 @@ class BookingController extends BaseController {
         q = this.joinBrowseQuery(
           q,
           "in_",
-          `schedules.some.doctors.user_id:${uid}`
+          `schedules.some.schedule.doctors.user_id:${uid}`
         );
       } else if (role == RoleCode.ASESOR) {
         q = this.joinBrowseQuery(q, "where", `status.not:draft`);
@@ -39,10 +39,12 @@ class BookingController extends BaseController {
   });
 
   findById = this.wrapper(async (req, res) => {
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound("Reservasi tidak ditemukan");
+
     if (req.user?.role_code == "USR")
       await this.#service.checkBookingOwner(req.params.id, req.user.id);
-    const data = await this.#service.findById(req.params.id);
-    if (!data) throw new NotFound("Booking tidak ditemukan");
+
     data["service_data"] = this.#service.extractServiceData(data.service_data);
 
     return this.ok(res, data, "Booking berhasil didapatkan");
@@ -67,8 +69,9 @@ class BookingController extends BaseController {
           "Booking Anda sudah dikunci dan tidak bisa diubah lagi"
         );
 
-      // user cant update status field
-      if (req.body.status) delete req.body.status;
+      // user cant update these fields
+      delete req.body.status;
+      delete req.body.is_locked;
     }
 
     const data = await this.#service.update(req.params.id, req.body);
@@ -145,19 +148,22 @@ class BookingController extends BaseController {
 
   createReportResponse = this.wrapper(async (req, res) => {
     const payload = req.body;
-    await this.#service.createReportResponse(
+    const result = await this.#service.createReportResponse(
       req.user.id,
       payload.booking_id,
       payload.questionnaire_id
     );
-    return this.ok(res, null, "Respon laporan berhasil dibuat");
+    return this.ok(res, result, "Respon laporan berhasil dibuat");
   });
 
-  acceptAgreementDocument = this.wrapper(async (req, res) => {
-    await this.#service.checkBookingOwner(req.body.booking_id, req.user.id);
-    await this.#service.acceptAgreementDocument(
-      req.body.booking_id,
-      req.body.document_id
+  updateAgreementDocument = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req))
+      await this.#service.checkBookingOwner(req.body.booking_id, req.user.id);
+
+    await this.#service.updateAgreementDocument(
+      req.params.id,
+      req.params.document_id,
+      req.body
     );
     return this.ok(res, null, "Berhasil menerima dokumen persetujuan");
   });

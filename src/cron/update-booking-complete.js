@@ -17,28 +17,19 @@ const updateBookingComplete = async () => {
       },
       select: {
         id: true,
-        schedules: {
+        quantity: true,
+        _count: {
           select: {
-            id: true,
-            start_date: true,
-            end_date: true,
-            recurring: true,
+            schedules: {
+              where: { is_active: true },
+            },
           },
-          orderBy: {
-            start_date: "desc",
-          },
-          take: 1,
         },
       },
     });
 
     const bookingsComplete = bookingsOngoing.filter(
-      (b) =>
-        b.schedules.length &&
-        moment(now).isAfter(
-          b.schedules[0].end_date ?? b.schedules[0].start_date
-        ) &&
-        b.schedules.every((s) => s.recurring == null)
+      (b) => b._count.schedules >= b.quantity
     );
 
     await db.booking.updateMany({
@@ -55,7 +46,9 @@ const updateBookingComplete = async () => {
     console.log(
       `- Ongoing bookings: ${bookingsOngoing.length} \n- Completed bookings: ${bookingsComplete.length}`
     );
-  } catch {}
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export default updateBookingComplete;
