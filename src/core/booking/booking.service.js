@@ -46,6 +46,15 @@ class BookingService extends BaseService {
     const data = await this.db.booking.findUnique({
       where: { id },
       include: {
+        _count: {
+          select: {
+            agreed_documents: true,
+            questionnaire_responses: true,
+            reports: true,
+            schedules: true,
+          },
+        },
+        user: { select: { avatar: true, full_name: true, email: true } },
         client: true,
         agreed_documents: {
           include: this.select(["document.title"]),
@@ -57,13 +66,39 @@ class BookingService extends BaseService {
           include: this.select(["questionnaire.title"]),
         },
         schedules: {
+          orderBy: { schedule: { start_date: "desc" } },
           include: {
-            doctors: {
-              select: this.select(doctorFields.full("USR")),
+            booking: {
+              select: {
+                service_data: true,
+              },
+            },
+            invoices: {
+              include: {
+                invoice: true,
+              },
+            },
+            schedule: {
+              select: {
+                start_date: true,
+                end_date: true,
+                service: {
+                  select: { title: true, category: true },
+                },
+                repeat: true,
+                title: true,
+                doctors: {
+                  select: {
+                    category: true,
+                    first_name: true,
+                    last_name: true,
+                    avatar: true,
+                  },
+                },
+              },
             },
           },
         },
-        invoices: true,
       },
     });
     return data;
@@ -75,34 +110,35 @@ class BookingService extends BaseService {
         id: payload.service_id,
         is_active: true,
       },
-      include: this.select([
-        "category.name",
-        "location.title",
-        "questionnaires",
-        "agrement_documents",
-        "entry_fees.id",
-      ]),
+      select: {
+        id: true,
+        category: true,
+        location: true,
+        title: true,
+        price: true,
+        price_unit: true,
+        questionnaires: true,
+        agrement_documents: true,
+      },
     });
+    const { agrement_documents, questionnaires, ...rest } = service;
 
     const data = await this.db.booking.create({
       data: {
         ...payload,
-        price: service.price,
-        service_data:
-          JSON.stringify(
-            this.exclude(service, ["questionnaires", "agrement_documents"])
-          ) ?? "",
+        price: rest.price,
+        service_data: JSON.stringify(rest) ?? "",
         status: BookingStatus.DRAFT,
-        title: `${service.category?.name ?? ""} - ${service.title}`,
+        title: `${rest.category?.name ?? ""} - ${rest.title}`,
         questionnaire_responses: {
-          create: service.questionnaires?.map((que) => ({
+          create: questionnaires?.map((que) => ({
             user_id: payload.user_id,
             client_id: payload.client_id,
             questionnaire_id: que.id,
           })),
         },
         agreed_documents: {
-          create: service.agrement_documents?.map((doc) => ({
+          create: agrement_documents?.map((doc) => ({
             document_id: doc.id,
           })),
         },
@@ -113,127 +149,17 @@ class BookingService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const booking = await this.findById(id),
-      serviceData = this.extractServiceData(booking.service_data);
-
-    // daycare booking can create its own schedule
-    if (
-      serviceData.category_id == 4 &&
-      payload.start_date &&
-      payload.end_date
-    ) {
-      const start = payload.start_date,
-        end = payload.end_date;
-
-      payload = {
-        ...payload,
-        schedules: {
-          deleteMany: {},
-          create: [
-            {
-              title: `Daycare - ${booking.client?.first_name ?? ""} ${booking.client?.last_name ?? ""}`,
-              start_date: start,
-              end_date: end,
-              service_id: booking.service_id,
-            },
-          ],
-        },
-      };
-
-      if (serviceData.billing_type == ServiceBillingType.DAILY)
-        payload["quantity"] = moment(end).diff(start, "days") + 1;
-      else if (serviceData.billing_type == ServiceBillingType.DAILY)
-        payload["quantity"] = moment(end).diff(start, "months") + 1;
-
-      // for training, psikolog, therapy
-    } else if (payload.schedule_ids?.length) {
-      // check schedule availability
-      const schedules = await this.db.schedule.findMany({
-        where: {
-          id: {
-            in: payload.schedule_ids,
-          },
-          bookings: {
-            none: {
-              id,
-            },
-          },
-        },
-        select: {
-          start_date: true,
-          max_bookings: true,
-          _count: {
-            select: {
-              bookings: {
-                where: {
-                  status: {
-                    not: BookingStatus.DRAFT,
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
-
-      if (schedules.filter((s) => s._count.bookings >= s.max_bookings).length)
-        throw new BadRequest(
-          `Jadwal pada tanggal ${schedules.map((s) => moment(s.start_date).format("DD MMM YYYY")).join(", ")} sudah penuh. Silakan pilih jadwal lain yang masih tersedia.`
-        );
-
-      const prevScheduleIds = (
-        await this.db.schedule.findMany({
-          where: {
-            bookings: {
-              some: {
-                id,
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        })
-      ).map((sc) => sc.id);
-
-      payload = {
-        ...payload,
-        quantity: payload.schedule_ids.length,
-        schedules: {
-          disconnect: prevScheduleIds.map((id) => ({ id })),
-          connect: payload.schedule_ids.map((id) => ({ id })),
-        },
-      };
+    if (payload.quantity) {
+      const data = await this.findById(id);
+      payload["quantity"] =
+        payload.quantity < data.quantity ? data.quantity : payload.quantity;
     }
 
-    delete payload.start_date;
-    delete payload.end_date;
-    delete payload.schedule_ids;
-
-    await this.db.booking.update({
-      where: {
-        id,
-      },
+    const result = await this.db.booking.update({
+      where: { id },
       data: payload,
     });
-
-    if (payload.status == BookingStatus.COMPLETED) {
-      await this.db.booking.update({
-        where: {
-          id,
-        },
-        data: {
-          schedules: {
-            updateMany: {
-              where: {},
-              data: {
-                recurring: null,
-              },
-            },
-          },
-        },
-      });
-    }
+    return result;
   };
 
   delete = async (id) => {
@@ -406,7 +332,7 @@ class BookingService extends BaseService {
       ...q,
       where: {
         ...q.where,
-        booking_id,
+        OR: [{ booking_id: booking_id }, { booking_report_id: booking_id }],
       },
       include: this.select(["questionnaire.title"]),
     });
@@ -427,7 +353,7 @@ class BookingService extends BaseService {
       },
     });
 
-    await this.db.questionnaireResponse.create({
+    const result = await this.db.questionnaireResponse.create({
       data: {
         user_id: uid,
         booking_report_id: booking_id,
@@ -435,18 +361,24 @@ class BookingService extends BaseService {
         questionnaire_id,
       },
     });
+    return result;
   };
 
-  acceptAgreementDocument = async (booking_id, document_id) => {
-    await this.db.bookingAgreedDocuments.update({
-      where: {
-        booking_id_document_id: {
-          booking_id,
-          document_id,
-        },
-      },
+  updateAgreementDocument = async (id, document_id, payload) => {
+    await this.db.booking.update({
+      where: { id },
       data: {
-        is_agreed: true,
+        agreed_documents: {
+          update: {
+            where: {
+              booking_id_document_id: {
+                booking_id: id,
+                document_id: document_id,
+              },
+            },
+            data: payload,
+          },
+        },
       },
     });
   };
@@ -475,6 +407,19 @@ class BookingService extends BaseService {
         "clients.client_id",
       ]),
     });
+  };
+
+  getScheduleQuota = async (id) => {
+    const booking = await this.db.booking.findFirst({
+      where: { id },
+      select: { quantity: true, _count: { select: { schedules: true } } },
+    });
+
+    return {
+      target: booking.quantity,
+      used: booking._count.schedules,
+      remaining: booking.quantity - booking._count.schedules,
+    };
   };
 }
 

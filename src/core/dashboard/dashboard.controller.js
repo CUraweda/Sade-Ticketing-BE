@@ -71,6 +71,11 @@ class DashboardController extends BaseController {
         permitted: await this.#service.schedulePermitted(clientIds),
         upcoming: await this.#service.countUpcomingSchedules(clientIds),
       },
+      quota: {
+        total: await this.#service.totalScheduleQuota(clientIds),
+        active: await this.#service.activeScheduleQuota(clientIds),
+        inactive: await this.#service.inactiveScheduleQuota(clientIds),
+      },
     };
     return this.ok(res, data, "Stat dashboard user berhasil didapatkan");
   });

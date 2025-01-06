@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { relationExist, Workday } from "../../base/validator.base.js";
+import { relationExist } from "../../base/validator.base.js";
 
 export const ClientScheduleStatus = {
   PRESENT: "present",
@@ -7,43 +7,48 @@ export const ClientScheduleStatus = {
   PERMITTED: "permitted",
 };
 
-export const ScheduleRecurring = {
+export const ScheduleRepeat = {
   MONTHLY: "monthly",
   DAILY: "daily",
   WEEKLY: "weekly",
 };
 
+export const ScheduleDays = {
+  MONDAY: "monday",
+  TUESDAY: "tuesday",
+  WEDNESDAY: "wednesday",
+  THURSDAY: "thursday",
+  FRIDAY: "friday",
+  SATURDAY: "saturday",
+};
+
 export const ScheduleValidator = {
   create: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
-    start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+    dates: Joi.array()
+      .items(
+        Joi.object({
+          start_date: Joi.date().required(),
+          end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+          repeat: Joi.array()
+            .items(Joi.string().valid(...Object.values(ScheduleDays)))
+            .optional(),
+          repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
+        })
+      )
+      .min(1)
+      .required(),
     title: Joi.string().max(50).required(),
     description: Joi.string().max(230).optional(),
     doctors: Joi.array()
       .items(Joi.string().external(relationExist("doctorProfile")).required())
       .optional(),
-    clients: Joi.array()
-      .items(Joi.string().external(relationExist("clientProfile")).required())
+    attendees: Joi.array()
+      .items(
+        Joi.string().external(relationExist("scheduleAttendee")).required()
+      )
       .optional(),
-    max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.array()
-      .items(Joi.string().valid(...Object.values(Workday)))
-      .optional(),
-  }),
-  createByDoctor: Joi.object({
-    service_id: Joi.string().external(relationExist("service")).optional(),
-    start_date: Joi.date().required(),
-    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
-    title: Joi.string().max(50).required(),
-    description: Joi.string().max(230).optional(),
-    max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.array()
-      .items(Joi.string().valid(...Object.values(Workday)))
-      .optional(),
-  }),
-  setOvertime: Joi.object({
-    minutes: Joi.number().min(1).required(),
+    max_attendees: Joi.number().min(1).optional(),
   }),
   update: Joi.object({
     service_id: Joi.string().external(relationExist("service")).optional(),
@@ -51,26 +56,28 @@ export const ScheduleValidator = {
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     title: Joi.string().max(50).optional(),
     description: Joi.string().max(230).optional(),
-    max_bookings: Joi.number().min(1).optional(),
-    recurring: Joi.array()
-      .items(Joi.string().valid(...Object.values(Workday)))
+    repeat: Joi.array()
+      .items(Joi.string().valid(...Object.values(ScheduleDays)))
       .optional(),
+    repeat_end: Joi.date().greater(Joi.ref("end_date")).optional(),
+    max_attendees: Joi.number().min(1).optional(),
   }),
-  setClient: Joi.object({
-    client_id: Joi.string().external(relationExist("clientProfile")).required(),
-    set: Joi.string().valid("add", "remove").required(),
+  detach: Joi.object({
+    start_date: Joi.date().required(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).required(),
+    mode: Joi.string().valid("with_parent", "leave_parent").required(),
   }),
   setDoctor: Joi.object({
     doctor_id: Joi.string().external(relationExist("doctorProfile")).required(),
     set: Joi.string().valid("add", "remove").required(),
   }),
-  setClientStatus: Joi.object({
-    client_id: Joi.string().external(relationExist("clientProfile")).required(),
-    status: Joi.string()
-      .valid(...Object.values(ClientScheduleStatus))
-      .required()
-      .allow(""),
-    note: Joi.string().max(50).optional(),
+  checkAvailability: Joi.array().items(
+    Joi.object({
+      schedule_id: Joi.string().external(relationExist("schedule")).required(),
+    })
+  ),
+  toggleLock: Joi.object({
+    is_locked: Joi.boolean().required(),
   }),
 };
 

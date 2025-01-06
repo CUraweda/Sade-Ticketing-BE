@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { upBookingStatusOnUpdateInvoice } from "../middlewares/prisma/update-booking.js";
 import { sendNotif } from "../middlewares/prisma/send-notif.js";
+import { extendInvoiceUpdate } from "../middlewares/prisma/extend-invoice-update.js";
 
 const prism = new PrismaClient().$extends({
   query: {
     invoice: {
-      updateMany: upBookingStatusOnUpdateInvoice,
-      update: upBookingStatusOnUpdateInvoice,
+      updateMany: extendInvoiceUpdate,
+      update: extendInvoiceUpdate,
     },
     notification: {
       create: sendNotif,

@@ -10,6 +10,7 @@ const r = Router(),
 
 r.get(
   "/show-all",
+  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );

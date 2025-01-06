@@ -19,9 +19,23 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
-  validatorMiddleware({ body: validator.create }),
   authMiddleware(["ADM", "SDM"]),
+  validatorMiddleware({ body: validator.create }),
   controller.create
+);
+
+r.post(
+  "/generate-simulation",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.autoGenerate }),
+  controller.generateSimulation
+);
+
+r.post(
+  "/generate-create",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.autoGenerate }),
+  controller.generateCreate
 );
 
 r.put(

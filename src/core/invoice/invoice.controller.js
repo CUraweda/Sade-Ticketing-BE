@@ -1,6 +1,8 @@
+import moment from "moment";
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
 import InvoiceService from "./invoice.service.js";
+import { InvoiceStatus } from "./invoice.validator.js";
 
 class InvoiceController extends BaseController {
   #service;
@@ -58,6 +60,59 @@ class InvoiceController extends BaseController {
     result.doc.getBuffer((buffer) => {
       res.send(Buffer.from(buffer));
     });
+  });
+
+  generateSimulation = this.wrapper(async (req, res) => {
+    const data = {};
+    const { booking_ids, start_date, end_date } = req.body;
+
+    // items, main
+    const items = await this.#service.generateItems(req.user.id, booking_ids, {
+      startDate: start_date,
+      endDate: end_date,
+    });
+    data["items"] = items.items;
+    data["items_total"] = items.total;
+
+    // fees, additional
+    const fees = await this.#service.generateFees(req.user.id, booking_ids);
+    data["fees"] = fees.items;
+    data["fees_total"] = fees.total;
+
+    // accumulation
+    data["total"] = data.fees_total.price + data.items_total.price;
+
+    if (data["total"] <= 0) return this.noContent(res, "Tidak ada invoice");
+
+    return this.ok(res, data, "Simulasi invoice berhasil didapatkan");
+  });
+
+  generateCreate = this.wrapper(async (req, res) => {
+    const { booking_ids, start_date, end_date } = req.body;
+
+    const payload = {
+      user_id: req.user.id,
+      title: `Tagihan ${moment().locale("id").format("MMMM YYYY")}`,
+      status: InvoiceStatus.ISSUED,
+      expiry_date: moment().add(1, "day").toDate(),
+    };
+
+    // items, main
+    const items = await this.#service.generateItems(req.user.id, booking_ids, {
+      startDate: start_date,
+      endDate: end_date,
+    });
+    payload["items"] = items.items;
+
+    // fees, additional
+    const fees = await this.#service.generateFees(req.user.id, booking_ids);
+    payload["fees"] = fees.items;
+
+    // accumulation
+    payload["total"] = fees.total.price + items.total.price;
+
+    const result = await this.#service.create(payload);
+    return this.ok(res, result, "Invoice berhasil dibuat");
   });
 }
 

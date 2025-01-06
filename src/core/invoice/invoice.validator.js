@@ -106,6 +106,11 @@ export const InvoiceValidator = {
       )
       .optional(),
   }),
+  autoGenerate: Joi.object({
+    booking_ids: Joi.array().items(Joi.string()).optional(),
+    start_date: Joi.date().optional(),
+    end_date: Joi.date().min(Joi.ref("start_date")).optional(),
+  }),
 };
 
 export default InvoiceValidator;

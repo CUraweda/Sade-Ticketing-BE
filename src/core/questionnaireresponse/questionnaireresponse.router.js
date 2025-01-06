@@ -38,7 +38,11 @@ r.put(
 //   controller.update
 // );
 
-// r.delete("/delete/:id", controller.delete);
+r.delete(
+  "/delete/:id",
+  authMiddleware(["ADM", "SDM", "ASR", "PSI", "TRS"]),
+  controller.delete
+);
 
 const questionnaireresponseRouter = r;
 export default questionnaireresponseRouter;

@@ -54,7 +54,12 @@ class QuestionnaireResponseController extends BaseController {
   });
 
   delete = this.wrapper(async (req, res) => {
-    const data = await this.#service.delete(req.params.id);
+    const data = await this.#service.findById(req.params.id);
+    if (!data) throw new NotFound();
+    if (!this.isAdmin(req) && data.user_id != req.user.id)
+      throw new Forbidden();
+
+    await this.#service.delete(req.params.id);
     return this.noContent(res, "QuestionnaireResponse berhasil dihapus");
   });
 
