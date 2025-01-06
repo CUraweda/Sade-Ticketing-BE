@@ -29,14 +29,19 @@ const extendInvoiceUpdate = async ({ args, query, operation }) => {
           },
         },
         where: {
-          invoices: {
-            every: {
-              invoice: {
-                id: { in: ids },
-                status: InvoiceStatus.PAID,
+          AND: [
+            { invoices: { some: {} } },
+            {
+              invoices: {
+                every: {
+                  invoice: {
+                    id: { in: ids },
+                    status: InvoiceStatus.PAID,
+                  },
+                },
               },
             },
-          },
+          ],
         },
       });
 
