@@ -63,16 +63,19 @@ class InvoiceController extends BaseController {
   });
 
   generateSimulation = this.wrapper(async (req, res) => {
-    const bookingIds = req.query?.booking_ids?.split("+") ?? [];
     const data = {};
+    const { booking_ids, start_date, end_date } = req.body;
 
     // items, main
-    const items = await this.#service.generateItems(req.user.id, bookingIds);
+    const items = await this.#service.generateItems(req.user.id, booking_ids, {
+      startDate: start_date,
+      endDate: end_date,
+    });
     data["items"] = items.items;
     data["items_total"] = items.total;
 
     // fees, additional
-    const fees = await this.#service.generateFees(req.user.id, bookingIds);
+    const fees = await this.#service.generateFees(req.user.id, booking_ids);
     data["fees"] = fees.items;
     data["fees_total"] = fees.total;
 
@@ -85,7 +88,8 @@ class InvoiceController extends BaseController {
   });
 
   generateCreate = this.wrapper(async (req, res) => {
-    const bookingIds = req.query?.booking_ids?.split("+") ?? [];
+    const { booking_ids, start_date, end_date } = req.body;
+
     const payload = {
       user_id: req.user.id,
       title: `Tagihan ${moment().locale("id").format("MMMM YYYY")}`,
@@ -94,11 +98,14 @@ class InvoiceController extends BaseController {
     };
 
     // items, main
-    const items = await this.#service.generateItems(req.user.id, bookingIds);
+    const items = await this.#service.generateItems(req.user.id, booking_ids, {
+      startDate: start_date,
+      endDate: end_date,
+    });
     payload["items"] = items.items;
 
     // fees, additional
-    const fees = await this.#service.generateFees(req.user.id, bookingIds);
+    const fees = await this.#service.generateFees(req.user.id, booking_ids);
     payload["fees"] = fees.items;
 
     // accumulation

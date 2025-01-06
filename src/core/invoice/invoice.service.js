@@ -137,7 +137,11 @@ class InvoiceService extends BaseService {
     return data;
   };
 
-  generateItems = async (userId, bookingIds = []) => {
+  generateItems = async (
+    userId,
+    bookingIds = [],
+    { startDate, endDate } = {}
+  ) => {
     const items = [];
 
     // collect any invoice-able from bookings
@@ -163,12 +167,24 @@ class InvoiceService extends BaseService {
     bookings.forEach((b) => {
       const service = parseJson(b.service_data);
 
-      if (b.schedules.length) {
+      const schedules = b.schedules
+        .filter((sc) =>
+          startDate
+            ? moment(sc.schedule?.start_date).isSameOrAfter(moment(startDate))
+            : true
+        )
+        .filter((sc) =>
+          endDate
+            ? moment(sc.schedule?.start_date).isSameOrBefore(moment(endDate))
+            : true
+        );
+
+      if (schedules.length) {
         items.push({
-          attendees: b.schedules.map((sc) => sc.id),
-          dates: b.schedules.map((sc) => sc.schedule.start_date).join(","),
+          attendees: schedules.map((sc) => sc.id),
+          dates: schedules.map((sc) => sc.schedule.start_date).join(","),
           name: `${service.category?.name ?? ""} - ${service.title ?? ""}`,
-          quantity: b.schedules.length,
+          quantity: schedules.length,
           quantity_unit: service.price_unit,
           price: service.price,
           service_id: service.id,
