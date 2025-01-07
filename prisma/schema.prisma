@@ -26,7 +26,6 @@ model User {
   questionnaire_responses QuestionnaireResponse[]
   bookings                Booking[]
   payments                Payments[]
-  reschedule_requests     RescheduleRequest[]
   invoices                Invoice[]
   notifications           NotificationUser[]
   created_notifications   Notification[]
@@ -588,8 +587,7 @@ model Schedule {
   parent                Schedule?           @relation("NestedSchedule", fields: [parent_id], references: [id])
   service               Service?            @relation(fields: [service_id], references: [id], onDelete: SetNull)
   children              Schedule[]          @relation("NestedSchedule")
-  reschedule_requests   RescheduleRequest[] @relation("reschedule_request")
-  new_schedule_requests RescheduleRequest[] @relation("new_reschedule_request")
+  new_schedule_requests RescheduleRequest[]
   doctors               DoctorProfile[]
   attendees             ScheduleAttendee[]
 
@@ -611,10 +609,11 @@ model ScheduleAttendee {
   overtime    Int? // in second
   is_active   Boolean? @default(false)
 
-  schedule Schedule?      @relation(fields: [schedule_id], references: [id], onDelete: SetNull)
-  client   ClientProfile? @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  booking  Booking?       @relation(fields: [booking_id], references: [id], onDelete: SetNull)
-  invoices InvoiceItem[]
+  schedule            Schedule?           @relation(fields: [schedule_id], references: [id], onDelete: SetNull)
+  client              ClientProfile?      @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  booking             Booking?            @relation(fields: [booking_id], references: [id], onDelete: SetNull)
+  invoices            InvoiceItem[]
+  reschedule_requests RescheduleRequest[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -623,18 +622,16 @@ model ScheduleAttendee {
 }
 
 model RescheduleRequest {
-  id              String    @id @default(uuid())
-  reason          String
-  schedule_id     String
-  start_date      DateTime?
-  end_date        DateTime?
+  id              String  @id @default(uuid())
+  attendee_id     String
   new_schedule_id String?
-  user_id         String
-  is_approved     Boolean   @default(false)
 
-  schedule     Schedule  @relation("reschedule_request", fields: [schedule_id], references: [id], onDelete: Cascade)
-  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  new_schedule Schedule? @relation("new_reschedule_request", fields: [new_schedule_id], references: [id], onDelete: SetNull)
+  reason      String
+  response    String?
+  is_approved Boolean?
+
+  attendee     ScheduleAttendee @relation(fields: [attendee_id], references: [id], onDelete: Cascade)
+  new_schedule Schedule?        @relation(fields: [new_schedule_id], references: [id], onDelete: SetNull)
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

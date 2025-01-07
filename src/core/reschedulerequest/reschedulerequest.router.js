@@ -11,39 +11,35 @@ const r = Router(),
 
 r.get(
   "/show-all",
-  authMiddleware(["ADM"]),
+  authMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
   controller.findAll
 );
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
-r.get(
-  "/user",
-  authMiddleware(),
-  validatorMiddleware({ query: baseValidator.browseQuery }),
-  controller.findAllByUser
-);
-
 r.post(
   "/create",
-  authMiddleware(),
+  authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
-  authMiddleware(),
+  authMiddleware(["USR"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.put("/approve/:id", authMiddleware(["ADM"]), controller.approveReschedule);
+r.put(
+  "/admin-response/:id",
+  authMiddleware(["ADM"]),
+  validatorMiddleware({ body: validator.adminResponse }),
+  controller.adminResponse
+);
 
-r.delete("/delete-user/:id", authMiddleware(), controller.deleteByUser);
-
-r.delete("/delete/:id", authMiddleware(["ADM"]), controller.delete);
+r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const reschedulerequestRouter = r;
 export default reschedulerequestRouter;

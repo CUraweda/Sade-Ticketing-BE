@@ -25,6 +25,10 @@ class ScheduleAttendeeService extends BaseService {
     const data = await this.db.scheduleAttendee.findUnique({
       where: { id },
       include: {
+        client: {
+          select: { first_name: true, last_name: true },
+        },
+        booking: true,
         schedule: true,
       },
     });
