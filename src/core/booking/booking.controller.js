@@ -1,5 +1,5 @@
 import BaseController from "../../base/controller.base.js";
-import { Forbidden, NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import InvoiceService from "../invoice/invoice.service.js";
 import { RoleCode } from "../role/role.validator.js";
 import BookingService from "./booking.service.js";
@@ -80,13 +80,15 @@ class BookingController extends BaseController {
 
   delete = this.wrapper(async (req, res) => {
     if (req.user.role_code == "USR") {
-      const find = await this.#service.checkBookingOwner(
-        req.params.id,
-        req.user.id
-      );
-      if (find.is_locked)
+      const data = await this.#service.findById(req.params.id);
+      if (data.user_id != req.user.id) throw new Forbidden();
+      if (data.is_locked)
         throw new Forbidden(
-          "Booking Anda sudah dikunci dan tidak bisa diubah lagi"
+          "Reservasi Anda sudah dikunci dan tidak bisa diubah lagi"
+        );
+      if (data.schedules.length > 0)
+        throw new BadRequest(
+          "Anda sudah memiliki kontrak jadwal di reservasi ini"
         );
     }
 

@@ -19,31 +19,21 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
-  authMiddleware(["SDM", "ASR", "PSI", "ADM", "TRS"]),
+  authMiddleware(["SDM", "ASR"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
-  authMiddleware(["SDM", "ASR", "PSI", "ADM", "TRS"]),
+  authMiddleware(["SDM", "ASR"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.delete(
-  "/delete/:id",
-  authMiddleware(["SDM", "ASR", "PSI", "ADM", "TRS"]),
-  controller.delete
-);
+r.delete("/delete/:id", authMiddleware(["SDM", "ASR"]), controller.delete);
 
-r.get(
-  "/recommendation-by-booking/:booking_id",
-  authMiddleware(),
-  controller.findByBookingId
-);
-
-r.put("/mark-as-read/:id", authMiddleware(), controller.markAsRead);
+r.put("/mark-as-read/:id", authMiddleware(["USR"]), controller.markAsRead);
 
 const servicerecommendationRouter = r;
 export default servicerecommendationRouter;

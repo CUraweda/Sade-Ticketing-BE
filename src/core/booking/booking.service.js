@@ -52,6 +52,7 @@ class BookingService extends BaseService {
             questionnaire_responses: true,
             reports: true,
             schedules: true,
+            service_recommendations: true,
           },
         },
         user: { select: { avatar: true, full_name: true, email: true } },

@@ -203,20 +203,21 @@ model Service {
   doctor_fee           Decimal? @db.Decimal(5, 2) // in percentage
   is_active            Boolean? @default(true)
   billing_type         String   @default("one_time")
+  need_recommendation  Boolean  @default(false)
 
-  category                     ServiceCategory?            @relation(fields: [category_id], references: [id], onDelete: SetNull)
-  location                     Location?                   @relation(fields: [location_id], references: [id], onDelete: SetNull)
-  doctors                      DoctorService[]
-  required_services            Service[]                   @relation("RequiredServices")
-  prerequisite_For             Service[]                   @relation("RequiredServices")
-  questionnaires               Questionnaire[]             @relation("ServiceQuestionnaires")
-  reports                      Questionnaire[]             @relation("ServiceReports")
-  agrement_documents           Document[]
-  service_recommendation_items ServiceRecommendationItem[]
-  schedules                    Schedule[]
-  bookings                     Booking[]
-  entry_fees                   Fee[]
-  service_prices               ServicePrice[]
+  category                ServiceCategory?        @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  location                Location?               @relation(fields: [location_id], references: [id], onDelete: SetNull)
+  doctors                 DoctorService[]
+  required_services       Service[]               @relation("RequiredServices")
+  prerequisite_For        Service[]               @relation("RequiredServices")
+  questionnaires          Questionnaire[]         @relation("ServiceQuestionnaires")
+  reports                 Questionnaire[]         @relation("ServiceReports")
+  agrement_documents      Document[]
+  service_recommendations ServiceRecommendation[]
+  schedules               Schedule[]
+  bookings                Booking[]
+  entry_fees              Fee[]
+  service_prices          ServicePrice[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -410,10 +411,11 @@ model QuestionAnswer {
 
 // BOOKING SERVICE
 model Booking {
-  id         String  @id @default(uuid())
-  client_id  String?
-  user_id    String?
-  service_id String?
+  id                String  @id @default(uuid())
+  client_id         String?
+  user_id           String?
+  service_id        String?
+  recommendation_id String?
 
   compliant        String?
   quantity         Int
@@ -427,10 +429,11 @@ model Booking {
   client                  ClientProfile?           @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user                    User?                    @relation(fields: [user_id], references: [id], onDelete: SetNull)
   service                 Service?                 @relation(fields: [service_id], references: [id], onDelete: SetNull)
+  recommendation          ServiceRecommendation?   @relation("BookingRecommendation", fields: [recommendation_id], references: [id], onDelete: SetNull)
   questionnaire_responses QuestionnaireResponse[]  @relation("BookingQuestionnaires")
   reports                 QuestionnaireResponse[]  @relation("BookingReports")
   invoices                Invoice[]
-  service_recommendations ServiceRecommendation[]
+  service_recommendations ServiceRecommendation[]  @relation("BookingRecommendations")
   daycare_journals        DaycareJournal[]
   agreed_documents        BookingAgreedDocuments[]
   schedules               ScheduleAttendee[]
@@ -543,30 +546,24 @@ model Payments {
 // SERVICE RECOMMENDATION
 model ServiceRecommendation {
   id         String  @id @default(uuid())
-  title      String?
   doctor_id  String?
+  booking_id String?
   client_id  String
-  booking_id String
-  is_read    Boolean @default(false)
+  service_id String
 
-  service_recommendation_items ServiceRecommendationItem[]
-  doctor                       DoctorProfile?              @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
-  client                       ClientProfile               @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  booking                      Booking                     @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  note             String?
+  quantity         Int
+  weekly_frequency String?
+  is_read          Boolean @default(false)
+
+  doctor   DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
+  booking  Booking?       @relation("BookingRecommendations", fields: [booking_id], references: [id], onDelete: SetNull)
+  client   ClientProfile  @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  service  Service        @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  bookings Booking[]      @relation("BookingRecommendation")
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
-}
-
-model ServiceRecommendationItem {
-  id                        Int     @id @default(autoincrement())
-  quantity                  Int
-  note                      String?
-  service_id                String
-  service_recommendation_id String
-
-  service                Service               @relation(fields: [service_id], references: [id], onDelete: Cascade)
-  service_recommendation ServiceRecommendation @relation(fields: [service_recommendation_id], references: [id], onDelete: Cascade)
 }
 
 // SCHEDULE
