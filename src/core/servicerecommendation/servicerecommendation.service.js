@@ -14,6 +14,7 @@ class ServiceRecommendationService extends BaseService {
         id: true,
         quantity: true,
         is_read: true,
+        updated_at: true,
         weekly_frequency: true,
         doctor: { select: { avatar: true, first_name: true, last_name: true } },
         booking: {
@@ -23,7 +24,7 @@ class ServiceRecommendationService extends BaseService {
           },
         },
         client: { select: { avatar: true, first_name: true, last_name: true } },
-        service: { select: { title: true, category: true } },
+        service: { select: { title: true, price_unit: true, category: true } },
       },
     });
 
