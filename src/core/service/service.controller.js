@@ -17,14 +17,14 @@ class ServiceController extends BaseController {
   findAll = this.wrapper(async (req, res) => {
     let q = req.query;
 
-    if (this.isDoctor(req)) {
-      const doctor = await this.#doctorService.findByUser(req.user.id);
-      q = this.joinBrowseQuery(
-        q,
-        "in_",
-        `doctors.doctor_id:${doctor?.id ?? ""}`
-      );
-    }
+    // if (this.isDoctor(req)) {
+    //   const doctor = await this.#doctorService.findByUser(req.user.id);
+    //   q = this.joinBrowseQuery(
+    //     q,
+    //     "in_",
+    //     `doctors.doctor_id:${doctor?.id ?? ""}`
+    //   );
+    // }
 
     const data = await this.#service.findAll(req.query);
     return this.ok(res, data, "Banyak Service berhasil didapatkan");

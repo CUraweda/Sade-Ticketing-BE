@@ -10,15 +10,20 @@ class ServiceRecommendationService extends BaseService {
     const q = this.transformBrowseQuery(query);
     const data = await this.db.serviceRecommendation.findMany({
       ...q,
-      include: {
-        service_recommendation_items: {
-          include: {
-            service: true,
+      select: {
+        id: true,
+        quantity: true,
+        is_read: true,
+        weekly_frequency: true,
+        doctor: { select: { avatar: true, first_name: true, last_name: true } },
+        booking: {
+          select: {
+            title: true,
+            service: { select: { title: true, category: true } },
           },
         },
-
-        doctor: true,
-        client: true,
+        client: { select: { avatar: true, first_name: true, last_name: true } },
+        service: { select: { title: true, category: true } },
       },
     });
 
@@ -35,60 +40,52 @@ class ServiceRecommendationService extends BaseService {
     const data = await this.db.serviceRecommendation.findUnique({
       where: { id },
       include: {
-        service_recommendation_items: {
-          include: {
-            service: true,
+        doctor: {
+          select: {
+            first_name: true,
+            last_name: true,
+            avatar: true,
+            category: true,
           },
         },
-        doctor: true,
-        client: true,
+        booking: {
+          select: {
+            title: true,
+            service: { select: { id: true, title: true, category: true } },
+          },
+        },
+        client: {
+          select: {
+            avatar: true,
+            first_name: true,
+            last_name: true,
+            dob: true,
+            category: true,
+          },
+        },
+        service: {
+          select: {
+            title: true,
+            category: true,
+            price_unit: true,
+          },
+        },
       },
     });
     return data;
   };
 
   create = async (payload) => {
-    const { service_recommendation_items, ...recommendationData } = payload;
     const data = await this.db.serviceRecommendation.create({
-      data: {
-        ...recommendationData,
-        service_recommendation_items: {
-          create: service_recommendation_items,
-        },
-      },
-      include: {
-        service_recommendation_items: {
-          include: {
-            service: true,
-          },
-        },
-        doctor: true,
-        client: true,
-      },
+      data: payload,
     });
     return data;
   };
 
   update = async (id, payload) => {
-    const { service_recommendation_items, ...recommendationData } = payload;
     const data = await this.db.serviceRecommendation.update({
       where: { id },
-      data: {
-        ...recommendationData,
-        service_recommendation_items: {
-          deleteMany: {},
-          create: service_recommendation_items,
-        },
-      },
-      include: {
-        service_recommendation_items: {
-          include: {
-            service: true,
-          },
-        },
-        doctor: true,
-        client: true,
-      },
+      data: payload,
     });
     return data;
   };
@@ -96,44 +93,6 @@ class ServiceRecommendationService extends BaseService {
   delete = async (id) => {
     const data = await this.db.serviceRecommendation.delete({
       where: { id },
-      include: {
-        service_recommendation_items: true,
-      },
-    });
-    return data;
-  };
-
-  findByBookingId = async (booking_id) => {
-    const data = await this.db.serviceRecommendation.findMany({
-      where: { booking_id: booking_id },
-      include: {
-        service_recommendation_items: {
-          include: {
-            service: true,
-          },
-        },
-        doctor: true,
-        client: true,
-      },
-    });
-    return data;
-  };
-
-  markAsRead = async (id) => {
-    const data = await this.db.serviceRecommendation.update({
-      where: { id },
-      data: {
-        is_read: true,
-      },
-      include: {
-        service_recommendation_items: {
-          include: {
-            service: true,
-          },
-        },
-        doctor: true,
-        client: true,
-      },
     });
     return data;
   };
