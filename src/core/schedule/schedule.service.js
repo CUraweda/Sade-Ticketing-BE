@@ -3,6 +3,7 @@ import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { Forbidden } from "../../lib/response/catch.js";
 import { BookingStatus } from "../booking/booking.validator.js";
+import { AttendeeStatus } from "../scheduleattendee/scheduleattendee.validator.js";
 
 class ScheduleService extends BaseService {
   constructor() {
@@ -331,6 +332,18 @@ class ScheduleService extends BaseService {
       .map(({ id, start_date }) => ({ id, start_date }));
 
     return unavailable;
+  };
+
+  completeRuleQuery = {
+    attendees: {
+      some: {
+        OR: [{ status: AttendeeStatus.PRESENT }, { status: null }],
+        is_active: true,
+      },
+    },
+    start_date: {
+      lte: moment().toDate(),
+    },
   };
 }
 

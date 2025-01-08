@@ -7,10 +7,14 @@ import { PaymentStatus } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
 import { BalanceType } from "@prisma/client";
 import { AttendeeStatus } from "../scheduleattendee/scheduleattendee.validator.js";
+import ScheduleService from "../schedule/schedule.service.js";
 
 class DashboardService extends BaseService {
+  #scheduleService;
+
   constructor() {
     super(prism);
+    this.#scheduleService = new ScheduleService();
   }
 
   topServices = async (query) => {
@@ -290,26 +294,23 @@ class DashboardService extends BaseService {
   doctorWorkTime = async (doctorId, start, end) => {
     const data = await this.db.schedule.findMany({
       where: {
-        attendees: {
-          some: {
-            status: AttendeeStatus.PRESENT,
-          },
-        },
         doctors: {
           some: {
             id: doctorId,
           },
         },
-        end_date: {
-          not: null,
-        },
-        ...(start &&
-          end && {
-            start_date: {
-              gte: moment(start).toDate(),
-              lte: moment(end).toDate(),
-            },
-          }),
+        AND: [
+          this.#scheduleService.completeRuleQuery,
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
       },
       select: {
         start_date: true,
@@ -344,25 +345,27 @@ class DashboardService extends BaseService {
     });
     const completed = await this.db.schedule.count({
       where: {
-        attendees: {
-          some: { status: AttendeeStatus.PRESENT },
-        },
+        AND: [
+          this.#scheduleService.completeRuleQuery,
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
         doctors: {
           some: {
             id: doctorId,
           },
         },
-        ...(start &&
-          end && {
-            start_date: {
-              gte: moment(start).toDate(),
-              lte: moment(end).toDate(),
-            },
-          }),
       },
     });
 
-    return (completed / total) * 100;
+    return { completed, total };
   };
 
   doctorServiceStat = async (doctorId, start_date, end_date) => {
@@ -534,7 +537,7 @@ class DashboardService extends BaseService {
         schedules: {
           where: {
             AND: [
-              { start_date: { lte: moment().toDate() } },
+              this.#scheduleService.completeRuleQuery,
               {
                 ...(start &&
                   end && {
@@ -556,16 +559,39 @@ class DashboardService extends BaseService {
 
     const total = services.reduce((a, c) => {
       const salary = c.doctors.length ? c.doctors[0].salary : 0;
-      const completed = c.schedules.filter((s) => {
-        return s.attendees.some(
-          (a) => a.status == AttendeeStatus.PRESENT || a.status == null
-        );
-      }).length;
+      const completed = c.schedules.length;
 
       return a + salary * completed;
     }, 0);
 
     return total;
+  };
+
+  totalDoctorWorkDays = async (doctorId, start, end) => {
+    const schedules = await this.db.schedule.findMany({
+      where: {
+        doctors: { some: { id: doctorId } },
+        AND: [
+          this.#scheduleService.completeRuleQuery,
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
+      },
+      select: { start_date: true },
+    });
+
+    const totalDays = schedules.map((sc) =>
+      moment(sc.start_date).format("YYYY-MM-DD")
+    ).length;
+
+    return totalDays;
   };
 }
 

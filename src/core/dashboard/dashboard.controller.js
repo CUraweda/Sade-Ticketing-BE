@@ -95,6 +95,11 @@ class DashboardController extends BaseController {
   doctorStats = this.wrapper(async (req, res) => {
     const doctorId = await this.getDoctorId(req);
 
+    const schedule = await this.#service.doctorCompletedSchedules(
+      doctorId,
+      req.query.start_date,
+      req.query.end_date
+    );
     const data = {
       total_payroll: 0,
       total_service_salary: await this.#service.totalServiceSalary(
@@ -103,32 +108,20 @@ class DashboardController extends BaseController {
         req.query.end_date
       ),
       total_transports_allowance: 0,
-      work_days: 0,
-      work_minutes: 0,
+      work_days: await this.#service.totalDoctorWorkDays(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
+      work_minutes: await this.#service.doctorWorkTime(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
       schedule: {
-        complete: 0,
-        total: 0,
+        complete: schedule.completed,
+        total: schedule.total,
       },
-      // balance: await this.#service.totalIncome(
-      //   doctorId,
-      //   req.query.start_date,
-      //   req.query.end_date
-      // ),
-      // work_time_minute: await this.#service.doctorWorkTime(
-      //   doctorId,
-      //   req.query.start_date,
-      //   req.query.end_date
-      // ),
-      // total_clients: await this.#service.doctorClients(
-      //   doctorId,
-      //   req.query.start_date,
-      //   req.query.end_date
-      // ),
-      // completed_schedules: await this.#service.doctorCompletedSchedules(
-      //   doctorId,
-      //   req.query.start_date,
-      //   req.query.end_date
-      // ),
     };
 
     return this.ok(res, data, "Stat dashboard doctor berhasil didapatkan");
