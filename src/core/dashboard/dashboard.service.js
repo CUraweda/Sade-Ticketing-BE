@@ -418,9 +418,7 @@ class DashboardService extends BaseService {
 
     return services.map((s) => {
       const scheduleComplete = s.schedules.filter((sc) =>
-        sc.attendees.some(
-          (b) => b.status == AttendeeStatus.PRESENT || b.status == null
-        )
+        this.#scheduleService.completeRuleFilter(sc)
       ).length;
 
       return {

@@ -345,6 +345,14 @@ class ScheduleService extends BaseService {
       lte: moment().toDate(),
     },
   };
+
+  completeRuleFilter = (schedule) => {
+    return (
+      schedule.attendees.some(
+        (att) => att.status == AttendeeStatus.PRESENT || att.status == null
+      ) && moment(schedule.start_date).isSameOrBefore(moment())
+    );
+  };
 }
 
 export default ScheduleService;
