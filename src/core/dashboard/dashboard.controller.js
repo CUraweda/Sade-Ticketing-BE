@@ -107,7 +107,11 @@ class DashboardController extends BaseController {
         req.query.start_date,
         req.query.end_date
       ),
-      total_transports_allowance: 0,
+      total_transports_allowance: await this.#service.totalDoctorTransport(
+        doctorId,
+        req.query.start_date,
+        req.query.end_date
+      ),
       work_days: await this.#service.totalDoctorWorkDays(
         doctorId,
         req.query.start_date,

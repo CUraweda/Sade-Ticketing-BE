@@ -8,13 +8,16 @@ import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
 import { BalanceType } from "@prisma/client";
 import { AttendeeStatus } from "../scheduleattendee/scheduleattendee.validator.js";
 import ScheduleService from "../schedule/schedule.service.js";
+import DoctorService from "../doctor/doctor.service.js";
 
 class DashboardService extends BaseService {
   #scheduleService;
+  #doctorService;
 
   constructor() {
     super(prism);
     this.#scheduleService = new ScheduleService();
+    this.#doctorService = new DoctorService();
   }
 
   topServices = async (query) => {
@@ -592,6 +595,14 @@ class DashboardService extends BaseService {
     ).length;
 
     return totalDays;
+  };
+
+  totalDoctorTransport = async (doctorId, start, end) => {
+    const doctor = await this.#doctorService.findById(doctorId);
+    const days = await this.totalDoctorWorkDays(doctorId, start, end);
+
+    const total = (doctor.transport_fee ?? 0) * days;
+    return total;
   };
 }
 
