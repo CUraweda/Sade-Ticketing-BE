@@ -22,6 +22,9 @@ class DoctorService extends BaseService {
           },
         },
         specialisms: true,
+        avatar: true,
+        user: { select: { id: true } },
+        is_active: true,
       },
     });
 

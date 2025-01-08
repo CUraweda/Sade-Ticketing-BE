@@ -49,6 +49,7 @@ export const doctorFields = {
     sex: [],
     grade_id: [],
     is_active: [],
+    transport_fee: ["USR"],
     created_at: [],
     updated_at: [],
   },

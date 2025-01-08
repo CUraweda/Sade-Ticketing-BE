@@ -146,18 +146,19 @@ model DoctorProfile {
   location_id Int?
   grade_id    Int?
 
-  category     String
-  title        String?
-  first_name   String
-  last_name    String?
-  email        String    @unique
-  phone_number String?
-  pob          String?
-  dob          DateTime?
-  address      String?
-  sex          String?
-  is_active    Boolean   @default(true)
-  avatar       String?
+  category      String
+  title         String?
+  first_name    String
+  last_name     String?
+  email         String    @unique
+  phone_number  String?
+  pob           String?
+  dob           DateTime?
+  address       String?
+  sex           String?
+  is_active     Boolean   @default(true)
+  avatar        String?
+  transport_fee Float?
 
   location                Location?               @relation(fields: [location_id], references: [id], onDelete: SetNull)
   user                    User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
