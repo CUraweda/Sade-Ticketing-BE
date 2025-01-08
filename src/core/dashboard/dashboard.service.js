@@ -518,6 +518,55 @@ class DashboardService extends BaseService {
     this.db.scheduleAttendee.count({
       where: { client_id: { in: clientIds }, is_active: true },
     });
+
+  totalDoctorPayroll = async (doctorId, start, end) => {};
+
+  totalServiceSalary = async (doctorId, start, end) => {
+    const services = await this.db.service.findMany({
+      where: {
+        doctors: { some: { doctor_id: doctorId } },
+      },
+      include: {
+        doctors: {
+          where: { doctor_id: doctorId },
+          select: { salary: true },
+        },
+        schedules: {
+          where: {
+            AND: [
+              { start_date: { lte: moment().toDate() } },
+              {
+                ...(start &&
+                  end && {
+                    start_date: {
+                      gte: moment(start).toDate(),
+                      lte: moment(end).toDate(),
+                    },
+                  }),
+              },
+            ],
+            doctors: { some: { id: doctorId } },
+          },
+          include: {
+            attendees: { select: { status: true }, where: { is_active: true } },
+          },
+        },
+      },
+    });
+
+    const total = services.reduce((a, c) => {
+      const salary = c.doctors.length ? c.doctors[0].salary : 0;
+      const completed = c.schedules.filter((s) => {
+        return s.attendees.some(
+          (a) => a.status == AttendeeStatus.PRESENT || a.status == null
+        );
+      }).length;
+
+      return a + salary * completed;
+    }, 0);
+
+    return total;
+  };
 }
 
 export default DashboardService;

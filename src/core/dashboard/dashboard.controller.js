@@ -96,26 +96,39 @@ class DashboardController extends BaseController {
     const doctorId = await this.getDoctorId(req);
 
     const data = {
-      balance: await this.#service.totalIncome(
+      total_payroll: 0,
+      total_service_salary: await this.#service.totalServiceSalary(
         doctorId,
         req.query.start_date,
         req.query.end_date
       ),
-      work_time_minute: await this.#service.doctorWorkTime(
-        doctorId,
-        req.query.start_date,
-        req.query.end_date
-      ),
-      total_clients: await this.#service.doctorClients(
-        doctorId,
-        req.query.start_date,
-        req.query.end_date
-      ),
-      completed_schedules: await this.#service.doctorCompletedSchedules(
-        doctorId,
-        req.query.start_date,
-        req.query.end_date
-      ),
+      total_transports_allowance: 0,
+      work_days: 0,
+      work_minutes: 0,
+      schedule: {
+        complete: 0,
+        total: 0,
+      },
+      // balance: await this.#service.totalIncome(
+      //   doctorId,
+      //   req.query.start_date,
+      //   req.query.end_date
+      // ),
+      // work_time_minute: await this.#service.doctorWorkTime(
+      //   doctorId,
+      //   req.query.start_date,
+      //   req.query.end_date
+      // ),
+      // total_clients: await this.#service.doctorClients(
+      //   doctorId,
+      //   req.query.start_date,
+      //   req.query.end_date
+      // ),
+      // completed_schedules: await this.#service.doctorCompletedSchedules(
+      //   doctorId,
+      //   req.query.start_date,
+      //   req.query.end_date
+      // ),
     };
 
     return this.ok(res, data, "Stat dashboard doctor berhasil didapatkan");
