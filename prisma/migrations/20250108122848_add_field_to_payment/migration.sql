@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Payments` ADD COLUMN `note` VARCHAR(191) NULL,
+    ADD COLUMN `type` VARCHAR(191) NOT NULL DEFAULT 'in';
