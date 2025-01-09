@@ -40,5 +40,11 @@ r.get(
 
 r.get("/stats", authMiddleware(), controller.stats);
 
+r.get(
+  "/finance-stats",
+  authMiddleware(["ADM", "SDM"]),
+  controller.financeStats
+);
+
 const dashboardRouter = r;
 export default dashboardRouter;
