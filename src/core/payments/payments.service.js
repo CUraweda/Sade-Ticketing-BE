@@ -61,36 +61,10 @@ class PaymentsService extends BaseService {
     return data;
   };
 
-  create = async (payload, invoice_ids) => {
-    let total = payload?.amount_paid ?? 0;
-
-    if (invoice_ids.length) {
-      total = (
-        await this.db.invoice.aggregate({
-          where: {
-            id: {
-              in: invoice_ids,
-            },
-            user_id: payload.user_id,
-            payment_id: null,
-          },
-          _sum: {
-            total: true,
-          },
-        })
-      )._sum.total;
-    }
-
+  create = async (payload) => {
     const data = await this.db.payments.create({
-      data: {
-        ...payload,
-        amount_paid: total,
-        invoices: {
-          connect: invoice_ids?.map((i) => ({ id: i })) ?? [],
-        },
-      },
+      data: payload,
     });
-
     return data;
   };
 

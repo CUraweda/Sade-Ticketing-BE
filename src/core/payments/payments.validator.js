@@ -3,6 +3,7 @@ import { relationExist } from "../../base/validator.base.js";
 
 export const PaymentMethod = {
   MANUAL_TRANSFER: "manual_transfer",
+  MANUAL_INPUT: "manual_input",
 };
 
 export const PaymentStatus = {
@@ -21,9 +22,15 @@ export const PaymentType = {
 };
 
 export const PaymentsValidator = {
-  create: Joi.object({
-    booking_id: Joi.string().required(),
-    payment_method: Joi.string().required(),
+  createManualInput: Joi.object({
+    amount_paid: Joi.number().required(),
+    bank_account_id: Joi.number()
+      .external(relationExist("bankAccount"))
+      .required(),
+    note: Joi.string().max(150).optional(),
+    type: Joi.string()
+      .valid(...Object.values(PaymentType))
+      .required(),
   }),
   update: Joi.object({
     status: Joi.string()

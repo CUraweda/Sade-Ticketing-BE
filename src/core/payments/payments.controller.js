@@ -36,6 +36,21 @@ class PaymentsController extends BaseController {
     return this.ok(res, data, "Payments berhasil didapatkan");
   });
 
+  createManual = this.wrapper(async (req, res) => {
+    const payload = req.body;
+
+    payload.payment_method = PaymentMethod.MANUAL_INPUT;
+    payload.status = PaymentStatus.PAID;
+    payload.transaction_id = uuidv4();
+    payload.user_id = req.user.id;
+    payload.payment_date = moment();
+
+    if (req.file) payload.payment_proof_path = req.file.path;
+
+    const data = await this.#service.create(payload);
+    return this.ok(res, data, `Payments berhasil dibuat`);
+  });
+
   update = this.wrapper(async (req, res) => {
     const data = await this.#service.update(req.params.id, req.body);
     return this.ok(res, data, "Payments berhasil diperbarui");
