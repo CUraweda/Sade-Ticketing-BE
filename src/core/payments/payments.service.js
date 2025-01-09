@@ -97,7 +97,20 @@ class PaymentsService extends BaseService {
   findById = async (id) => {
     return this.db.payments.findUnique({
       where: { id },
-      include: this.select(["bank_account"]),
+      include: {
+        bank_account: true,
+        user: {
+          select: { id: true, full_name: true, email: true, avatar: true },
+        },
+        invoices: {
+          select: {
+            id: true,
+            total: true,
+            title: true,
+            _count: { select: { items: true, fees: true } },
+          },
+        },
+      },
     });
   };
 
@@ -157,6 +170,13 @@ class PaymentsService extends BaseService {
   delete = async (id) => {
     const data = await this.db.payments.delete({ where: { id } });
     return data;
+  };
+
+  checkUser = async (id, userId) => {
+    const check = await this.db.payments.count({
+      where: { id, user_id: userId },
+    });
+    return check;
   };
 }
 

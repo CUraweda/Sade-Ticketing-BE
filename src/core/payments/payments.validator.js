@@ -15,6 +15,11 @@ export const PaymentStatus = {
   COMPLETED: "completed",
 };
 
+export const PaymentType = {
+  IN: "in",
+  OUT: "out",
+};
+
 export const PaymentsValidator = {
   create: Joi.object({
     booking_id: Joi.string().required(),

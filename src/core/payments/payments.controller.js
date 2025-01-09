@@ -1,5 +1,5 @@
 import BaseController from "../../base/controller.base.js";
-import { BadRequest, NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import PaymentsService from "./payments.service.js";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
@@ -15,21 +15,22 @@ class PaymentsController extends BaseController {
   }
 
   findAll = this.wrapper(async (req, res) => {
-    const q =
-      req.user.role_code != "SDM" && req.user.role_code != "ADM"
-        ? this.joinBrowseQuery(req.query, "where", `user_id:${req.user.id}`)
-        : req.query;
+    let q = req.query;
+
+    if (!this.isAdmin(req))
+      q = this.joinBrowseQuery(req.query, "where", `user_id:${req.user.id}`);
+
     const data = await this.#service.findAll(q);
     return this.ok(res, data, "Banyak Payments berhasil didapatkan");
   });
 
   findById = this.wrapper(async (req, res) => {
-    if (req.user.role_code != "SDM" && req.user.role_code != "ADM") {
-      await this.#service.checkOwner(req.params.id, req.user.id);
+    if (!this.isAdmin(req)) {
+      const check = await this.#service.checkUser(req.params.id, req.user.id);
+      if (!check) throw new Forbidden();
     }
 
     const data = await this.#service.findById(req.params.id);
-
     if (!data) throw new NotFound("Payments tidak ditemukan");
 
     return this.ok(res, data, "Payments berhasil didapatkan");
