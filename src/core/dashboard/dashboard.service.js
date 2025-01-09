@@ -3,7 +3,7 @@ import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
-import { PaymentStatus } from "../payments/payments.validator.js";
+import { PaymentStatus, PaymentType } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
 import { BalanceType } from "@prisma/client";
 import { AttendeeStatus } from "../scheduleattendee/scheduleattendee.validator.js";
@@ -601,6 +601,131 @@ class DashboardService extends BaseService {
 
     const total = (doctor.transport_fee ?? 0) * days;
     return total;
+  };
+
+  totalPaymentIncome = async (start, end) => {
+    const sum = await this.db.payments.aggregate({
+      _sum: { amount_paid: true },
+      where: {
+        type: PaymentType.IN,
+        status: { in: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED] },
+        ...(start &&
+          end && {
+            payment_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
+      },
+    });
+
+    return sum._sum.amount_paid;
+  };
+
+  totalPaymentOutcome = async (start, end) => {
+    const sum = await this.db.payments.aggregate({
+      _sum: { amount_paid: true },
+      where: {
+        type: PaymentType.OUT,
+        status: { in: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED] },
+        ...(start &&
+          end && {
+            payment_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
+      },
+    });
+
+    return sum._sum.amount_paid;
+  };
+
+  totalPaymentPending = async (start, end) => {
+    const sum = await this.db.payments.aggregate({
+      _sum: { amount_paid: true },
+      where: {
+        status: { notIn: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED] },
+        ...(start &&
+          end && {
+            payment_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
+      },
+    });
+
+    return sum._sum.amount_paid;
+  };
+
+  totalPaymentsNet = async (start, end) => {
+    const income = await this.totalPaymentIncome(start, end);
+    const outcome = await this.totalPaymentOutcome(start, end);
+
+    return income - outcome;
+  };
+
+  bankChart = async (start, end) => {
+    const income = await this.totalPaymentIncome(start, end);
+    const outcome = await this.totalPaymentOutcome(start, end);
+    const pending = await this.totalPaymentPending(start, end);
+    const net = income - outcome;
+
+    const banks = await this.db.bankAccount.findMany({
+      include: {
+        payments: {
+          select: { amount_paid: true, type: true, status: true },
+          where: {
+            ...(start &&
+              end && {
+                payment_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        },
+      },
+    });
+
+    const data = banks.map((b) => {
+      const inc = b.payments
+        .filter(
+          (p) =>
+            [PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(
+              p.status
+            ) && p.type == PaymentType.IN
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const out = b.payments
+        .filter(
+          (p) =>
+            [PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(
+              p.status
+            ) && p.type == PaymentType.OUT
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const pend = b.payments
+        .filter(
+          (p) =>
+            ![PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(p.status)
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const ne = inc - out;
+
+      return {
+        ...b,
+        payments: {
+          income: { value: inc, percent: (inc / income) * 100 },
+          outcome: { value: out, percent: (out / outcome) * 100 },
+          pending: { value: pend, percent: (pend / pending) * 100 },
+          net: { value: ne, percent: (ne / net) * 100 },
+        },
+      };
+    });
+
+    return data;
   };
 }
 

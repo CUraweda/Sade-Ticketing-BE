@@ -19,6 +19,14 @@ r.get(
 
 r.get("/show-by-id/:id", authMiddleware(), controller.findById);
 
+r.post(
+  "/create-manual",
+  authMiddleware(["ADM", "SDM"]),
+  uploader("/payment-proofs", "image", 3000000).single("proof_file"),
+  validatorMiddleware({ body: validator.createManualInput }),
+  controller.createManual
+);
+
 r.put(
   "/update/:id",
   authMiddleware(["ADM", "SDM"]),

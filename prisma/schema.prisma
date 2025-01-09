@@ -535,6 +535,8 @@ model Payments {
   user_id            String?
   payment_date       DateTime?
   expiry_date        DateTime?
+  note               String?
+  type               String    @default("in") // in, out
 
   user         User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
   bank_account BankAccount? @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
