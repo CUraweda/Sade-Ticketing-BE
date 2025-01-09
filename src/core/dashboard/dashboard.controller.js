@@ -162,6 +162,14 @@ class DashboardController extends BaseController {
     };
     return this.ok(res, data, "Stat finance berhasil didapatkan");
   });
+
+  bankChart = this.wrapper(async (req, res) => {
+    const s = req.query.start_date,
+      e = req.query.end_date;
+
+    const data = await this.#service.bankChart(s, e);
+    return this.ok(res, data, "Chart bank berhasil didapatkan");
+  });
 }
 
 export default DashboardController;

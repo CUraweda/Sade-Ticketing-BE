@@ -46,5 +46,11 @@ r.get(
   controller.financeStats
 );
 
+r.get(
+  "/finance-bank-chart",
+  authMiddleware(["ADM", "SDM"]),
+  controller.bankChart
+);
+
 const dashboardRouter = r;
 export default dashboardRouter;

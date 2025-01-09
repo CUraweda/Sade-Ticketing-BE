@@ -665,6 +665,68 @@ class DashboardService extends BaseService {
 
     return income - outcome;
   };
+
+  bankChart = async (start, end) => {
+    const income = await this.totalPaymentIncome(start, end);
+    const outcome = await this.totalPaymentOutcome(start, end);
+    const pending = await this.totalPaymentPending(start, end);
+    const net = income - outcome;
+
+    const banks = await this.db.bankAccount.findMany({
+      include: {
+        payments: {
+          select: { amount_paid: true, type: true, status: true },
+          where: {
+            ...(start &&
+              end && {
+                payment_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        },
+      },
+    });
+
+    const data = banks.map((b) => {
+      const inc = b.payments
+        .filter(
+          (p) =>
+            [PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(
+              p.status
+            ) && p.type == PaymentType.IN
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const out = b.payments
+        .filter(
+          (p) =>
+            [PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(
+              p.status
+            ) && p.type == PaymentType.OUT
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const pend = b.payments
+        .filter(
+          (p) =>
+            ![PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(p.status)
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const ne = inc - out;
+
+      return {
+        ...b,
+        payments: {
+          income: { value: inc, percent: (inc / income) * 100 },
+          outcome: { value: out, percent: (out / outcome) * 100 },
+          pending: { value: pend, percent: (pend / pending) * 100 },
+          net: { value: ne, percent: (ne / net) * 100 },
+        },
+      };
+    });
+
+    return data;
+  };
 }
 
 export default DashboardService;
