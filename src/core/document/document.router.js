@@ -19,19 +19,19 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
-  authMiddleware(["ADM", "SDM"]),
+  authMiddleware(["SDM"]),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
-  authMiddleware(["ADM", "SDM"]),
+  authMiddleware(["SDM"]),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.delete("/delete/:id", authMiddleware(["ADM", "SDM"]), controller.delete);
+r.delete("/delete/:id", authMiddleware(["SDM"]), controller.delete);
 
 const documentRouter = r;
 export default documentRouter;
