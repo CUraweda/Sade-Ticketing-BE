@@ -61,43 +61,30 @@ class PaymentsService extends BaseService {
     return data;
   };
 
-  create = async (payload, invoice_ids) => {
-    let total = payload?.amount_paid ?? 0;
-
-    if (invoice_ids.length) {
-      total = (
-        await this.db.invoice.aggregate({
-          where: {
-            id: {
-              in: invoice_ids,
-            },
-            user_id: payload.user_id,
-            payment_id: null,
-          },
-          _sum: {
-            total: true,
-          },
-        })
-      )._sum.total;
-    }
-
+  create = async (payload) => {
     const data = await this.db.payments.create({
-      data: {
-        ...payload,
-        amount_paid: total,
-        invoices: {
-          connect: invoice_ids?.map((i) => ({ id: i })) ?? [],
-        },
-      },
+      data: payload,
     });
-
     return data;
   };
 
   findById = async (id) => {
     return this.db.payments.findUnique({
       where: { id },
-      include: this.select(["bank_account"]),
+      include: {
+        bank_account: true,
+        user: {
+          select: { id: true, full_name: true, email: true, avatar: true },
+        },
+        invoices: {
+          select: {
+            id: true,
+            total: true,
+            title: true,
+            _count: { select: { items: true, fees: true } },
+          },
+        },
+      },
     });
   };
 
@@ -157,6 +144,13 @@ class PaymentsService extends BaseService {
   delete = async (id) => {
     const data = await this.db.payments.delete({ where: { id } });
     return data;
+  };
+
+  checkUser = async (id, userId) => {
+    const check = await this.db.payments.count({
+      where: { id, user_id: userId },
+    });
+    return check;
   };
 }
 

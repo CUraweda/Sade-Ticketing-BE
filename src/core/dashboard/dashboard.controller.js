@@ -95,27 +95,37 @@ class DashboardController extends BaseController {
   doctorStats = this.wrapper(async (req, res) => {
     const doctorId = await this.getDoctorId(req);
 
+    const schedule = await this.#service.doctorCompletedSchedules(
+      doctorId,
+      req.query.start_date,
+      req.query.end_date
+    );
     const data = {
-      balance: await this.#service.totalIncome(
+      total_payroll: 0,
+      total_service_salary: await this.#service.totalServiceSalary(
         doctorId,
         req.query.start_date,
         req.query.end_date
       ),
-      work_time_minute: await this.#service.doctorWorkTime(
+      total_transports_allowance: await this.#service.totalDoctorTransport(
         doctorId,
         req.query.start_date,
         req.query.end_date
       ),
-      total_clients: await this.#service.doctorClients(
+      work_days: await this.#service.totalDoctorWorkDays(
         doctorId,
         req.query.start_date,
         req.query.end_date
       ),
-      completed_schedules: await this.#service.doctorCompletedSchedules(
+      work_minutes: await this.#service.doctorWorkTime(
         doctorId,
         req.query.start_date,
         req.query.end_date
       ),
+      schedule: {
+        complete: schedule.completed,
+        total: schedule.total,
+      },
     };
 
     return this.ok(res, data, "Stat dashboard doctor berhasil didapatkan");
@@ -139,6 +149,26 @@ class DashboardController extends BaseController {
       },
     };
     return this.ok(res, data, "Stat berhasil didapatkan");
+  });
+
+  financeStats = this.wrapper(async (req, res) => {
+    const s = req.query.start_date,
+      e = req.query.end_date;
+    const data = {
+      net: await this.#service.totalPaymentsNet(s, e),
+      income: await this.#service.totalPaymentIncome(s, e),
+      outcome: await this.#service.totalPaymentOutcome(s, e),
+      pending: await this.#service.totalPaymentPending(s, e),
+    };
+    return this.ok(res, data, "Stat finance berhasil didapatkan");
+  });
+
+  bankChart = this.wrapper(async (req, res) => {
+    const s = req.query.start_date,
+      e = req.query.end_date;
+
+    const data = await this.#service.bankChart(s, e);
+    return this.ok(res, data, "Chart bank berhasil didapatkan");
   });
 }
 

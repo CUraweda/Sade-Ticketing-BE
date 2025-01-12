@@ -2,10 +2,12 @@ import Joi from "joi";
 
 export const ServicecategoryValidator = {
   create: Joi.object({
-    name: Joi.string().max(50).required(),
+    description: Joi.string().max(150).optional(),
+    hex_color: Joi.string().optional(),
   }),
   update: Joi.object({
-    name: Joi.string().max(50).required(),
+    description: Joi.string().max(150).optional(),
+    hex_color: Joi.string().optional(),
   }),
 };
 

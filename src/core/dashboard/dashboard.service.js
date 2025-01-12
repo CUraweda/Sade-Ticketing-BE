@@ -3,14 +3,21 @@ import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
-import { PaymentStatus } from "../payments/payments.validator.js";
+import { PaymentStatus, PaymentType } from "../payments/payments.validator.js";
 import { ClientScheduleStatus } from "../schedule/schedule.validator.js";
 import { BalanceType } from "@prisma/client";
 import { AttendeeStatus } from "../scheduleattendee/scheduleattendee.validator.js";
+import ScheduleService from "../schedule/schedule.service.js";
+import DoctorService from "../doctor/doctor.service.js";
 
 class DashboardService extends BaseService {
+  #scheduleService;
+  #doctorService;
+
   constructor() {
     super(prism);
+    this.#scheduleService = new ScheduleService();
+    this.#doctorService = new DoctorService();
   }
 
   topServices = async (query) => {
@@ -290,26 +297,23 @@ class DashboardService extends BaseService {
   doctorWorkTime = async (doctorId, start, end) => {
     const data = await this.db.schedule.findMany({
       where: {
-        attendees: {
-          some: {
-            status: AttendeeStatus.PRESENT,
-          },
-        },
         doctors: {
           some: {
             id: doctorId,
           },
         },
-        end_date: {
-          not: null,
-        },
-        ...(start &&
-          end && {
-            start_date: {
-              gte: moment(start).toDate(),
-              lte: moment(end).toDate(),
-            },
-          }),
+        AND: [
+          this.#scheduleService.completeRuleQuery,
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
       },
       select: {
         start_date: true,
@@ -344,25 +348,27 @@ class DashboardService extends BaseService {
     });
     const completed = await this.db.schedule.count({
       where: {
-        attendees: {
-          some: { status: AttendeeStatus.PRESENT },
-        },
+        AND: [
+          this.#scheduleService.completeRuleQuery,
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
         doctors: {
           some: {
             id: doctorId,
           },
         },
-        ...(start &&
-          end && {
-            start_date: {
-              gte: moment(start).toDate(),
-              lte: moment(end).toDate(),
-            },
-          }),
       },
     });
 
-    return (completed / total) * 100;
+    return { completed, total };
   };
 
   doctorServiceStat = async (doctorId, start_date, end_date) => {
@@ -412,9 +418,7 @@ class DashboardService extends BaseService {
 
     return services.map((s) => {
       const scheduleComplete = s.schedules.filter((sc) =>
-        sc.attendees.some(
-          (b) => b.status == AttendeeStatus.PRESENT || b.status == null
-        )
+        this.#scheduleService.completeRuleFilter(sc)
       ).length;
 
       return {
@@ -518,6 +522,211 @@ class DashboardService extends BaseService {
     this.db.scheduleAttendee.count({
       where: { client_id: { in: clientIds }, is_active: true },
     });
+
+  totalDoctorPayroll = async (doctorId, start, end) => {};
+
+  totalServiceSalary = async (doctorId, start, end) => {
+    const services = await this.db.service.findMany({
+      where: {
+        doctors: { some: { doctor_id: doctorId } },
+      },
+      include: {
+        doctors: {
+          where: { doctor_id: doctorId },
+          select: { salary: true },
+        },
+        schedules: {
+          where: {
+            AND: [
+              this.#scheduleService.completeRuleQuery,
+              {
+                ...(start &&
+                  end && {
+                    start_date: {
+                      gte: moment(start).toDate(),
+                      lte: moment(end).toDate(),
+                    },
+                  }),
+              },
+            ],
+            doctors: { some: { id: doctorId } },
+          },
+          include: {
+            attendees: { select: { status: true }, where: { is_active: true } },
+          },
+        },
+      },
+    });
+
+    const total = services.reduce((a, c) => {
+      const salary = c.doctors.length ? c.doctors[0].salary : 0;
+      const completed = c.schedules.length;
+
+      return a + salary * completed;
+    }, 0);
+
+    return total;
+  };
+
+  totalDoctorWorkDays = async (doctorId, start, end) => {
+    const schedules = await this.db.schedule.findMany({
+      where: {
+        doctors: { some: { id: doctorId } },
+        AND: [
+          this.#scheduleService.completeRuleQuery,
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
+      },
+      select: { start_date: true },
+    });
+
+    const totalDays = schedules.map((sc) =>
+      moment(sc.start_date).format("YYYY-MM-DD")
+    ).length;
+
+    return totalDays;
+  };
+
+  totalDoctorTransport = async (doctorId, start, end) => {
+    const doctor = await this.#doctorService.findById(doctorId);
+    const days = await this.totalDoctorWorkDays(doctorId, start, end);
+
+    const total = (doctor.transport_fee ?? 0) * days;
+    return total;
+  };
+
+  totalPaymentIncome = async (start, end) => {
+    const sum = await this.db.payments.aggregate({
+      _sum: { amount_paid: true },
+      where: {
+        type: PaymentType.IN,
+        status: { in: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED] },
+        ...(start &&
+          end && {
+            payment_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
+      },
+    });
+
+    return sum._sum.amount_paid;
+  };
+
+  totalPaymentOutcome = async (start, end) => {
+    const sum = await this.db.payments.aggregate({
+      _sum: { amount_paid: true },
+      where: {
+        type: PaymentType.OUT,
+        status: { in: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED] },
+        ...(start &&
+          end && {
+            payment_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
+      },
+    });
+
+    return sum._sum.amount_paid;
+  };
+
+  totalPaymentPending = async (start, end) => {
+    const sum = await this.db.payments.aggregate({
+      _sum: { amount_paid: true },
+      where: {
+        status: { notIn: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED] },
+        ...(start &&
+          end && {
+            payment_date: {
+              gte: moment(start).toDate(),
+              lte: moment(end).toDate(),
+            },
+          }),
+      },
+    });
+
+    return sum._sum.amount_paid;
+  };
+
+  totalPaymentsNet = async (start, end) => {
+    const income = await this.totalPaymentIncome(start, end);
+    const outcome = await this.totalPaymentOutcome(start, end);
+
+    return income - outcome;
+  };
+
+  bankChart = async (start, end) => {
+    const income = await this.totalPaymentIncome(start, end);
+    const outcome = await this.totalPaymentOutcome(start, end);
+    const pending = await this.totalPaymentPending(start, end);
+    const net = income - outcome;
+
+    const banks = await this.db.bankAccount.findMany({
+      include: {
+        payments: {
+          select: { amount_paid: true, type: true, status: true },
+          where: {
+            ...(start &&
+              end && {
+                payment_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        },
+      },
+    });
+
+    const data = banks.map((b) => {
+      const inc = b.payments
+        .filter(
+          (p) =>
+            [PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(
+              p.status
+            ) && p.type == PaymentType.IN
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const out = b.payments
+        .filter(
+          (p) =>
+            [PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(
+              p.status
+            ) && p.type == PaymentType.OUT
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const pend = b.payments
+        .filter(
+          (p) =>
+            ![PaymentStatus.SETTLED, PaymentStatus.COMPLETED].includes(p.status)
+        )
+        .reduce((a, c) => (a += c.amount_paid), 0);
+      const ne = inc - out;
+
+      return {
+        ...b,
+        payments: {
+          income: { value: inc, percent: (inc / income) * 100 },
+          outcome: { value: out, percent: (out / outcome) * 100 },
+          pending: { value: pend, percent: (pend / pending) * 100 },
+          net: { value: ne, percent: (ne / net) * 100 },
+        },
+      };
+    });
+
+    return data;
+  };
 }
 
 export default DashboardService;

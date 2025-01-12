@@ -25,4 +25,4 @@ cron.schedule("5 0 25 * *", createRepeatSchedules);
 cron.schedule("30 0 * * *", updateInvoiceOverdue);
 
 // release specialist salary everyday at 0:40 (7:40 in ID)
-cron.schedule("40 0 * * *", releaseSpecialistSalary);
+// cron.schedule("40 0 * * *", releaseSpecialistSalary);

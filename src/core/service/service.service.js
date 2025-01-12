@@ -60,6 +60,7 @@ class ServiceService extends BaseService {
       where: { id },
       include: this.select([
         "category.name",
+        "category.hex_color",
         "location.title",
         "questionnaires.id",
         "questionnaires.title",

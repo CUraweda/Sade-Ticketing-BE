@@ -9,7 +9,10 @@ class QuestionnaireService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.questionnaire.findMany({ ...q });
+    const data = await this.db.questionnaire.findMany({
+      ...q,
+      include: { _count: { select: { questions: true, responses: true } } },
+    });
 
     if (query.paginate) {
       const countData = await this.db.questionnaire.count({ where: q.where });

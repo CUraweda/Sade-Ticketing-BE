@@ -2,10 +2,12 @@ import Joi from "joi";
 
 export const DocumentValidator = {
   create: Joi.object({
-    // no-data
+    title: Joi.string().max(50).required(),
+    content: Joi.string().required(),
   }),
   update: Joi.object({
-    // no-data
+    title: Joi.string().max(50).required(),
+    content: Joi.string().required(),
   }),
 };
 

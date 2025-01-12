@@ -23,16 +23,28 @@ class privilegeController extends BaseController {
   });
 
   create = this.wrapper(async (req, res) => {
-    const data = await this.#service.create(req.body);
+    const payload = req.body;
+    if (req.file) payload.image_path = req.file.path;
+
+    const data = await this.#service.create(payload);
     return this.created(res, data, "privilege berhasil dibuat");
   });
 
   update = this.wrapper(async (req, res) => {
-    const data = await this.#service.update(req.params.id, req.body);
+    const prev = await this.#service.findById(req.params.id);
+    if (prev.image_path) this.deleteFileByPath(prev.image_path);
+
+    const payload = req.body;
+    if (req.file) payload.image_path = req.file.path;
+
+    const data = await this.#service.update(req.params.id, payload);
     return this.ok(res, data, "privilege berhasil diperbarui");
   });
 
   delete = this.wrapper(async (req, res) => {
+    const prev = await this.#service.findById(req.params.id);
+    if (prev.image_path) this.deleteFileByPath(prev.image_path);
+
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "privilege berhasil dihapus");
   });
