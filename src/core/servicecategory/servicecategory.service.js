@@ -8,7 +8,10 @@ class ServicecategoryService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.serviceCategory.findMany({ ...q });
+    const data = await this.db.serviceCategory.findMany({
+      ...q,
+      include: { _count: { select: { services: true } } },
+    });
 
     if (query.paginate) {
       const countData = await this.db.serviceCategory.count({ where: q.where });
@@ -28,7 +31,10 @@ class ServicecategoryService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.serviceCategory.update({ where: { id }, data: payload });
+    const data = await this.db.serviceCategory.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +44,4 @@ class ServicecategoryService extends BaseService {
   };
 }
 
-export default ServicecategoryService;  
+export default ServicecategoryService;
