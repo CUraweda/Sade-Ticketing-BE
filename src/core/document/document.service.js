@@ -8,7 +8,14 @@ class DocumentService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.document.findMany({ ...q });
+    const data = await this.db.document.findMany({
+      ...q,
+      select: {
+        id: true,
+        title: true,
+        _count: { select: { booking_agreement: true, services: true } },
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.document.count({ where: q.where });
@@ -28,7 +35,10 @@ class DocumentService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.document.update({ where: { id }, data: payload });
+    const data = await this.db.document.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +48,4 @@ class DocumentService extends BaseService {
   };
 }
 
-export default DocumentService;  
+export default DocumentService;
