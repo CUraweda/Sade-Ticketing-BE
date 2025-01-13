@@ -88,6 +88,9 @@ class InvoiceService extends BaseService {
               data: rest.fees,
             },
           },
+          bookings: {
+            connect: payload.bookings?.map((id) => ({ id })),
+          },
         },
       });
 
@@ -214,7 +217,7 @@ class InvoiceService extends BaseService {
         status: BookingStatus.DRAFT,
       },
       include: {
-        service: { include: { fees: true } },
+        service: { include: { fees: { include: { fee: true } } } },
         questionnaire_responses: true,
         invoices: true,
         schedules: true,
@@ -228,24 +231,24 @@ class InvoiceService extends BaseService {
       )
         b.service.fees
           .filter((f) => f.type == ServiceFeeType.SITIN)
-          .forEach((ef) =>
+          .forEach((sf) =>
             items.push({
-              fee_id: ef.id,
-              name: ef.title,
+              fee_id: sf.fee_id,
+              name: sf.fee.title,
               quantity: 1,
-              price: ef.price,
+              price: sf.fee.price,
             })
           );
 
       if (b.schedules.length > 0 && b.schedules.every((s) => !s.is_active))
         b.service.fees
           .filter((f) => f.type == ServiceFeeType.ENTRY)
-          .forEach((ef) =>
+          .forEach((sf) =>
             items.push({
-              fee_id: ef.id,
-              name: ef.title,
+              fee_id: sf.fee_id,
+              name: sf.fee.title,
               quantity: 1,
-              price: ef.price,
+              price: sf.fee.price,
             })
           );
     });

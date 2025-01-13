@@ -55,6 +55,10 @@ class BookingService extends BaseService {
             service_recommendations: true,
           },
         },
+        service: {
+          select: { fees: true },
+        },
+        invoices: true,
         user: { select: { avatar: true, full_name: true, email: true } },
         client: true,
         agreed_documents: {
