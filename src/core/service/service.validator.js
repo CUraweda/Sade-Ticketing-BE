@@ -7,6 +7,11 @@ export const ServiceBillingType = {
   MONTHLY: "monthly",
 };
 
+export const ServiceFeeType = {
+  SITIN: "sit_in",
+  ENTRY: "entry_tuition",
+};
+
 export const ServiceValidator = {
   create: Joi.object({
     location_id: Joi.number().external(relationExist("location")).required(),

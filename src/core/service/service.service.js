@@ -15,7 +15,9 @@ class ServiceService extends BaseService {
       include: {
         category: { select: { name: true, hex_color: true } },
         location: { select: { title: true } },
-        entry_fees: true,
+        fees: {
+          include: { fee: true },
+        },
         schedules: {
           select: {
             max_attendees: true,
@@ -68,9 +70,11 @@ class ServiceService extends BaseService {
         "reports.id",
         "reports.title",
         "reports._count.questions",
-        "entry_fees.id",
-        "entry_fees.title",
-        "entry_fees.price",
+        "fees.id",
+        "fees.type",
+        "fees.fee.id",
+        "fees.fee.title",
+        "fees.fee.price",
         "agrement_documents.id",
         "agrement_documents.title",
       ]),

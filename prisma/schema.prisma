@@ -217,11 +217,24 @@ model Service {
   service_recommendations ServiceRecommendation[]
   schedules               Schedule[]
   bookings                Booking[]
-  entry_fees              Fee[]
+  fees                    ServiceFee[]
   service_prices          ServicePrice[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model ServiceFee {
+  id         Int    @id @default(autoincrement())
+  fee_id     Int
+  service_id String
+
+  type String // sit_in, entry_tuition
+
+  fee     Fee     @relation(fields: [fee_id], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
+
+  @@unique([fee_id, service_id])
 }
 
 model ServicePrice {
@@ -465,7 +478,7 @@ model Fee {
 
   invoices         InvoiceFee[]
   daycare_logtimes DaycareLogTime[]
-  services         Service[]
+  services         ServiceFee[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

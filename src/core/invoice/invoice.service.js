@@ -2,7 +2,10 @@ import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
-import { ServiceBillingType } from "../service/service.validator.js";
+import {
+  ServiceBillingType,
+  ServiceFeeType,
+} from "../service/service.validator.js";
 import { parseJson } from "../../utils/transform.js";
 import fs from "fs";
 import ScheduleService from "../schedule/schedule.service.js";
@@ -211,26 +214,40 @@ class InvoiceService extends BaseService {
         status: BookingStatus.DRAFT,
       },
       include: {
-        service: { include: { entry_fees: true } },
-        _count: {
-          select: {
-            schedules: {
-              where: { invoices: { some: {} } },
-            },
-          },
-        },
+        service: { include: { fees: true } },
+        questionnaire_responses: true,
+        invoices: true,
+        schedules: true,
       },
     });
     bookings.forEach((b) => {
-      if (b._count.schedules == 0)
-        b.service.entry_fees.forEach((ef) =>
-          items.push({
-            fee_id: ef.id,
-            name: ef.title,
-            quantity: 1,
-            price: ef.price,
-          })
-        );
+      if (
+        b.questionnaire_responses.every((qr) => qr.is_locked) &&
+        b.schedules.length == 0 &&
+        b.invoices.length == 0
+      )
+        b.service.fees
+          .filter((f) => f.type == ServiceFeeType.SITIN)
+          .forEach((ef) =>
+            items.push({
+              fee_id: ef.id,
+              name: ef.title,
+              quantity: 1,
+              price: ef.price,
+            })
+          );
+
+      if (b.schedules.length > 0 && b.schedules.every((s) => !s.is_active))
+        b.service.fees
+          .filter((f) => f.type == ServiceFeeType.ENTRY)
+          .forEach((ef) =>
+            items.push({
+              fee_id: ef.id,
+              name: ef.title,
+              quantity: 1,
+              price: ef.price,
+            })
+          );
     });
 
     const total = {
