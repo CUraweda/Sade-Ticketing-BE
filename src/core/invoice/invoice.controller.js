@@ -92,6 +92,7 @@ class InvoiceController extends BaseController {
 
     const payload = {
       user_id: req.user.id,
+      bookings: booking_ids,
       title: `Tagihan ${moment().locale("id").format("MMMM YYYY")}`,
       status: InvoiceStatus.ISSUED,
       expiry_date: moment().add(1, "day").toDate(),

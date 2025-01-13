@@ -161,12 +161,17 @@
     "price": 200000,
     "price_unit": "hari",
     "billing_type": "daily",
-    "entry_fees": {
+    "fees": {
       "create": [
         {
-          "title": "Uang pangkal daycare harian depok",
-          "description": "Uang pangkal daycare harian depok",
-          "price": 20000
+          "type": "entry_tuition",
+          "fee": {
+            "create": {
+              "title": "Uang pangkal daycare harian depok",
+              "description": "Uang pangkal daycare harian depok",
+              "price": 20000
+            }
+          }
         }
       ]
     }
@@ -179,12 +184,17 @@
     "price": 4000000,
     "price_unit": "bulan",
     "billing_type": "monthly",
-    "entry_fees": {
+    "fees": {
       "create": [
         {
-          "title": "Uang pangkal daycare bulanan depok",
-          "description": "Uang pangkal daycare bulanan depok",
-          "price": 400000
+          "type": "entry_tuition",
+          "fee": {
+            "create": {
+              "title": "Uang pangkal daycare bulanan depok",
+              "description": "Uang pangkal daycare bulanan depok",
+              "price": 400000
+            }
+          }
         }
       ]
     }
