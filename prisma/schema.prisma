@@ -328,6 +328,7 @@ model Questionnaire {
   id          String  @id @default(uuid())
   title       String  @unique
   description String? @db.LongText
+  footnote    String? @db.LongText
   signers     String?
 
   questions        Question[]
