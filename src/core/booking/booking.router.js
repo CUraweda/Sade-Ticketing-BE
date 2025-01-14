@@ -4,6 +4,7 @@ import BookingController from "./booking.controller.js";
 import BookingValidator from "./booking.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import uploader from "../../middlewares/multer.middleware.js";
 const r = Router(),
   validator = BookingValidator,
   controller = new BookingController();
@@ -69,6 +70,15 @@ r.put(
 );
 
 r.delete("/delete/:id", authMiddleware(), controller.delete);
+
+r.put(
+  "/set-file/:id/:file_id",
+  authMiddleware(),
+  uploader("/booking-files", "file", 3000000).single("file"),
+  controller.setFile
+);
+
+r.get("/download-file/:id/:file_id", authMiddleware(), controller.downloadFile);
 
 const bookingRouter = r;
 export default bookingRouter;

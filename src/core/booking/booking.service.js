@@ -55,6 +55,7 @@ class BookingService extends BaseService {
             service_recommendations: true,
           },
         },
+        files: true,
         service: {
           select: { fees: true },
         },
@@ -124,9 +125,10 @@ class BookingService extends BaseService {
         price_unit: true,
         questionnaires: true,
         agrement_documents: true,
+        files: true,
       },
     });
-    const { agrement_documents, questionnaires, ...rest } = service;
+    const { files, agrement_documents, questionnaires, ...rest } = service;
 
     const data = await this.db.booking.create({
       data: {
@@ -135,6 +137,12 @@ class BookingService extends BaseService {
         service_data: JSON.stringify(rest) ?? "",
         status: BookingStatus.DRAFT,
         title: `${rest.category?.name ?? ""} - ${rest.title}`,
+        files: {
+          create: files?.map((f) => ({
+            title: f.title,
+            type: f.type,
+          })),
+        },
         questionnaire_responses: {
           create: questionnaires?.map((que) => ({
             user_id: payload.user_id,
@@ -426,6 +434,17 @@ class BookingService extends BaseService {
       remaining: booking.quantity - booking._count.schedules,
     };
   };
+
+  getFile = (id, fileId) =>
+    this.db.bookingFile.findFirst({
+      where: { id: fileId, booking_id: id },
+    });
+
+  updateFile = (id, fileId, filePath) =>
+    this.db.bookingFile.update({
+      where: { id: fileId, booking_id: id },
+      data: { path: filePath },
+    });
 }
 
 export default BookingService;
