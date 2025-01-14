@@ -219,6 +219,7 @@ model Service {
   bookings                Booking[]
   fees                    ServiceFee[]
   service_prices          ServicePrice[]
+  files                   ServiceFile[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -235,6 +236,16 @@ model ServiceFee {
   service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
 
   @@unique([fee_id, service_id])
+}
+
+model ServiceFile {
+  id         Int    @id @default(autoincrement())
+  service_id String
+
+  title String
+  type  String // input / output
+
+  service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
 }
 
 model ServicePrice {
@@ -452,9 +463,21 @@ model Booking {
   daycare_journals        DaycareJournal[]
   agreed_documents        BookingAgreedDocuments[]
   schedules               ScheduleAttendee[]
+  files                   BookingFile[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model BookingFile {
+  id         Int    @id @default(autoincrement())
+  booking_id String
+
+  path  String?
+  title String
+  type  String // in out
+
+  booking Booking @relation(fields: [booking_id], references: [id], onDelete: Cascade)
 }
 
 model BookingAgreedDocuments {
