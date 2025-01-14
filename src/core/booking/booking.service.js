@@ -53,6 +53,7 @@ class BookingService extends BaseService {
             reports: true,
             schedules: true,
             service_recommendations: true,
+            files: true,
           },
         },
         files: true,
@@ -79,27 +80,12 @@ class BookingService extends BaseService {
                 service_data: true,
               },
             },
-            invoices: {
-              include: {
-                invoice: true,
-              },
-            },
             schedule: {
               select: {
                 start_date: true,
                 end_date: true,
                 service: {
                   select: { title: true, category: true },
-                },
-                repeat: true,
-                title: true,
-                doctors: {
-                  select: {
-                    category: true,
-                    first_name: true,
-                    last_name: true,
-                    avatar: true,
-                  },
                 },
               },
             },

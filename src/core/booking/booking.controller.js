@@ -178,7 +178,7 @@ class BookingController extends BaseController {
   setFile = this.wrapper(async (req, res) => {
     if (!req.file) throw new BadRequest("Mohon unggah file PDF");
 
-    if (!this.isAdmin(req) || !this.isDoctor(req))
+    if (!this.isAdmin(req) && !this.isDoctor(req))
       await this.#service.checkBookingOwner(req.params.id, req.user.id);
 
     const prev = await this.#service.getFile(
@@ -197,7 +197,7 @@ class BookingController extends BaseController {
   });
 
   downloadFile = this.wrapper(async (req, res) => {
-    if (!this.isAdmin(req) || !this.isDoctor(req))
+    if (!this.isAdmin(req) && !this.isDoctor(req))
       await this.#service.checkBookingOwner(req.params.id, req.user.id);
 
     const file = await this.#service.getFile(
