@@ -77,6 +77,7 @@ class ServiceService extends BaseService {
         "fees.fee.price",
         "agrement_documents.id",
         "agrement_documents.title",
+        "files",
       ]),
     });
     return data;
@@ -193,6 +194,22 @@ class ServiceService extends BaseService {
         ),
       }))
       .filter((profile) => profile.schedules.length > 0);
+  };
+
+  addFile = async (id, payload) => {
+    const result = await this.db.service.update({
+      where: { id },
+      data: { files: { create: payload } },
+    });
+    return result;
+  };
+
+  removeFile = async (id, fileId) => {
+    const result = await this.db.service.update({
+      where: { id },
+      data: { files: { delete: { id: fileId } } },
+    });
+    return result;
   };
 }
 
