@@ -18,6 +18,8 @@ r.get(
 
 r.get("/show-one/:id", authMiddleware(), controller.findById);
 
+r.get("/documents/:id", authMiddleware(), controller.getDocuments);
+
 r.get(
   "/show-one/:id/que-responses",
   authMiddleware(),

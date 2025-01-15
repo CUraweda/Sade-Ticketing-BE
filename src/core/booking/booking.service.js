@@ -431,6 +431,32 @@ class BookingService extends BaseService {
       where: { id: fileId, booking_id: id },
       data: { path: filePath },
     });
+
+  getDocuments = async (id) => {
+    const data = await this.db.booking.findUnique({
+      where: { id },
+      select: {
+        agreed_documents: {
+          include: { document: { select: { title: true } } },
+        },
+        reports: {
+          include: { questionnaire: { select: { title: true } } },
+        },
+        questionnaire_responses: {
+          include: { questionnaire: { select: { title: true } } },
+        },
+        files: true,
+      },
+    });
+
+    return {
+      agreements: data.agreed_documents,
+      que_output: data.reports,
+      que_input: data.questionnaire_responses,
+      file_output: data.files.filter((f) => f.type == "output"),
+      file_input: data.files.filter((f) => f.type == "input"),
+    };
+  };
 }
 
 export default BookingService;
