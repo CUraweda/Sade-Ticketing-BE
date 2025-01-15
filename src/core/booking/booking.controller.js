@@ -215,10 +215,12 @@ class BookingController extends BaseController {
   });
 
   getDocuments = this.wrapper(async (req, res) => {
+    const ids = req.params.id.split("+");
     if (!this.isAdmin(req) && !this.isDoctor(req))
-      await this.#service.checkBookingOwner(req.params.id, req.user.id);
+      for (let id of ids)
+        await this.#service.checkBookingOwner(id, req.user.id);
 
-    const data = await this.#service.getDocuments(req.params.id);
+    const data = await this.#service.getDocuments(ids);
     return this.ok(res, data, "Berhasil mendapatkan dokumen-dokumen reservasi");
   });
 }

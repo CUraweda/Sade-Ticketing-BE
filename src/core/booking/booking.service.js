@@ -432,9 +432,9 @@ class BookingService extends BaseService {
       data: { path: filePath },
     });
 
-  getDocuments = async (id) => {
-    const data = await this.db.booking.findUnique({
-      where: { id },
+  getDocuments = async (ids = []) => {
+    const data = await this.db.booking.findMany({
+      where: { id: { in: ids } },
       select: {
         agreed_documents: {
           include: { document: { select: { title: true } } },
@@ -449,13 +449,27 @@ class BookingService extends BaseService {
       },
     });
 
-    return {
-      agreements: data.agreed_documents,
-      que_output: data.reports,
-      que_input: data.questionnaire_responses,
-      file_output: data.files.filter((f) => f.type == "output"),
-      file_input: data.files.filter((f) => f.type == "input"),
+    const result = {
+      agreements: [],
+      que_output: [],
+      que_input: [],
+      file_output: [],
+      file_input: [],
     };
+
+    data.forEach((booking) => {
+      result.agreements.push(...booking.agreed_documents);
+      result.que_output.push(...booking.reports);
+      result.que_input.push(...booking.questionnaire_responses);
+      result.file_output.push(
+        ...booking.files.filter((f) => f.type === "output")
+      );
+      result.file_input.push(
+        ...booking.files.filter((f) => f.type === "input")
+      );
+    });
+
+    return result;
   };
 }
 
