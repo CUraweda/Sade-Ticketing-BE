@@ -2,7 +2,7 @@
   {
     "title": "Kuesioner Lingkungan Kehidupan",
     "footnote": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
-    "signers": "user",
+    "signers": "klien",
     "questions": {
       "create": [
         {
@@ -456,7 +456,7 @@
   {
     "title": "Kuesioner Orang Tua",
     "footnote": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
-    "signers": "user",
+    "signers": "klien",
     "questions": {
       "create": [
         {
@@ -1354,7 +1354,7 @@
   {
     "title": "Kuesioner Sensory Devensiveness",
     "footnote": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
-    "signers": "user",
+    "signers": "klien",
     "questions": {
       "create": [
         {
@@ -3902,7 +3902,7 @@
   },
   {
     "title": "Catatan Assessment",
-    "signers": "user",
+    "signers": "asesor,psikolog",
     "questions": {
       "create": [
         {
@@ -6730,7 +6730,7 @@
   },
   {
     "title": "Catatan Psikotest",
-    "signers": "user",
+    "signers": "psikolog",
     "questions": {
       "create": [
         {
@@ -6858,7 +6858,7 @@
   },
   {
     "title": "Laporan Terapi",
-    "signers": "user,client",
+    "signers": "terapis,klien",
     "questions": {
       "create": [
         {

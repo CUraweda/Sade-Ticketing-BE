@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const SignatureRole = {
   ORANG_TUA: "orang_tua",
-  PASIEN: "pasien",
+  KLIEN: "klien",
   PSI: "psikolog",
   ASR: "asesor",
   TRS: "terapis",
