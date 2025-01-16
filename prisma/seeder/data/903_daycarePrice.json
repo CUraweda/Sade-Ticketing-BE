@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Harian",
+    "invoice_cycle": "daily",
+    "price": 200000
+  },
+  {
+    "title": "Bulanan",
+    "invoice_cycle": "monthly",
+    "price": 800000
+  }
+]

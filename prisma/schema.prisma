@@ -874,16 +874,16 @@ model DaycareOperatingHours {
 
 model DaycareBooking {
   id        String  @id @default(uuid())
-  price_id  String
+  price_id  String?
   client_id String?
   user_id   String?
 
   status     String // draft, ongoing, completed
-  start_date DateTime
+  start_date DateTime?
   end_date   DateTime?
   note       String?
 
-  price         DaycarePrice            @relation(fields: [price_id], references: [id])
+  price         DaycarePrice?           @relation(fields: [price_id], references: [id])
   client        ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user          User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
   sitin_forms   QuestionnaireResponse[] @relation("DaycareBookingSitIn")
