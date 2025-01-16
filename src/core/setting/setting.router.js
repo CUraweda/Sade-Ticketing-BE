@@ -21,5 +21,18 @@ r.put(
   controller.setDaycareSitInQuestionnaires
 );
 
+r.get(
+  "/daycare-report-questionnaires",
+  authMiddleware(),
+  controller.getDaycareReportQuestionnaires
+);
+
+r.put(
+  "/daycare-report-questionnaires",
+  authMiddleware(["SDM"]),
+  validatorMiddleware({ body: validator.setDaycareReportForms }),
+  controller.setDaycareReportQuestionnaires
+);
+
 const settingRouter = r;
 export default settingRouter;

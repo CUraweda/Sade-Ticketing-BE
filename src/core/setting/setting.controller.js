@@ -36,6 +36,29 @@ class SettingController extends BaseController {
     );
     return this.ok(res);
   });
+
+  getDaycareReportQuestionnaires = this.wrapper(async (req, res) => {
+    let data = [];
+
+    const setting = await this.#service.getValue(
+      SettingKeys.DAYCARE_REPORT_QUESTIONNAIRE_IDS
+    );
+    if (setting)
+      data = await this.#questionnaireService.findAll({
+        paginate: false,
+        in_: `id:${setting.value}`,
+      });
+
+    return this.ok(res, data);
+  });
+
+  setDaycareReportQuestionnaires = this.wrapper(async (req, res) => {
+    await this.#service.setValue(
+      SettingKeys.DAYCARE_REPORT_QUESTIONNAIRE_IDS,
+      req.body.questionnaire_ids.join(",")
+    );
+    return this.ok(res);
+  });
 }
 
 export default SettingController;
