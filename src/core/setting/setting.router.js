@@ -34,5 +34,18 @@ r.put(
   controller.setDaycareReportQuestionnaires
 );
 
+r.get(
+  "/daycare-agree-documents",
+  authMiddleware(),
+  controller.getDaycareAgreeDocs
+);
+
+r.put(
+  "/daycare-agree-documents",
+  authMiddleware(["SDM"]),
+  validatorMiddleware({ body: validator.setDaycareAgreeDocs }),
+  controller.setDaycareAgreeDocs
+);
+
 const settingRouter = r;
 export default settingRouter;
