@@ -29,7 +29,7 @@ r.put(
   controller.update
 );
 
-r.delete("/delete/:id", controller.delete);
+r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const daycarebookingRouter = r;
 export default daycarebookingRouter;

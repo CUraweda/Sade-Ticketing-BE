@@ -1,7 +1,8 @@
 import BaseController from "../../base/controller.base.js";
-import { Forbidden, NotFound } from "../../lib/response/catch.js";
+import { BadRequest, Forbidden, NotFound } from "../../lib/response/catch.js";
 import clientService from "../client/client.service.js";
 import DaycareBookingService from "./daycarebooking.service.js";
+import { DaycareBookingStatus } from "./daycarebooking.validator.js";
 
 class DaycareBookingController extends BaseController {
   #service;
@@ -20,7 +21,7 @@ class DaycareBookingController extends BaseController {
 
   findById = this.wrapper(async (req, res) => {
     if (!this.isAdmin(req)) {
-      const check = this.#service.checkUser(req.params.id, req.user.id);
+      const check = await this.#service.checkUser(req.params.id, req.user.id);
       if (!check) throw new Forbidden();
     }
 
@@ -50,6 +51,15 @@ class DaycareBookingController extends BaseController {
   });
 
   delete = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req)) {
+      const check = await this.#service.checkUser(req.params.id, req.user.id);
+      if (!check) throw new Forbidden();
+    }
+
+    const prev = await this.#service.findById(req.params.id);
+    if (prev.status != DaycareBookingStatus.DRAFT)
+      throw new BadRequest("Reservasi sudah tidak bisa dibatalkan");
+
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "DaycareBooking berhasil dihapus");
   });

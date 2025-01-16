@@ -1,5 +1,6 @@
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
+import { BadRequest } from "../../lib/response/catch.js";
 import SettingService from "../setting/setting.service.js";
 import { SettingKeys } from "../setting/setting.validator.js";
 import { DaycareBookingStatus } from "./daycarebooking.validator.js";
@@ -14,7 +15,12 @@ class DaycareBookingService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.daycareBooking.findMany({ ...q });
+    const data = await this.db.daycareBooking.findMany({
+      ...q,
+      include: {
+        client: { select: { avatar: true, first_name: true, last_name: true } },
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.daycareBooking.count({ where: q.where });
@@ -30,12 +36,23 @@ class DaycareBookingService extends BaseService {
         sitin_forms: { select: { id: true } },
         agreements: true,
         invoices: true,
+        client: true,
+        price: true,
       },
     });
     return data;
   };
 
   create = async (payload) => {
+    const check = await this.db.daycareBooking.count({
+      where: {
+        client_id: payload.client_id,
+        status: { not: DaycareBookingStatus.COMPLETED },
+      },
+    });
+
+    if (check) throw new BadRequest("Anak sudah memiliki reservasi aktif");
+
     const sitInForms = await this.#settingService.getValue(
       SettingKeys.DAYCARE_SITIN_QUESTIONNAIRE_IDS
     );
@@ -63,8 +80,6 @@ class DaycareBookingService extends BaseService {
                 .map((docId) => ({ document_id: docId })) ?? [],
           },
         },
-        client: true,
-        price: true,
       },
     });
     return data;

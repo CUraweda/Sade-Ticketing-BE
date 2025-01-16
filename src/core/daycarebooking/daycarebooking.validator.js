@@ -10,6 +10,7 @@ export const DaycareBookingStatus = {
 export const DaycareBookingValidator = {
   create: Joi.object({
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
+    note: Joi.string().max(150).optional(),
   }),
   update: Joi.object({
     // no-data
