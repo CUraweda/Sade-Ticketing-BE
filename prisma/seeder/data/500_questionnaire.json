@@ -1,6 +1,8 @@
 [
   {
-    "title": "Lingkungan Kehidupan",
+    "title": "Kuesioner Lingkungan Kehidupan",
+    "footnote": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
+    "signers": "klien",
     "questions": {
       "create": [
         {
@@ -452,8 +454,9 @@
     }
   },
   {
-    "title": "Orang Tua Klinik Liliput Binar Depok",
-    "description": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
+    "title": "Kuesioner Orang Tua",
+    "footnote": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
+    "signers": "klien",
     "questions": {
       "create": [
         {
@@ -1349,8 +1352,9 @@
     }
   },
   {
-    "title": "Sensory Devensiveness",
-    "description": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
+    "title": "Kuesioner Sensory Devensiveness",
+    "footnote": "Dengan ini menyatakan bahwa data yang diisi adalah yang sebenarnya sesuai kondisi saat ini: <strong>Saya setuju</strong>",
+    "signers": "klien",
     "questions": {
       "create": [
         {
@@ -3438,7 +3442,7 @@
   {
     "title": "Hasil Pemeriksaan Psikologis",
     "signers": "psikolog,terapis,asesor",
-    "description": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)<br><br><strong>Keterangan:</strong> 1 – 2 = kurang 3 – 4 – 5 = cukup 6 – 7 = baik",
+    "footnote": "<strong>Penjelasan IQ:</strong><br> ≤ 90: Di bawah rata-rata<br> 91,5 hingga 110: Rata-rata<br> 111 hingga 119: Di atas rata-rata<br> 120 hingga 127: Superior (Cerdas)<br> ≥ 128: Sangat Superior (Sangat Cerdas)<br><br><strong>Keterangan:</strong> 1 – 2 = kurang 3 – 4 – 5 = cukup 6 – 7 = baik",
     "questions": {
       "create": [
         {
@@ -3897,7 +3901,8 @@
     }
   },
   {
-    "title": "Lembar Jawaban Tes Informal",
+    "title": "Catatan Assessment",
+    "signers": "asesor,psikolog",
     "questions": {
       "create": [
         {
@@ -3934,7 +3939,7 @@
         },
         {
           "code": "q-lk-5-4",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Konsep dasar berhitung",
           "name": "basic_counting_concepts",
           "typ": "textarea",
@@ -3942,7 +3947,7 @@
         },
         {
           "code": "q-lk-5-5",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Pemahaman bahasa (nama benda, fungsi, preposisi, pengecualian, pengelompokan)",
           "name": "language_comprehension",
           "typ": "textarea",
@@ -3950,7 +3955,7 @@
         },
         {
           "code": "q-lk-5-6",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Membuat kalimat",
           "name": "sentence_construction",
           "typ": "textarea",
@@ -3958,7 +3963,7 @@
         },
         {
           "code": "q-lk-5-7",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Daya ingat",
           "name": "memory",
           "typ": "textarea",
@@ -3966,7 +3971,7 @@
         },
         {
           "code": "q-lk-5-8",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Motorik halus (pola pegang, mengkopi bentuk, menulis)",
           "name": "fine_motor_skills",
           "typ": "textarea",
@@ -3974,7 +3979,7 @@
         },
         {
           "code": "q-lk-5-9",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Motorik kasar",
           "name": "gross_motor_skills",
           "typ": "textarea",
@@ -3982,7 +3987,7 @@
         },
         {
           "code": "q-lk-5-10",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Konsep perbandingan dan urutan",
           "name": "comparison_concepts",
           "typ": "textarea",
@@ -3990,7 +3995,7 @@
         },
         {
           "code": "q-lk-5-11",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Membaca (pengenalan alfabet, kemampuan membaca serta membangkai bunyinya)",
           "name": "reading_skills",
           "typ": "textarea",
@@ -3998,7 +4003,7 @@
         },
         {
           "code": "q-lk-5-12",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Ketelitian",
           "name": "attention_to_detail",
           "typ": "textarea",
@@ -4006,7 +4011,7 @@
         },
         {
           "code": "q-lk-5-13",
-          "section": "Aspek",
+          "section": "Tes Informal",
           "label": "Ketekunan",
           "name": "perseverance",
           "typ": "textarea",
@@ -4014,7 +4019,7 @@
         },
         {
           "code": "q-lk-5-16",
-          "section": "Evaluasi",
+          "section": "Catatan Asesmen / Evaluasi",
           "label": "Catatan",
           "name": "evaluation_note",
           "typ": "wysiwyg",
@@ -6719,6 +6724,246 @@
               { "label": "Dari teman atau keluarga", "value": "friend_family" }
             ]
           }
+        }
+      ]
+    }
+  },
+  {
+    "title": "Catatan Psikotest",
+    "signers": "psikolog",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-17-0",
+          "section": "Personal Info",
+          "label": "Nama depan",
+          "name": "first_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-1",
+          "section": "Personal Info",
+          "label": "Nama belakang",
+          "name": "last_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-2",
+          "section": "Personal Info",
+          "label": "Tanggal Lahir",
+          "name": "dob",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-3",
+          "section": "Info",
+          "label": "Tanggal Psikotest / Evaluasi",
+          "name": "evaluation_date",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-4",
+          "section": "Tes Informal",
+          "label": "Konsep dasar berhitung",
+          "name": "basic_counting_concepts",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-5",
+          "section": "Tes Informal",
+          "label": "Pemahaman bahasa (nama benda, fungsi, preposisi, pengecualian, pengelompokan)",
+          "name": "language_comprehension",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-6",
+          "section": "Tes Informal",
+          "label": "Membuat kalimat",
+          "name": "sentence_construction",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-7",
+          "section": "Tes Informal",
+          "label": "Daya ingat",
+          "name": "memory",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-8",
+          "section": "Tes Informal",
+          "label": "Motorik halus (pola pegang, mengkopi bentuk, menulis)",
+          "name": "fine_motor_skills",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-9",
+          "section": "Tes Informal",
+          "label": "Motorik kasar",
+          "name": "gross_motor_skills",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-10",
+          "section": "Tes Informal",
+          "label": "Konsep perbandingan dan urutan",
+          "name": "comparison_concepts",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-11",
+          "section": "Tes Informal",
+          "label": "Membaca (pengenalan alfabet, kemampuan membaca serta membangkai bunyinya)",
+          "name": "reading_skills",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-12",
+          "section": "Tes Informal",
+          "label": "Ketelitian",
+          "name": "attention_to_detail",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-13",
+          "section": "Tes Informal",
+          "label": "Ketekunan",
+          "name": "perseverance",
+          "typ": "textarea",
+          "required": true
+        },
+        {
+          "code": "q-lk-17-16",
+          "section": "Catatan Psikotes",
+          "label": "Catatan",
+          "name": "evaluation_note",
+          "typ": "wysiwyg",
+          "required": true
+        }
+      ]
+    }
+  },
+  {
+    "title": "Laporan Terapi",
+    "signers": "terapis,klien",
+    "questions": {
+      "create": [
+        {
+          "code": "q-lk-18-0",
+          "section": "Personal Info",
+          "label": "Nama depan",
+          "name": "first_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-1",
+          "section": "Personal Info",
+          "label": "Nama belakang",
+          "name": "last_name",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-2",
+          "section": "Personal Info",
+          "label": "Tanggal lahir",
+          "name": "dob",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-3",
+          "section": "Personal Info",
+          "label": "Nomor anggota",
+          "name": "member_no",
+          "typ": "text",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-4",
+          "section": "Info",
+          "label": "Terapi ke",
+          "name": "therapy_count",
+          "typ": "number",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-5",
+          "section": "Info",
+          "label": "Tanggal laporan",
+          "name": "report_date",
+          "typ": "date",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-6",
+          "section": "Info",
+          "label": "Kategori terapi",
+          "name": "therapy_type",
+          "typ": "checkbox",
+          "required": true,
+          "options": {
+            "create": [
+              {
+                "label": "TW",
+                "value": "tw"
+              },
+              {
+                "label": "OT",
+                "value": "ot"
+              },
+              {
+                "label": "SI",
+                "value": "si"
+              },
+              {
+                "label": "OP",
+                "value": "op"
+              },
+              {
+                "label": "FT",
+                "value": "ft"
+              }
+            ]
+          }
+        },
+        {
+          "code": "q-lk-18-7",
+          "section": "Laporan",
+          "label": "Yang dilakukan terapis",
+          "name": "doctor_does",
+          "typ": "wysiwyg",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-8",
+          "section": "Laporan",
+          "label": "Catatan untuk orang tua",
+          "name": "note_for_parent",
+          "typ": "wysiwyg",
+          "required": true
+        },
+        {
+          "code": "q-lk-18-9",
+          "section": "Laporan",
+          "label": "Yang perlu dilaporkan orang tua selama anak di rumah",
+          "name": "parent_reports_at_home",
+          "typ": "wysiwyg",
+          "required": true
         }
       ]
     }

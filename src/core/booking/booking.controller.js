@@ -174,6 +174,55 @@ class BookingController extends BaseController {
     const data = await this.#service.getCurrentSchedule(req.params.id);
     return this.ok(res, data, "Jadwal terkini berhasil didapatkan");
   });
+
+  setFile = this.wrapper(async (req, res) => {
+    if (!req.file) throw new BadRequest("Mohon unggah file PDF");
+
+    if (!this.isAdmin(req) && !this.isDoctor(req))
+      await this.#service.checkBookingOwner(req.params.id, req.user.id);
+
+    const prev = await this.#service.getFile(
+      req.params.id,
+      parseInt(req.params.file_id)
+    );
+    if (!prev) throw new NotFound();
+    if (prev.path) this.deleteFileByPath(prev.path);
+
+    const data = await this.#service.updateFile(
+      req.params.id,
+      parseInt(req.params.file_id),
+      req.file.path
+    );
+    return this.ok(res, data, "Berhasil memperbarui file");
+  });
+
+  downloadFile = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req) && !this.isDoctor(req))
+      await this.#service.checkBookingOwner(req.params.id, req.user.id);
+
+    const file = await this.#service.getFile(
+      req.params.id,
+      parseInt(req.params.file_id)
+    );
+    if (!file?.path) throw new NotFound();
+
+    return res.download(file.path, (err) => {
+      if (err) {
+        console.error("Error sending file:", err);
+        return this.serverError(res, "Gagal mendownload file");
+      }
+    });
+  });
+
+  getDocuments = this.wrapper(async (req, res) => {
+    const ids = req.params.id.split("+");
+    if (!this.isAdmin(req) && !this.isDoctor(req))
+      for (let id of ids)
+        await this.#service.checkBookingOwner(id, req.user.id);
+
+    const data = await this.#service.getDocuments(ids);
+    return this.ok(res, data, "Berhasil mendapatkan dokumen-dokumen reservasi");
+  });
 }
 
 export default BookingController;

@@ -85,6 +85,19 @@ class ServiceController extends BaseController {
       "Doctor layanan yang tersedia berhasil didapatkan"
     );
   });
+
+  addFile = this.wrapper(async (req, res) => {
+    const result = await this.#service.addFile(req.params.id, req.body);
+    return this.ok(res, result, "Berhasil menambahkan file");
+  });
+
+  removeFile = this.wrapper(async (req, res) => {
+    const result = await this.#service.removeFile(
+      req.params.id,
+      parseInt(req.params.file_id)
+    );
+    return this.ok(res, result, "Berhasil menghapus file");
+  });
 }
 
 export default ServiceController;

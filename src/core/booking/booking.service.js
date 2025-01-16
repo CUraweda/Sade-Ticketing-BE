@@ -53,8 +53,10 @@ class BookingService extends BaseService {
             reports: true,
             schedules: true,
             service_recommendations: true,
+            files: true,
           },
         },
+        files: true,
         service: {
           select: { fees: true },
         },
@@ -78,27 +80,12 @@ class BookingService extends BaseService {
                 service_data: true,
               },
             },
-            invoices: {
-              include: {
-                invoice: true,
-              },
-            },
             schedule: {
               select: {
                 start_date: true,
                 end_date: true,
                 service: {
                   select: { title: true, category: true },
-                },
-                repeat: true,
-                title: true,
-                doctors: {
-                  select: {
-                    category: true,
-                    first_name: true,
-                    last_name: true,
-                    avatar: true,
-                  },
                 },
               },
             },
@@ -124,9 +111,10 @@ class BookingService extends BaseService {
         price_unit: true,
         questionnaires: true,
         agrement_documents: true,
+        files: true,
       },
     });
-    const { agrement_documents, questionnaires, ...rest } = service;
+    const { files, agrement_documents, questionnaires, ...rest } = service;
 
     const data = await this.db.booking.create({
       data: {
@@ -135,6 +123,12 @@ class BookingService extends BaseService {
         service_data: JSON.stringify(rest) ?? "",
         status: BookingStatus.DRAFT,
         title: `${rest.category?.name ?? ""} - ${rest.title}`,
+        files: {
+          create: files?.map((f) => ({
+            title: f.title,
+            type: f.type,
+          })),
+        },
         questionnaire_responses: {
           create: questionnaires?.map((que) => ({
             user_id: payload.user_id,
@@ -425,6 +419,57 @@ class BookingService extends BaseService {
       used: booking._count.schedules,
       remaining: booking.quantity - booking._count.schedules,
     };
+  };
+
+  getFile = (id, fileId) =>
+    this.db.bookingFile.findFirst({
+      where: { id: fileId, booking_id: id },
+    });
+
+  updateFile = (id, fileId, filePath) =>
+    this.db.bookingFile.update({
+      where: { id: fileId, booking_id: id },
+      data: { path: filePath },
+    });
+
+  getDocuments = async (ids = []) => {
+    const data = await this.db.booking.findMany({
+      where: { id: { in: ids } },
+      select: {
+        agreed_documents: {
+          include: { document: { select: { title: true } } },
+        },
+        reports: {
+          include: { questionnaire: { select: { title: true } } },
+        },
+        questionnaire_responses: {
+          include: { questionnaire: { select: { title: true } } },
+        },
+        files: true,
+      },
+    });
+
+    const result = {
+      agreements: [],
+      que_output: [],
+      que_input: [],
+      file_output: [],
+      file_input: [],
+    };
+
+    data.forEach((booking) => {
+      result.agreements.push(...booking.agreed_documents);
+      result.que_output.push(...booking.reports);
+      result.que_input.push(...booking.questionnaire_responses);
+      result.file_output.push(
+        ...booking.files.filter((f) => f.type === "output")
+      );
+      result.file_input.push(
+        ...booking.files.filter((f) => f.type === "input")
+      );
+    });
+
+    return result;
   };
 }
 

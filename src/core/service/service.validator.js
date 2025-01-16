@@ -61,6 +61,10 @@ export const ServiceValidator = {
     document_id: Joi.string().external(relationExist("document")).required(),
     set: Joi.string().valid("add", "remove"),
   }),
+  addFile: Joi.object({
+    title: Joi.string().max(50).required(),
+    type: Joi.string().valid("input", "output").required(),
+  }),
 };
 
 export default ServiceValidator;
