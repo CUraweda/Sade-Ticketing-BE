@@ -33,6 +33,7 @@ model User {
   chats                   Chat[]
   chat_reads              ChatRead[]
   signatures              Signature[]
+  daycare_bookings        DaycareBooking[]
 }
 
 model UserRole {
@@ -302,6 +303,7 @@ model ClientProfile {
   schedules               ScheduleAttendee[]
   daycare_journals        DaycareJournal[]
   client_privileges       ClientPrivilege[]
+  daycare_bookings        DaycareBooking[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -362,13 +364,15 @@ model QuestionnaireResponse {
   note      String?
   is_locked Boolean @default(false)
 
-  user           User?                            @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  client         ClientProfile?                   @relation(fields: [client_id], references: [id], onDelete: SetNull)
-  questionnaire  Questionnaire?                   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
-  booking        Booking?                         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
-  booking_report Booking?                         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
-  answers        QuestionAnswer[]
-  signatures     QuestionnaireResponseSignature[]
+  user            User?                            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  client          ClientProfile?                   @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  questionnaire   Questionnaire?                   @relation(fields: [questionnaire_id], references: [id], onDelete: SetNull)
+  booking         Booking?                         @relation(name: "BookingQuestionnaires", fields: [booking_id], references: [id], onDelete: Cascade)
+  booking_report  Booking?                         @relation(name: "BookingReports", fields: [booking_report_id], references: [id], onDelete: Cascade)
+  answers         QuestionAnswer[]
+  signatures      QuestionnaireResponseSignature[]
+  daycare_sitins  DaycareBooking[]                 @relation("DaycareBookingSitIn")
+  daycare_reports DaycareBooking[]                 @relation("DaycareBookingReport")
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -550,12 +554,13 @@ model Invoice {
   paid_date   DateTime?
   note        String?
 
-  bank_account BankAccount?  @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
-  user         User?         @relation(fields: [user_id], references: [id], onDelete: SetNull)
-  payment      Payments?     @relation(fields: [payment_id], references: [id], onDelete: SetNull)
-  bookings     Booking[]
-  fees         InvoiceFee[]
-  items        InvoiceItem[]
+  bank_account     BankAccount?     @relation(fields: [bank_account_id], references: [id], onDelete: SetNull)
+  user             User?            @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  payment          Payments?        @relation(fields: [payment_id], references: [id], onDelete: SetNull)
+  bookings         Booking[]
+  fees             InvoiceFee[]
+  items            InvoiceItem[]
+  daycare_bookings DaycareBooking[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -728,8 +733,9 @@ model Document {
   title   String @unique
   content String @db.LongText
 
-  services          Service[]
-  booking_agreement BookingAgreedDocuments[]
+  services           Service[]
+  booking_agreement  BookingAgreedDocuments[]
+  daycare_agreements DaycareAgreement[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -808,4 +814,154 @@ model ChatRead {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([chat_id, user_id])
+}
+
+// KEY VALUE GENERAL SETTING
+model Setting {
+  id String @id @default(uuid())
+
+  key   String
+  value String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+// DAYCARE 
+model DaycarePrice {
+  id String @id @default(uuid())
+
+  title         String
+  description   String?
+  price         Float
+  invoice_cycle String // daily, monthly
+  is_available  Boolean @default(true)
+
+  bookings DaycareBooking[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@unique([price, invoice_cycle])
+}
+
+model DaycareAdditional {
+  id String @id @default(uuid())
+
+  title        String
+  description  String?
+  price        Float
+  is_available Boolean @default(true)
+
+  activities DaycareActivity[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model DaycareOperatingHours {
+  id Int @id @default(autoincrement())
+
+  day        String
+  start_time String?
+  end_time   String?
+  is_open    Boolean @default(false)
+  note       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DaycareBooking {
+  id        String  @id @default(uuid())
+  price_id  String
+  client_id String?
+  user_id   String?
+
+  status     String // draft, ongoing, completed
+  start_date DateTime
+  end_date   DateTime?
+  note       String?
+
+  price         DaycarePrice            @relation(fields: [price_id], references: [id])
+  client        ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  user          User?                   @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  sitin_forms   QuestionnaireResponse[] @relation("DaycareBookingSitIn")
+  reports       QuestionnaireResponse[] @relation("DaycareBookingReport")
+  agreements    DaycareAgreement[]
+  invoices      Invoice[]
+  short_reports DaycareShortReport[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model DaycareAgreement {
+  document_id String
+  booking_id  String
+
+  is_agree Boolean @default(false)
+
+  document Document       @relation(fields: [document_id], references: [id], onDelete: Cascade)
+  booking  DaycareBooking @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+
+  @@id([document_id, booking_id])
+}
+
+model DaycareShortReport {
+  id         Int    @id @default(autoincrement())
+  booking_id String
+
+  cycle  String // daily, monthly, yearly
+  weight Float?
+  height Float?
+
+  booking DaycareBooking @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model DaycareLinkBook {
+  id         String @id @default(uuid())
+  booking_id String
+
+  date        DateTime
+  status      String // present, sick, permitted, absent
+  status_note String?
+
+  bed_time       DateTime?
+  wakeup_time    DateTime?
+  is_poop        Boolean?
+  body_temp      Float?
+  breakfast_menu String?
+  parent_note    String?   @db.LongText
+
+  morning_snack         String?
+  noon_snack            String?
+  afternoon_snack       String?
+  is_sleep_soundly      Boolean?
+  poop_count            Int?
+  fav_activity          String?
+  daily_progress_report String?  @db.LongText
+  facilitator_note      String?  @db.LongText
+  today_feeling         String?
+
+  activities DaycareActivity[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model DaycareActivity {
+  id            String  @id @default(uuid())
+  linkbook_id   String
+  additional_id String?
+
+  date        DateTime
+  title       String
+  description String?
+
+  linkbook   DaycareLinkBook    @relation(fields: [linkbook_id], references: [id], onDelete: Cascade)
+  additional DaycareAdditional? @relation(fields: [additional_id], references: [id], onDelete: SetNull)
 }
