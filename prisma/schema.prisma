@@ -882,6 +882,7 @@ model DaycareBooking {
   start_date DateTime?
   end_date   DateTime?
   note       String?
+  is_locked  Boolean   @default(false)
 
   price         DaycarePrice?           @relation(fields: [price_id], references: [id])
   client        ClientProfile?          @relation(fields: [client_id], references: [id], onDelete: SetNull)

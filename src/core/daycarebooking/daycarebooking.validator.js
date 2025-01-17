@@ -13,7 +13,10 @@ export const DaycareBookingValidator = {
     note: Joi.string().max(150).optional(),
   }),
   update: Joi.object({
-    // no-data
+    price_id: Joi.string().external(relationExist("daycarePrice")).optional(),
+    start_date: Joi.date().optional(),
+    end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
+    note: Joi.string().max(150).optional(),
   }),
   updateAgreeDoc: Joi.object({
     document_id: Joi.string().external(relationExist("document")).required(),

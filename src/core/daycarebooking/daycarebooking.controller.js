@@ -46,6 +46,15 @@ class DaycareBookingController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
+    const prev = await this.#service.findById(req.params.id);
+
+    if (!this.isAdmin(req)) {
+      const check = await this.#service.checkUser(req.params.id, req.user.id);
+      if (!check) throw new Forbidden();
+
+      if (prev.is_locked) throw new Forbidden("Reservasi sudah dikunci");
+    }
+
     const data = await this.#service.update(req.params.id, req.body);
     return this.ok(res, data, "DaycareBooking berhasil diperbarui");
   });
