@@ -29,6 +29,13 @@ r.put(
   controller.update
 );
 
+r.put(
+  "/update-agree-doc/:id",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.updateAgreeDoc }),
+  controller.updateAgreeDoc
+);
+
 r.delete("/delete/:id", authMiddleware(), controller.delete);
 
 const daycarebookingRouter = r;

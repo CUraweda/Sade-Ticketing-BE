@@ -107,6 +107,21 @@ class DaycareBookingService extends BaseService {
 
   checkUser = (id, userId) =>
     this.db.daycareBooking.count({ where: { id, user_id: userId } });
+
+  updateAgreeDoc = (id, docId, payload) =>
+    this.db.daycareBooking.update({
+      where: { id },
+      data: {
+        agreements: {
+          update: {
+            where: {
+              document_id_booking_id: { booking_id: id, document_id: docId },
+            },
+            data: payload,
+          },
+        },
+      },
+    });
 }
 
 export default DaycareBookingService;

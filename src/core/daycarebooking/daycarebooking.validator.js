@@ -15,6 +15,10 @@ export const DaycareBookingValidator = {
   update: Joi.object({
     // no-data
   }),
+  updateAgreeDoc: Joi.object({
+    document_id: Joi.string().external(relationExist("document")).required(),
+    is_agree: Joi.bool().required(),
+  }),
 };
 
 export default DaycareBookingValidator;

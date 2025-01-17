@@ -63,6 +63,18 @@ class DaycareBookingController extends BaseController {
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "DaycareBooking berhasil dihapus");
   });
+
+  updateAgreeDoc = this.wrapper(async (req, res) => {
+    if (!this.isAdmin(req)) {
+      const check = await this.#service.checkUser(req.params.id, req.user.id);
+      if (!check) throw new Forbidden();
+    }
+
+    const { document_id, ...payload } = req.body;
+    await this.#service.updateAgreeDoc(req.params.id, document_id, payload);
+
+    return this.ok(res, null, "Berhasil memperbarui dokumen persetujuan");
+  });
 }
 
 export default DaycareBookingController;
