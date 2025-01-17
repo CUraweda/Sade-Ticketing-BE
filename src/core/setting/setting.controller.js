@@ -91,6 +91,23 @@ class SettingController extends BaseController {
     );
     return this.ok(res);
   });
+
+  getDaycareSitInCost = this.wrapper(async (req, res) => {
+    let price = 0;
+    const setting = await this.#service.getValue(
+      SettingKeys.DAYCARE_SITIN_COST
+    );
+    if (setting?.value) price = parseFloat(setting.value);
+    return this.ok(res, price);
+  });
+
+  setDaycareSitInCost = this.wrapper(async (req, res) => {
+    await this.#service.setValue(
+      SettingKeys.DAYCARE_SITIN_COST,
+      req.body.price.toString()
+    );
+    return this.ok(res);
+  });
 }
 
 export default SettingController;
