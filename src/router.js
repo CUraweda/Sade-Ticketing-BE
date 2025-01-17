@@ -38,6 +38,7 @@ import scheduleattendeeRouter from "./core/scheduleattendee/scheduleattendee.rou
 import servicefeeRouter from "./core/servicefee/servicefee.router.js";
 import settingRouter from "./core/setting/setting.router.js";
 import daycarebookingRouter from "./core/daycarebooking/daycarebooking.router.js";
+import daycarepriceRouter from "./core/daycareprice/daycareprice.router.js";
 
 const r = Router();
 
@@ -80,6 +81,7 @@ r.use("/schedule-attendee", scheduleattendeeRouter);
 r.use("/service-fee", servicefeeRouter);
 r.use("/setting", settingRouter);
 r.use("/daycare-booking", daycarebookingRouter);
+r.use("/daycare-price", daycarepriceRouter);
 
 const appRouter = r;
 export default appRouter;
