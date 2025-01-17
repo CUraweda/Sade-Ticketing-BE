@@ -11,15 +11,21 @@ import fs from "fs";
 import ScheduleService from "../schedule/schedule.service.js";
 import SettingService from "../setting/setting.service.js";
 import { SettingKeys } from "../setting/setting.validator.js";
+import { DaycareBookingStatus } from "../daycarebooking/daycarebooking.validator.js";
+import { InvoiceStatus } from "./invoice.validator.js";
+import FeeService from "../fee/fee.service.js";
+import { TimeCycle } from "../../base/validator.base.js";
 
 class InvoiceService extends BaseService {
   #scheduleService;
   #settingService;
+  #feeService;
 
   constructor() {
     super(prism);
     this.#scheduleService = new ScheduleService();
     this.#settingService = new SettingService();
+    this.#feeService = new FeeService();
   }
 
   findAll = async (query) => {
@@ -214,6 +220,7 @@ class InvoiceService extends BaseService {
       include: {
         invoices: true,
         sitin_forms: true,
+        price: true,
       },
     });
 
@@ -222,11 +229,26 @@ class InvoiceService extends BaseService {
         SettingKeys.DAYCARE_SITIN_COST
       );
       dcBookings.forEach((b) => {
+        // first billing for monthly
+        if (
+          b.invoices.length &&
+          b.status == DaycareBookingStatus.DRAFT &&
+          b.price &&
+          b.price.invoice_cycle == TimeCycle.MONTHLY
+        )
+          items.push({
+            dates: `${moment().toDate()}`,
+            name: `${b.price.title} Daycare ${moment().locale("id").format("MMMM")}`,
+            quantity: 1,
+            price: b.price.price,
+          });
+
         if (
           !b.invoices.length &&
           b.sitin_forms.every((sf) => sf.is_locked) &&
           sitIn
         )
+          // sit in
           items.push({
             dates: `${moment().toDate()}`,
             name: "Biaya Sit In Daycare",
@@ -244,7 +266,11 @@ class InvoiceService extends BaseService {
     return { items, total };
   };
 
-  generateFees = async (userId, bookingIds = []) => {
+  generateFees = async (
+    userId,
+    bookingIds = [],
+    { daycareBookingIds } = {}
+  ) => {
     const items = [];
 
     // collect any entry fees from bookings
@@ -290,6 +316,48 @@ class InvoiceService extends BaseService {
             })
           );
     });
+
+    // collect any fee able from daycare bookings
+    const dcBookings = await this.db.daycareBooking.findMany({
+      where: {
+        ...(daycareBookingIds.length && { id: { in: daycareBookingIds } }),
+        user_id: userId,
+      },
+      include: {
+        invoices: true,
+        sitin_forms: true,
+      },
+    });
+
+    if (dcBookings) {
+      const entryFeeIds = await this.#settingService.getValue(
+        SettingKeys.DAYCARE_ENTRY_FEES
+      );
+      const entryFees = entryFeeIds
+        ? await this.#feeService.findAll({
+            paginate: false,
+            in_: `id:${entryFeeIds.value}`,
+          })
+        : [];
+
+      dcBookings.forEach((b) => {
+        // daycare entry fee
+        if (
+          b.status == DaycareBookingStatus.DRAFT &&
+          b.invoices.length > 0 &&
+          b.invoices.every((i) => i.status == InvoiceStatus.PAID) &&
+          entryFees.length
+        )
+          entryFees.forEach((ef) =>
+            items.push({
+              fee_id: ef.id,
+              name: ef.title,
+              quantity: 1,
+              price: ef.price,
+            })
+          );
+      });
+    }
 
     const total = {
       quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),

@@ -76,7 +76,9 @@ class InvoiceController extends BaseController {
     data["items_total"] = items.total;
 
     // fees, additional
-    const fees = await this.#service.generateFees(req.user.id, booking_ids);
+    const fees = await this.#service.generateFees(req.user.id, booking_ids, {
+      daycareBookingIds: daycare_booking_ids,
+    });
     data["fees"] = fees.items;
     data["fees_total"] = fees.total;
 
@@ -109,7 +111,9 @@ class InvoiceController extends BaseController {
     payload["items"] = items.items;
 
     // fees, additional
-    const fees = await this.#service.generateFees(req.user.id, booking_ids);
+    const fees = await this.#service.generateFees(req.user.id, booking_ids, {
+      daycareBookingIds: daycare_booking_ids,
+    });
     payload["fees"] = fees.items;
 
     // accumulation
