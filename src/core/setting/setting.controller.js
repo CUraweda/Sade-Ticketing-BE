@@ -2,6 +2,7 @@ import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
 import { filterDuplicate } from "../../utils/array.js";
 import DocumentService from "../document/document.service.js";
+import FeeService from "../fee/fee.service.js";
 import QuestionnaireService from "../questionnaire/questionnaire.service.js";
 import SettingService from "./setting.service.js";
 import { SettingKeys } from "./setting.validator.js";
@@ -10,12 +11,14 @@ class SettingController extends BaseController {
   #service;
   #questionnaireService;
   #documentService;
+  #feeService;
 
   constructor() {
     super();
     this.#service = new SettingService();
     this.#questionnaireService = new QuestionnaireService();
     this.#documentService = new DocumentService();
+    this.#feeService = new FeeService();
   }
 
   getDaycareSitInQuestionnaires = this.wrapper(async (req, res) => {
@@ -106,6 +109,28 @@ class SettingController extends BaseController {
       SettingKeys.DAYCARE_SITIN_COST,
       req.body.price.toString()
     );
+    return this.ok(res);
+  });
+
+  getDaycareEntryFees = this.wrapper(async (req, res) => {
+    let data = [];
+
+    const setting = await this.#service.getValue(
+      SettingKeys.DAYCARE_ENTRY_FEES
+    );
+    if (setting)
+      data = await this.#feeService.findAll({
+        paginate: false,
+        in_: `id:${setting.value}`,
+      });
+
+    return this.ok(res, data);
+  });
+
+  setDaycareEntryFees = this.wrapper(async (req, res) => {
+    const ids = filterDuplicate(req.body.fee_ids);
+
+    await this.#service.setValue(SettingKeys.DAYCARE_ENTRY_FEES, ids.join(","));
     return this.ok(res);
   });
 }

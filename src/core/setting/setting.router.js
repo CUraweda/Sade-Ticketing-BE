@@ -56,5 +56,14 @@ r.put(
   controller.setDaycareSitInCost
 );
 
+r.get("/daycare-entry-fees", authMiddleware(), controller.getDaycareEntryFees);
+
+r.put(
+  "/daycare-entry-fees",
+  authMiddleware(),
+  validatorMiddleware({ body: validator.setDaycareEntryFees }),
+  controller.setDaycareEntryFees
+);
+
 const settingRouter = r;
 export default settingRouter;

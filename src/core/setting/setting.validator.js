@@ -6,6 +6,7 @@ export const SettingKeys = {
   DAYCARE_REPORT_QUESTIONNAIRE_IDS: "daycare-report-questionnaire-ids",
   DAYCARE_AGREE_DOC_IDS: "daycare-agree-doc-ids",
   DAYCARE_SITIN_COST: "daycare-sitin-cost",
+  DAYCARE_ENTRY_FEES: "daycare-entry-fees",
 };
 
 export const SettingValidator = {
@@ -26,6 +27,11 @@ export const SettingValidator = {
   }),
   setDaycareSitInCost: Joi.object({
     price: Joi.number().required(),
+  }),
+  setDaycareEntryFees: Joi.object({
+    fee_ids: Joi.array()
+      .items(Joi.number().external(relationExist("fee")))
+      .required(),
   }),
 };
 

@@ -108,15 +108,23 @@ class BaseService {
         let current = in_;
         keys.forEach((key, index) => {
           if (index === keys.length - 1) {
+            const vals = val.split(",").map((v) => {
+              if (isInteger(v)) {
+                v = parseInt(v);
+              } else if (isBoolean(v)) {
+                v = v === "true";
+              }
+              return v;
+            });
             if (keys[keys.length - 2]?.endsWith("s")) {
               current["some"] = {
                 [key]: {
-                  in: val.split(","),
+                  in: vals,
                 },
               };
             } else {
               current[key] = {
-                in: val.split(","),
+                in: vals,
               };
             }
           } else {
