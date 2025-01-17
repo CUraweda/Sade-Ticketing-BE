@@ -892,6 +892,7 @@ model DaycareBooking {
   agreements    DaycareAgreement[]
   invoices      Invoice[]
   short_reports DaycareShortReport[]
+  link_books    DaycareLinkBook[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
@@ -948,10 +949,13 @@ model DaycareLinkBook {
   facilitator_note      String?  @db.LongText
   today_feeling         String?
 
+  booking    DaycareBooking    @relation(fields: [booking_id], references: [id], onDelete: Cascade)
   activities DaycareActivity[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+
+  @@unique([booking_id, date])
 }
 
 model DaycareActivity {

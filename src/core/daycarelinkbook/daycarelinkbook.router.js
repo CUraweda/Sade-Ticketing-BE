@@ -1,12 +1,12 @@
 import { Router } from "express";
 import validatorMiddleware from "../../middlewares/validator.middleware.js";
-import DaycareBookingController from "./daycarebooking.controller.js";
-import DaycareBookingValidator from "./daycarebooking.validator.js";
+import DaycareLinkBookController from "./daycarelinkbook.controller.js";
+import DaycareLinkBookValidator from "./daycarelinkbook.validator.js";
 import { baseValidator } from "../../base/validator.base.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 const r = Router(),
-  validator = DaycareBookingValidator,
-  controller = new DaycareBookingController();
+  validator = DaycareLinkBookValidator,
+  controller = new DaycareLinkBookController();
 
 r.get(
   "/show-all",
@@ -19,26 +19,18 @@ r.get("/show-one/:id", authMiddleware(), controller.findById);
 
 r.post(
   "/create",
-  authMiddleware(["USR"]),
+  authMiddleware(),
   validatorMiddleware({ body: validator.create }),
   controller.create
 );
 
 r.put(
   "/update/:id",
-  authMiddleware(),
   validatorMiddleware({ body: validator.update }),
   controller.update
 );
 
-r.put(
-  "/update-agree-doc/:id",
-  authMiddleware(),
-  validatorMiddleware({ body: validator.updateAgreeDoc }),
-  controller.updateAgreeDoc
-);
+r.delete("/delete/:id", controller.delete);
 
-r.delete("/delete/:id", authMiddleware(), controller.delete);
-
-const daycarebookingRouter = r;
-export default daycarebookingRouter;
+const daycarelinkbookRouter = r;
+export default daycarelinkbookRouter;

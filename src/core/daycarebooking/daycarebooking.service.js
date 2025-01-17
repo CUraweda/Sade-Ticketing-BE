@@ -1,3 +1,4 @@
+import moment from "moment";
 import BaseService from "../../base/service.base.js";
 import { prism } from "../../config/db.js";
 import { BadRequest } from "../../lib/response/catch.js";
@@ -122,6 +123,16 @@ class DaycareBookingService extends BaseService {
         },
       },
     });
+
+  isOngoing = async (id, date = moment()) => {
+    const data = await this.findById(id);
+    return (
+      data &&
+      data.status == DaycareBookingStatus.ONGOING &&
+      (!data.start_date || moment(date).isSameOrAfter(data.start_date)) &&
+      (!data.end_date || moment(date).isSameOrBefore(data.end_date))
+    );
+  };
 }
 
 export default DaycareBookingService;
