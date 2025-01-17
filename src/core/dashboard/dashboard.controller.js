@@ -170,6 +170,11 @@ class DashboardController extends BaseController {
     const data = await this.#service.bankChart(s, e);
     return this.ok(res, data, "Chart bank berhasil didapatkan");
   });
+
+  getDaycareOperatingHours = this.wrapper(async (req, res) => {
+    const data = await this.#service.getDaycareOperatingHours();
+    return this.ok(res, data);
+  });
 }
 
 export default DashboardController;

@@ -862,7 +862,7 @@ model DaycareAdditional {
 model DaycareOperatingHours {
   id Int @id @default(autoincrement())
 
-  day        String
+  day        String  @unique
   start_time String?
   end_time   String?
   is_open    Boolean @default(false)
