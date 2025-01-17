@@ -9,13 +9,17 @@ import {
 import { parseJson } from "../../utils/transform.js";
 import fs from "fs";
 import ScheduleService from "../schedule/schedule.service.js";
+import SettingService from "../setting/setting.service.js";
+import { SettingKeys } from "../setting/setting.validator.js";
 
 class InvoiceService extends BaseService {
   #scheduleService;
+  #settingService;
 
   constructor() {
     super(prism);
     this.#scheduleService = new ScheduleService();
+    this.#settingService = new SettingService();
   }
 
   findAll = async (query) => {
@@ -91,6 +95,9 @@ class InvoiceService extends BaseService {
           bookings: {
             connect: payload.bookings?.map((id) => ({ id })),
           },
+          daycare_bookings: {
+            connect: payload.daycare_bookings?.map((id) => ({ id })),
+          },
         },
       });
 
@@ -101,7 +108,7 @@ class InvoiceService extends BaseService {
             ...item,
             invoice_id: data.id,
             attendees: {
-              connect: item.attendees.map((id) => ({ id })),
+              connect: item.attendees?.map((id) => ({ id })),
             },
           },
         });
@@ -146,7 +153,7 @@ class InvoiceService extends BaseService {
   generateItems = async (
     userId,
     bookingIds = [],
-    { startDate, endDate } = {}
+    { startDate, endDate, daycareBookingIds } = {}
   ) => {
     const items = [];
 
@@ -197,6 +204,37 @@ class InvoiceService extends BaseService {
         });
       }
     });
+
+    // collect any invoice-able from daycare bookings
+    const dcBookings = await this.db.daycareBooking.findMany({
+      where: {
+        ...(daycareBookingIds.length && { id: { in: daycareBookingIds } }),
+        user_id: userId,
+      },
+      include: {
+        invoices: true,
+        sitin_forms: true,
+      },
+    });
+
+    if (dcBookings.length) {
+      const sitIn = await this.#settingService.getValue(
+        SettingKeys.DAYCARE_SITIN_COST
+      );
+      dcBookings.forEach((b) => {
+        if (
+          !b.invoices.length &&
+          b.sitin_forms.every((sf) => sf.is_locked) &&
+          sitIn
+        )
+          items.push({
+            dates: `${moment().toDate()}`,
+            name: "Biaya Sit In Daycare",
+            quantity: 1,
+            price: parseFloat(sitIn.value),
+          });
+      });
+    }
 
     const total = {
       quantity: items.reduce((a, c) => (a += parseInt(c.quantity)), 0),

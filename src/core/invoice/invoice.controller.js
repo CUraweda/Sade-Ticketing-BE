@@ -64,12 +64,13 @@ class InvoiceController extends BaseController {
 
   generateSimulation = this.wrapper(async (req, res) => {
     const data = {};
-    const { booking_ids, start_date, end_date } = req.body;
+    const { daycare_booking_ids, booking_ids, start_date, end_date } = req.body;
 
     // items, main
     const items = await this.#service.generateItems(req.user.id, booking_ids, {
       startDate: start_date,
       endDate: end_date,
+      daycareBookingIds: daycare_booking_ids,
     });
     data["items"] = items.items;
     data["items_total"] = items.total;
@@ -88,10 +89,11 @@ class InvoiceController extends BaseController {
   });
 
   generateCreate = this.wrapper(async (req, res) => {
-    const { booking_ids, start_date, end_date } = req.body;
+    const { daycare_booking_ids, booking_ids, start_date, end_date } = req.body;
 
     const payload = {
       user_id: req.user.id,
+      daycare_bookings: daycare_booking_ids,
       bookings: booking_ids,
       title: `Tagihan ${moment().locale("id").format("MMMM YYYY")}`,
       status: InvoiceStatus.ISSUED,
@@ -102,6 +104,7 @@ class InvoiceController extends BaseController {
     const items = await this.#service.generateItems(req.user.id, booking_ids, {
       startDate: start_date,
       endDate: end_date,
+      daycareBookingIds: daycare_booking_ids,
     });
     payload["items"] = items.items;
 

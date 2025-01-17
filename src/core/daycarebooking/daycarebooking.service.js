@@ -33,8 +33,15 @@ class DaycareBookingService extends BaseService {
     const data = await this.db.daycareBooking.findUnique({
       where: { id },
       include: {
-        sitin_forms: { select: { id: true } },
-        agreements: true,
+        sitin_forms: {
+          select: {
+            id: true,
+            is_locked: true,
+            questionnaire_id: true,
+            questionnaire: { select: { title: true } },
+          },
+        },
+        agreements: { include: { document: { select: { title: true } } } },
         invoices: true,
         client: true,
         price: true,
