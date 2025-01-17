@@ -231,7 +231,7 @@ class InvoiceService extends BaseService {
       dcBookings.forEach((b) => {
         // first billing for monthly
         if (
-          b.invoices.length &&
+          b.invoices.length == 1 &&
           b.status == DaycareBookingStatus.DRAFT &&
           b.price &&
           b.price.invoice_cycle == TimeCycle.MONTHLY

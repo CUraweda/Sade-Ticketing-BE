@@ -17,6 +17,7 @@ export const DaycareBookingValidator = {
     start_date: Joi.date().optional(),
     end_date: Joi.date().greater(Joi.ref("start_date")).optional(),
     note: Joi.string().max(150).optional(),
+    is_locked: Joi.boolean().optional(),
   }),
   updateAgreeDoc: Joi.object({
     document_id: Joi.string().external(relationExist("document")).required(),

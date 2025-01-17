@@ -42,7 +42,7 @@ class DaycareBookingService extends BaseService {
           },
         },
         agreements: { include: { document: { select: { title: true } } } },
-        invoices: true,
+        invoices: { orderBy: { created_at: "desc" } },
         client: true,
         price: true,
       },
