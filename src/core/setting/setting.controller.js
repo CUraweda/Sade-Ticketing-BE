@@ -1,5 +1,6 @@
 import BaseController from "../../base/controller.base.js";
 import { NotFound } from "../../lib/response/catch.js";
+import { filterDuplicate } from "../../utils/array.js";
 import DocumentService from "../document/document.service.js";
 import QuestionnaireService from "../questionnaire/questionnaire.service.js";
 import SettingService from "./setting.service.js";
@@ -33,9 +34,11 @@ class SettingController extends BaseController {
   });
 
   setDaycareSitInQuestionnaires = this.wrapper(async (req, res) => {
+    const ids = filterDuplicate(req.body.questionnaire_ids);
+
     await this.#service.setValue(
       SettingKeys.DAYCARE_SITIN_QUESTIONNAIRE_IDS,
-      req.body.questionnaire_ids.join(",")
+      ids.join(",")
     );
     return this.ok(res);
   });
@@ -56,9 +59,10 @@ class SettingController extends BaseController {
   });
 
   setDaycareReportQuestionnaires = this.wrapper(async (req, res) => {
+    const ids = filterDuplicate(req.body.questionnaire_ids);
     await this.#service.setValue(
       SettingKeys.DAYCARE_REPORT_QUESTIONNAIRE_IDS,
-      req.body.questionnaire_ids.join(",")
+      ids.join(",")
     );
     return this.ok(res);
   });
@@ -79,9 +83,11 @@ class SettingController extends BaseController {
   });
 
   setDaycareAgreeDocs = this.wrapper(async (req, res) => {
+    const ids = filterDuplicate(req.body.document_ids);
+
     await this.#service.setValue(
       SettingKeys.DAYCARE_AGREE_DOC_IDS,
-      req.body.document_ids.join(",")
+      ids.join(",")
     );
     return this.ok(res);
   });
