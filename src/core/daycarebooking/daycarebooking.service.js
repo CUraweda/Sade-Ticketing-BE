@@ -19,7 +19,14 @@ class DaycareBookingService extends BaseService {
     const data = await this.db.daycareBooking.findMany({
       ...q,
       include: {
-        client: { select: { avatar: true, first_name: true, last_name: true } },
+        client: {
+          select: {
+            avatar: true,
+            first_name: true,
+            last_name: true,
+            dob: true,
+          },
+        },
       },
     });
 
@@ -34,11 +41,23 @@ class DaycareBookingService extends BaseService {
     const data = await this.db.daycareBooking.findUnique({
       where: { id },
       include: {
-        sitin_forms: {
+        _count: {
           select: {
-            id: true,
-            is_locked: true,
-            questionnaire_id: true,
+            sitin_forms: true,
+            reports: true,
+            invoices: true,
+            agreements: true,
+            link_books: true,
+            short_reports: true,
+          },
+        },
+        sitin_forms: {
+          include: {
+            questionnaire: { select: { title: true } },
+          },
+        },
+        reports: {
+          include: {
             questionnaire: { select: { title: true } },
           },
         },
@@ -132,6 +151,24 @@ class DaycareBookingService extends BaseService {
       (!data.start_date || moment(date).isSameOrAfter(data.start_date)) &&
       (!data.end_date || moment(date).isSameOrBefore(data.end_date))
     );
+  };
+
+  createReportResponse = async (id, questionnaireId, userId) => {
+    const booking = await this.findById(id);
+
+    const result = await this.db.daycareBooking.update({
+      where: { id },
+      data: {
+        reports: {
+          create: {
+            questionnaire_id: questionnaireId,
+            client_id: booking.client_id,
+            user_id: userId,
+          },
+        },
+      },
+    });
+    return result;
   };
 }
 

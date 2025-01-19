@@ -23,6 +23,11 @@ export const DaycareBookingValidator = {
     document_id: Joi.string().external(relationExist("document")).required(),
     is_agree: Joi.bool().required(),
   }),
+  createReportResponse: Joi.object({
+    questionnaire_id: Joi.string()
+      .external(relationExist("questionnaire"))
+      .required(),
+  }),
 };
 
 export default DaycareBookingValidator;

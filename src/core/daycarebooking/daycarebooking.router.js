@@ -24,6 +24,13 @@ r.post(
   controller.create
 );
 
+r.post(
+  "/create-report-response/:id",
+  authMiddleware(["ADM"]),
+  validatorMiddleware({ body: validator.createReportResponse }),
+  controller.createReportResponse
+);
+
 r.put(
   "/update/:id",
   authMiddleware(),

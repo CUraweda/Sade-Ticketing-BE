@@ -89,6 +89,15 @@ class DaycareBookingController extends BaseController {
 
     return this.ok(res, null, "Berhasil memperbarui dokumen persetujuan");
   });
+
+  createReportResponse = this.wrapper(async (req, res) => {
+    await this.#service.createReportResponse(
+      req.params.id,
+      req.body.questionnaire_id,
+      req.user.id
+    );
+    return this.ok(res, null, "Berhasil membuat respon laporan");
+  });
 }
 
 export default DaycareBookingController;
