@@ -41,6 +41,7 @@ import daycarebookingRouter from "./core/daycarebooking/daycarebooking.router.js
 import daycarepriceRouter from "./core/daycareprice/daycareprice.router.js";
 import daycarelinkbookRouter from "./core/daycarelinkbook/daycarelinkbook.router.js";
 import daycareshortreportRouter from "./core/daycareshortreport/daycareshortreport.router.js";
+import feetagRouter from "./core/feetag/feetag.router.js";
 
 const r = Router();
 
@@ -86,6 +87,7 @@ r.use("/daycare-booking", daycarebookingRouter);
 r.use("/daycare-price", daycarepriceRouter);
 r.use("/daycare-linkbook", daycarelinkbookRouter);
 r.use("/daycare-short-report", daycareshortreportRouter);
+r.use("/fee-tag", feetagRouter);
 
 const appRouter = r;
 export default appRouter;
