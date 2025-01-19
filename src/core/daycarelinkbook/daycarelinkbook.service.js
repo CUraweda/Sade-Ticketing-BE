@@ -8,7 +8,28 @@ class DaycareLinkBookService extends BaseService {
 
   findAll = async (query) => {
     const q = this.transformBrowseQuery(query);
-    const data = await this.db.daycareLinkBook.findMany({ ...q });
+    const data = await this.db.daycareLinkBook.findMany({
+      ...q,
+      select: {
+        id: true,
+        date: true,
+        status: true,
+        booking: {
+          select: {
+            id: true,
+            client: {
+              select: {
+                id: true,
+                avatar: true,
+                first_name: true,
+                last_name: true,
+                dob: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (query.paginate) {
       const countData = await this.db.daycareLinkBook.count({ where: q.where });
@@ -18,7 +39,24 @@ class DaycareLinkBookService extends BaseService {
   };
 
   findById = async (id) => {
-    const data = await this.db.daycareLinkBook.findUnique({ where: { id } });
+    const data = await this.db.daycareLinkBook.findUnique({
+      where: { id },
+      include: {
+        booking: {
+          select: {
+            client: {
+              select: {
+                id: true,
+                avatar: true,
+                first_name: true,
+                last_name: true,
+                dob: true,
+              },
+            },
+          },
+        },
+      },
+    });
     return data;
   };
 
@@ -28,7 +66,10 @@ class DaycareLinkBookService extends BaseService {
   };
 
   update = async (id, payload) => {
-    const data = await this.db.daycareLinkBook.update({ where: { id }, data: payload });
+    const data = await this.db.daycareLinkBook.update({
+      where: { id },
+      data: payload,
+    });
     return data;
   };
 
@@ -38,4 +79,4 @@ class DaycareLinkBookService extends BaseService {
   };
 }
 
-export default DaycareLinkBookService;  
+export default DaycareLinkBookService;

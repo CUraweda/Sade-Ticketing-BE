@@ -26,7 +26,15 @@ r.post(
 
 r.put(
   "/update/:id",
+  authMiddleware(),
   validatorMiddleware({ body: validator.update }),
+  controller.update
+);
+
+r.put(
+  "/update-facilitator/:id",
+  authMiddleware(["ADM"]),
+  validatorMiddleware({ body: validator.updateByFacilitator }),
   controller.update
 );
 

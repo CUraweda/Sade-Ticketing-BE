@@ -63,7 +63,17 @@ class DaycareLinkBookController extends BaseController {
   });
 
   update = this.wrapper(async (req, res) => {
-    const data = await this.#service.update(req.params.id, req.body);
+    const payload = req.body;
+
+    if (!this.isAdmin(req)) {
+      const check = await this.#daycareBookingService.checkUser(
+        payload.booking_id,
+        req.user.id
+      );
+      if (!check) throw new Forbidden();
+    }
+
+    const data = await this.#service.update(req.params.id, payload);
     return this.ok(res, data, "DaycareLinkBook berhasil diperbarui");
   });
 
