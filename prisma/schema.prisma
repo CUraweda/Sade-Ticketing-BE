@@ -498,18 +498,30 @@ model BookingAgreedDocuments {
 
 // INVOICE AND PAYMENT
 model Fee {
-  id          Int     @id @default(autoincrement())
-  title       String  @unique
-  description String?
-  price       Float
-  tags        String?
+  id Int @id @default(autoincrement())
 
-  invoices         InvoiceFee[]
-  daycare_logtimes DaycareLogTime[]
-  services         ServiceFee[]
+  title        String  @unique
+  description  String?
+  price        Float
+  is_available Boolean @default(true)
+
+  invoices           InvoiceFee[]
+  daycare_logtimes   DaycareLogTime[]
+  services           ServiceFee[]
+  tags               FeeTag[]
+  daycare_activities DaycareActivity[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
+}
+
+model FeeTag {
+  id Int @id @default(autoincrement())
+
+  name        String  @unique
+  description String?
+
+  fees Fee[]
 }
 
 model InvoiceFee {
@@ -845,20 +857,6 @@ model DaycarePrice {
   @@unique([price, invoice_cycle])
 }
 
-model DaycareAdditional {
-  id String @id @default(uuid())
-
-  title        String
-  description  String?
-  price        Float
-  is_available Boolean @default(true)
-
-  activities DaycareActivity[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-}
-
 model DaycareOperatingHours {
   id Int @id @default(autoincrement())
 
@@ -959,14 +957,14 @@ model DaycareLinkBook {
 }
 
 model DaycareActivity {
-  id            String  @id @default(uuid())
-  linkbook_id   String
-  additional_id String?
+  id          String @id @default(uuid())
+  linkbook_id String
+  fee_id      Int?
 
   date        DateTime
   title       String
   description String?
 
-  linkbook   DaycareLinkBook    @relation(fields: [linkbook_id], references: [id], onDelete: Cascade)
-  additional DaycareAdditional? @relation(fields: [additional_id], references: [id], onDelete: SetNull)
+  linkbook DaycareLinkBook @relation(fields: [linkbook_id], references: [id], onDelete: Cascade)
+  fee      Fee?            @relation(fields: [fee_id], references: [id], onDelete: SetNull)
 }
