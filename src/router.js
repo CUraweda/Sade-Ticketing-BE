@@ -40,6 +40,7 @@ import settingRouter from "./core/setting/setting.router.js";
 import daycarebookingRouter from "./core/daycarebooking/daycarebooking.router.js";
 import daycarepriceRouter from "./core/daycareprice/daycareprice.router.js";
 import daycarelinkbookRouter from "./core/daycarelinkbook/daycarelinkbook.router.js";
+import daycareshortreportRouter from "./core/daycareshortreport/daycareshortreport.router.js";
 
 const r = Router();
 
@@ -84,6 +85,7 @@ r.use("/setting", settingRouter);
 r.use("/daycare-booking", daycarebookingRouter);
 r.use("/daycare-price", daycarepriceRouter);
 r.use("/daycare-linkbook", daycarelinkbookRouter);
+r.use("/daycare-short-report", daycareshortreportRouter);
 
 const appRouter = r;
 export default appRouter;
