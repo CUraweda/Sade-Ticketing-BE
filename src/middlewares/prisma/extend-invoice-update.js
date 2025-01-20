@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { InvoiceStatus } from "../../core/invoice/invoice.validator.js";
+import { DaycareBookingStatus } from "../../core/daycarebooking/daycarebooking.validator.js";
 
 /** @type {PrismaClient} */
 const db = new PrismaClient();
@@ -76,6 +77,47 @@ const extendInvoiceUpdate = async ({ args, query, operation }) => {
       console.log(
         `- Attendees fitting schedule max_attendees: ${getIn.length}`
       );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
+    if (args.data?.status == InvoiceStatus.PAID) {
+      const dcBookings = await db.daycareBooking.findMany({
+        select: {
+          id: true,
+          status: true,
+          _count: { select: { invoices: true } },
+        },
+        where: {
+          AND: [
+            { invoices: { some: {} } },
+            {
+              invoices: {
+                some: { id: { in: ids } },
+                every: { status: InvoiceStatus.PAID },
+              },
+            },
+          ],
+        },
+      });
+      const toOngoing = [];
+
+      if (dcBookings.length)
+        dcBookings.forEach((b) => {
+          // invoice Sit In + invocie first billing
+          if (b.status == DaycareBookingStatus.DRAFT && b._count.invoices == 2)
+            toOngoing.push(b.id);
+        });
+
+      if (toOngoing.length)
+        await db.daycareBooking.updateMany({
+          where: { id: { in: toOngoing } },
+          data: { status: DaycareBookingStatus.ONGOING },
+        });
+
+      console.log(`- Ongoing daycare bookings: ${toOngoing.length}`);
     }
   } catch (error) {
     console.log(error);

@@ -84,3 +84,9 @@ export const Workday = {
   THURSDAY: "thursday",
   FRIDAY: "friday",
 };
+
+export const TimeCycle = {
+  DAILY: "daily",
+  MONTHLY: "monthly",
+  YEARLY: "yearly",
+};

@@ -727,6 +727,11 @@ class DashboardService extends BaseService {
 
     return data;
   };
+
+  getDaycareOperatingHours = async () => {
+    const result = await this.db.daycareOperatingHours.findMany();
+    return result;
+  };
 }
 
 export default DashboardService;

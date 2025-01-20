@@ -7,6 +7,11 @@ export const ServiceBillingType = {
   MONTHLY: "monthly",
 };
 
+export const ServiceFeeType = {
+  SITIN: "sit_in",
+  ENTRY: "entry_tuition",
+};
+
 export const ServiceValidator = {
   create: Joi.object({
     location_id: Joi.number().external(relationExist("location")).required(),
@@ -55,6 +60,10 @@ export const ServiceValidator = {
   setAgreementDocument: Joi.object({
     document_id: Joi.string().external(relationExist("document")).required(),
     set: Joi.string().valid("add", "remove"),
+  }),
+  addFile: Joi.object({
+    title: Joi.string().max(50).required(),
+    type: Joi.string().valid("input", "output").required(),
   }),
 };
 

@@ -61,5 +61,18 @@ r.put(
   controller.setAgreementDocument
 );
 
+r.put(
+  "/add-file/:id",
+  authMiddleware(["ADM", "SDM"]),
+  validatorMiddleware({ body: validator.addFile }),
+  controller.addFile
+);
+
+r.delete(
+  "/remove-file/:id/:file_id",
+  authMiddleware(["ADM", "SDM"]),
+  controller.removeFile
+);
+
 const serviceRouter = r;
 export default serviceRouter;

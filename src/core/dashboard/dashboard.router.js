@@ -52,5 +52,11 @@ r.get(
   controller.bankChart
 );
 
+r.get(
+  "/daycare-operating-hours",
+  authMiddleware(),
+  controller.getDaycareOperatingHours
+);
+
 const dashboardRouter = r;
 export default dashboardRouter;

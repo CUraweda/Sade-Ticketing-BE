@@ -35,6 +35,14 @@ import servicePriceRouter from "./core/serviceprice/serviceprice.router.js";
 import privilegeRouter from "./core/privilege/privilege.router.js";
 import signatureRouter from "./core/signature/signature.router.js";
 import scheduleattendeeRouter from "./core/scheduleattendee/scheduleattendee.router.js";
+import servicefeeRouter from "./core/servicefee/servicefee.router.js";
+import settingRouter from "./core/setting/setting.router.js";
+import daycarebookingRouter from "./core/daycarebooking/daycarebooking.router.js";
+import daycarepriceRouter from "./core/daycareprice/daycareprice.router.js";
+import daycarelinkbookRouter from "./core/daycarelinkbook/daycarelinkbook.router.js";
+import daycareshortreportRouter from "./core/daycareshortreport/daycareshortreport.router.js";
+import feetagRouter from "./core/feetag/feetag.router.js";
+import daycareactivityRouter from "./core/daycareactivity/daycareactivity.router.js";
 
 const r = Router();
 
@@ -74,6 +82,14 @@ r.use("/service-price", servicePriceRouter);
 r.use("/privilege", privilegeRouter);
 r.use("/signature", signatureRouter);
 r.use("/schedule-attendee", scheduleattendeeRouter);
+r.use("/service-fee", servicefeeRouter);
+r.use("/setting", settingRouter);
+r.use("/daycare-booking", daycarebookingRouter);
+r.use("/daycare-price", daycarepriceRouter);
+r.use("/daycare-linkbook", daycarelinkbookRouter);
+r.use("/daycare-short-report", daycareshortreportRouter);
+r.use("/daycare-activity", daycareactivityRouter);
+r.use("/fee-tag", feetagRouter);
 
 const appRouter = r;
 export default appRouter;
