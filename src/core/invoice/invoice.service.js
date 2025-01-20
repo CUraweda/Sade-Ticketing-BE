@@ -320,7 +320,7 @@ class InvoiceService extends BaseService {
     // collect any fee able from daycare bookings
     const dcBookings = await this.db.daycareBooking.findMany({
       where: {
-        ...(daycareBookingIds.length && { id: { in: daycareBookingIds } }),
+        ...(daycareBookingIds?.length && { id: { in: daycareBookingIds } }),
         user_id: userId,
       },
       include: {
