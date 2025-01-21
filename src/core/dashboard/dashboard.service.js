@@ -732,6 +732,79 @@ class DashboardService extends BaseService {
     const result = await this.db.daycareOperatingHours.findMany();
     return result;
   };
+
+  countDoctors = async () => {
+    const active = await this.db.doctorProfile.groupBy({
+      by: "category",
+      _count: { id: true },
+      where: { is_active: true },
+    });
+
+    const inactive = await this.db.doctorProfile.groupBy({
+      by: "category",
+      _count: { id: true },
+      where: { is_active: false },
+    });
+
+    const activeMap = Object.fromEntries(
+      active.map((d) => [d.category, d._count.id])
+    );
+    const inactiveMap = Object.fromEntries(
+      inactive.map((d) => [d.category, d._count.id])
+    );
+
+    const categories = new Set([
+      ...Object.keys(activeMap),
+      ...Object.keys(inactiveMap),
+    ]);
+
+    const result = Array.from(categories).map((category) => ({
+      category,
+      active: activeMap[category] || 0,
+      inactive: inactiveMap[category] || 0,
+    }));
+
+    return result;
+  };
+
+  countUsers = async () => {
+    const active = await this.db.user.count({ where: { status: true } });
+    const inactive = await this.db.user.count({ where: { status: false } });
+
+    return { active, inactive };
+  };
+
+  countBookings = async () => {
+    const byStatus = await this.db.booking.groupBy({
+      by: "status",
+      _count: { id: true },
+    });
+
+    return byStatus.map((b) => ({ status: b.status, count: b._count.id }));
+  };
+
+  countDaycareBookings = async () => {
+    const byStatus = await this.db.daycareBooking.groupBy({
+      by: "status",
+      _count: { id: true },
+    });
+
+    return byStatus.map((b) => ({ status: b.status, count: b._count.id }));
+  };
+
+  countInvoice = async () => {
+    const byStatus = await this.db.invoice.groupBy({
+      by: "status",
+      _count: { id: true },
+      _sum: { total: true },
+    });
+
+    return byStatus.map((b) => ({
+      status: b.status,
+      count: b._count.id,
+      total: b._sum.total,
+    }));
+  };
 }
 
 export default DashboardService;
