@@ -1480,7 +1480,7 @@
           "code": "q-lk-3-11",
           "section": "TANDA HIGH AROUSAL",
           "label": "Banyak gerak saat tidur",
-          "name": "excessive_movement",
+          "name": "excessive_movement_while_sleep",
           "typ": "radio",
           "required": true,
           "options": {
@@ -3286,7 +3286,7 @@
           "code": "q-lk-3-97",
           "section": "TANDA SENSORI - SEEKING",
           "label": "Banyak menggerakkan tangan dan kaki saat duduk",
-          "name": "excessive_movement",
+          "name": "excessive_movement_while_sit",
           "typ": "radio",
           "required": true,
           "options": {
@@ -4706,7 +4706,7 @@
           "code": "q-lk-6-65",
           "section": "MASA SETELAH KELAHIRAN",
           "label": "Diare",
-          "name": "infant_problems_first_month",
+          "name": "diarrhea",
           "typ": "radio",
           "required": true,
           "options": {
