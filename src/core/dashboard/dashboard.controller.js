@@ -23,10 +23,12 @@ class DashboardController extends BaseController {
 
   adminStats = this.wrapper(async (req, res) => {
     const data = {
-      total_income: await this.#service.totalIncome("system"),
-      pending_income: await this.#service.totalAmountIssuedInvoice(req.query),
-      active_booking_count: await this.#service.countActiveBookings(req.query),
-      active_specialist_count: await this.#service.countActiveSpecialists(),
+      doctors: await this.#service.countDoctors(),
+      users: await this.#service.countUsers(),
+      bookings: await this.#service.countBookings(),
+      daycare_bookings: await this.#service.countDaycareBookings(),
+      revenue: await this.#service.totalPaymentsNet(),
+      invoices: await this.#service.countInvoice(),
     };
     return this.ok(res, data, "Stat dashboard admin berhasil didapatkan");
   });
