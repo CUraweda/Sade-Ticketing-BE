@@ -1,6 +1,6 @@
 import moment from "moment";
 import BaseController from "../../base/controller.base.js";
-import { NotFound } from "../../lib/response/catch.js";
+import { BadRequest, NotFound } from "../../lib/response/catch.js";
 import InvoiceService from "./invoice.service.js";
 import { InvoiceStatus } from "./invoice.validator.js";
 
@@ -38,6 +38,9 @@ class InvoiceController extends BaseController {
   });
 
   delete = this.wrapper(async (req, res) => {
+    const prev = await this.#service.findById(req.params.id);
+    if (prev.status == InvoiceStatus.PAID)
+      throw new BadRequest("Tagihan yang sudah dibayar tidak dapat dihapus");
     const data = await this.#service.delete(req.params.id);
     return this.noContent(res, "Invoice berhasil dihapus");
   });
