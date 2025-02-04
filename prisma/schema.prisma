@@ -441,11 +441,10 @@ model QuestionAnswer {
 
 // BOOKING SERVICE
 model Booking {
-  id                String  @id @default(uuid())
-  client_id         String?
-  user_id           String?
-  service_id        String?
-  recommendation_id String?
+  id         String  @id @default(uuid())
+  client_id  String?
+  user_id    String?
+  service_id String?
 
   compliant        String?
   quantity         Int
@@ -459,11 +458,10 @@ model Booking {
   client                  ClientProfile?           @relation(fields: [client_id], references: [id], onDelete: SetNull)
   user                    User?                    @relation(fields: [user_id], references: [id], onDelete: SetNull)
   service                 Service?                 @relation(fields: [service_id], references: [id], onDelete: SetNull)
-  recommendation          ServiceRecommendation?   @relation("BookingRecommendation", fields: [recommendation_id], references: [id], onDelete: SetNull)
   questionnaire_responses QuestionnaireResponse[]  @relation("BookingQuestionnaires")
   reports                 QuestionnaireResponse[]  @relation("BookingReports")
   invoices                Invoice[]
-  service_recommendations ServiceRecommendation[]  @relation("BookingRecommendations")
+  service_recommendations ServiceRecommendation[]
   daycare_journals        DaycareJournal[]
   agreed_documents        BookingAgreedDocuments[]
   schedules               ScheduleAttendee[]
@@ -604,7 +602,6 @@ model Payments {
 model ServiceRecommendation {
   id         String  @id @default(uuid())
   doctor_id  String?
-  booking_id String?
   client_id  String
   service_id String
 
@@ -614,10 +611,9 @@ model ServiceRecommendation {
   is_read          Boolean @default(false)
 
   doctor   DoctorProfile? @relation(fields: [doctor_id], references: [id], onDelete: SetNull)
-  booking  Booking?       @relation("BookingRecommendations", fields: [booking_id], references: [id], onDelete: SetNull)
   client   ClientProfile  @relation(fields: [client_id], references: [id], onDelete: Cascade)
   service  Service        @relation(fields: [service_id], references: [id], onDelete: Cascade)
-  bookings Booking[]      @relation("BookingRecommendation")
+  bookings Booking[]
 
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt

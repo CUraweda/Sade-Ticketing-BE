@@ -42,6 +42,13 @@ class AuthService extends BaseService {
             },
           },
         },
+        doctor: {
+          select: {
+            id: true,
+            category: true,
+            is_active: true,
+          },
+        },
       },
     });
     if (!user) throw new NotFound("Akun tidak ditemukan");

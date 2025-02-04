@@ -17,12 +17,6 @@ class ServiceRecommendationService extends BaseService {
         updated_at: true,
         weekly_frequency: true,
         doctor: { select: { avatar: true, first_name: true, last_name: true } },
-        booking: {
-          select: {
-            title: true,
-            service: { select: { title: true, category: true } },
-          },
-        },
         client: { select: { avatar: true, first_name: true, last_name: true } },
         service: { select: { title: true, price_unit: true, category: true } },
       },
@@ -49,8 +43,9 @@ class ServiceRecommendationService extends BaseService {
             category: true,
           },
         },
-        booking: {
+        bookings: {
           select: {
+            id: true,
             title: true,
             service: { select: { id: true, title: true, category: true } },
           },
@@ -77,8 +72,14 @@ class ServiceRecommendationService extends BaseService {
   };
 
   create = async (payload) => {
+    const { booking_id, ...rest } = payload;
     const data = await this.db.serviceRecommendation.create({
-      data: payload,
+      data: {
+        ...rest,
+        bookings: {
+          connect: { id: booking_id },
+        },
+      },
     });
     return data;
   };
