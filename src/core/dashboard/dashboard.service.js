@@ -595,9 +595,43 @@ class DashboardService extends BaseService {
     return totalDays;
   };
 
+  estTotalDoctorWorkDays = async (doctorId, start, end) => {
+    const schedules = await this.db.schedule.findMany({
+      where: {
+        doctors: { some: { id: doctorId } },
+        AND: [
+          {
+            ...(start &&
+              end && {
+                start_date: {
+                  gte: moment(start).toDate(),
+                  lte: moment(end).toDate(),
+                },
+              }),
+          },
+        ],
+      },
+      select: { start_date: true },
+    });
+
+    const totalDays = schedules.map((sc) =>
+      moment(sc.start_date).format("YYYY-MM-DD")
+    ).length;
+
+    return totalDays;
+  };
+
   totalDoctorTransport = async (doctorId, start, end) => {
     const doctor = await this.#doctorService.findById(doctorId);
     const days = await this.totalDoctorWorkDays(doctorId, start, end);
+
+    const total = (doctor.transport_fee ?? 0) * days;
+    return total;
+  };
+
+  estTotalDoctorTransport = async (doctorId, start, end) => {
+    const doctor = await this.#doctorService.findById(doctorId);
+    const days = await this.estTotalDoctorWorkDays(doctorId, start, end);
 
     const total = (doctor.transport_fee ?? 0) * days;
     return total;
