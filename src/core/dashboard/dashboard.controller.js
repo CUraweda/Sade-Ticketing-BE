@@ -109,16 +109,30 @@ class DashboardController extends BaseController {
         req.query.start_date,
         req.query.end_date
       ),
-      total_transports_allowance: await this.#service.totalDoctorTransport(
-        doctorId,
-        req.query.start_date,
-        req.query.end_date
-      ),
-      work_days: await this.#service.totalDoctorWorkDays(
-        doctorId,
-        req.query.start_date,
-        req.query.end_date
-      ),
+      transport_fee: {
+        completed: await this.#service.totalDoctorTransport(
+          doctorId,
+          req.query.start_date,
+          req.query.end_date
+        ),
+        total: await this.#service.estTotalDoctorTransport(
+          doctorId,
+          req.query.start_date,
+          req.query.end_date
+        ),
+      },
+      work_days: {
+        completed: await this.#service.totalDoctorWorkDays(
+          doctorId,
+          req.query.start_date,
+          req.query.end_date
+        ),
+        total: await this.#service.estTotalDoctorWorkDays(
+          doctorId,
+          req.query.start_date,
+          req.query.end_date
+        ),
+      },
       work_minutes: await this.#service.doctorWorkTime(
         doctorId,
         req.query.start_date,

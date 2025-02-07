@@ -284,7 +284,7 @@ class InvoiceService extends BaseService {
         service: { include: { fees: { include: { fee: true } } } },
         questionnaire_responses: true,
         invoices: true,
-        schedules: true,
+        schedules: { include: { _count: { select: { invoices: true } } } },
       },
     });
     bookings.forEach((b) => {
@@ -304,7 +304,7 @@ class InvoiceService extends BaseService {
             })
           );
 
-      if (b.schedules.length > 0 && b.schedules.every((s) => !s.is_active))
+      if (b.schedules.length > 0 && b.schedules.some((s) => !s._count.invoices))
         b.service.fees
           .filter((f) => f.type == ServiceFeeType.ENTRY)
           .forEach((sf) =>

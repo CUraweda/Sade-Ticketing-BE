@@ -75,6 +75,7 @@ class BookingService extends BaseService {
         schedules: {
           orderBy: { schedule: { start_date: "desc" } },
           include: {
+            _count: { select: { invoices: true } },
             booking: {
               select: {
                 service_data: true,
@@ -115,10 +116,14 @@ class BookingService extends BaseService {
       },
     });
     const { files, agrement_documents, questionnaires, ...rest } = service;
+    const { recommendation_id, ...restPayload } = payload;
 
     const data = await this.db.booking.create({
       data: {
-        ...payload,
+        ...restPayload,
+        service_recommendations: {
+          connect: { id: recommendation_id },
+        },
         price: rest.price,
         service_data: JSON.stringify(rest) ?? "",
         status: BookingStatus.DRAFT,

@@ -30,6 +30,7 @@ class ScheduleAttendeeService extends BaseService {
         },
         booking: true,
         schedule: true,
+        _count: { select: { invoices: true } },
       },
     });
     return data;

@@ -16,6 +16,9 @@ export const WeeklyFrequency = {
 
 export const BookingValidator = {
   create: Joi.object({
+    recommendation_id: Joi.string()
+      .external(relationExist("serviceRecommendation"))
+      .optional(),
     client_id: Joi.string().external(relationExist("clientProfile")).required(),
     service_id: Joi.string().external(relationExist("service")).required(),
     compliant: Joi.string().max(100).optional(),

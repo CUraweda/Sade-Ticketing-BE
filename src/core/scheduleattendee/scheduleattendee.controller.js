@@ -185,6 +185,9 @@ class ScheduleAttendeeController extends BaseController {
     if (!this.isAdmin(req))
       await this.#bookingService.checkBookingOwner(data.booking_id);
 
+    if (data._count.invoices)
+      throw new BadRequest("Jadwal sudah memiliki tagihan");
+
     await this.#service.delete(req.params.id);
     return this.noContent(res, "ScheduleAttendee berhasil dihapus");
   });
