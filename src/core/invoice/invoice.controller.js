@@ -3,6 +3,7 @@ import BaseController from "../../base/controller.base.js";
 import { BadRequest, NotFound } from "../../lib/response/catch.js";
 import InvoiceService from "./invoice.service.js";
 import { InvoiceStatus } from "./invoice.validator.js";
+import GeneratePDF from "../../helper/generate-pdf.js";
 
 class InvoiceController extends BaseController {
   #service;
@@ -54,15 +55,20 @@ class InvoiceController extends BaseController {
   });
 
   export = this.wrapper(async (req, res) => {
+    const generator = new GeneratePDF();
+
     const result = await this.#service.export(req.params.id);
+    const html = generator.compileHTML("template-invoice", result);
+    const pdf = await generator.create({ html });
+
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${`${result?.data?.title}-${result?.data?.user?.full_name}` ?? "Invoice"}.pdf`
-    );
-    result.doc.getBuffer((buffer) => {
-      res.send(Buffer.from(buffer));
-    });
+    // res.setHeader("Content-Disposition", "attachment; filename=laporan.pdf");
+    res.end(pdf);
+  });
+
+  temp = this.wrapper(async (req, res) => {
+    const result = await this.#service.export(req.params.id);
+    return this.ok(res, result);
   });
 
   generateSimulation = this.wrapper(async (req, res) => {

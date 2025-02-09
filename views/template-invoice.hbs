@@ -1,0 +1,82 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {font-family: sans-serif !important; margin: 0; padding: 0;}
+      .list-schedules {
+        width: 100%;
+        border: none;
+      }
+      .list-schedules td {
+        padding: 8px 10px;
+      }
+
+      .list-items {
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid black;
+        font-family: sans-serif;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+      }
+
+      .list-items thead {
+        background-color: #c4e3b4;
+      }
+
+      .list-items th,
+      .list-items td {
+        border: 1px solid black;
+        padding: 8px 10px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div style="display: flex;gap: 16px;">
+      <div style="flex-grow: 1;">
+        {{#each bookings}}
+          <div style="background-color: #c4e3b4; padding: 8px; margin-bottom: 16px;">
+            <h3
+              style="font-weight: bolder; size: 18px; text-align: center; margin-bottom: 8px;"
+            >{{client.first_name}}
+              {{client.last_name}}</h3>
+            <p
+              style="font-weight: bold; font-size: 14px; text-align: center;"
+            >Periode:
+              {{../title}}</p>
+          </div>
+          <table class="list-schedules" >
+          {{#each schedules}}
+            <tr>
+              <td>Senin</td>
+              <td>15.00 - 18.00</td>
+              <td>SI</td>
+              <td>
+                {{#each schedule.doctors}}
+                  {{first_name}} {{last_name}}, 
+                {{/each}}
+              </td>
+            </tr>
+          {{/each}}
+          </table>
+        {{/each}}
+      </div>
+    </div>
+
+    <table class="list-items">
+      <thead>
+        <tr>
+          <th>Hari, Tanggal</th>
+          <th>Pembayaran</th>
+          <th>Jumlah sesi</th>
+          <th>Biaya</th>
+          <th>Total biaya</th>
+          <th>Keterangan</th>
+        </tr>
+      </thead>
+    </table>
+  </body>
+</html>
