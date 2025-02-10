@@ -57,18 +57,13 @@ class InvoiceController extends BaseController {
   export = this.wrapper(async (req, res) => {
     const generator = new GeneratePDF();
 
-    const result = await this.#service.export(req.params.id);
+    const result = await this.#service.exportData(req.params.id);
     const html = generator.compileHTML("template-invoice", result);
     const pdf = await generator.create({ html });
 
     res.setHeader("Content-Type", "application/pdf");
-    // res.setHeader("Content-Disposition", "attachment; filename=laporan.pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=tagihan.pdf");
     res.end(pdf);
-  });
-
-  temp = this.wrapper(async (req, res) => {
-    const result = await this.#service.export(req.params.id);
-    return this.ok(res, result);
   });
 
   generateSimulation = this.wrapper(async (req, res) => {

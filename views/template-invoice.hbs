@@ -8,6 +8,7 @@
       .list-schedules {
         width: 100%;
         border: none;
+        font-size: 12px;
       }
       .list-schedules td {
         padding: 8px 10px;
@@ -15,10 +16,10 @@
 
       .list-items {
         width: 100%;
+        border: 0px;
+        font-size: 12px;
         border-collapse: collapse;
-        border: 2px solid black;
         font-family: sans-serif;
-        font-size: 0.8rem;
         letter-spacing: 1px;
       }
 
@@ -32,15 +33,79 @@
         padding: 8px 10px;
       }
 
+      .list-items .no-border td  {
+        border: none;
+        padding: 4px 10px;
+      }
+
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      .calendar div {
+        padding: 8px;
+        font-size: 12px;
+        text-align: center;
+        border: 1px solid #000;
+      }
+
+      .table-profil {
+        border-collapse: collapse;
+        border: 2px solid #000;
+      }
+
+      .table-profil td {
+        font-size: 12px;
+        border: 1px solid #000;
+        padding: 4px;
+      }
     </style>
   </head>
   <body>
-    <div style="display: flex;gap: 16px;">
+
+    <div style="display: flex; gap: 16px; margin-bottom: 40px;">
+      <div style="flex-grow: 1;">
+        <img src="{{logo_binar}}" alt="" style="width: 200px;">
+      </div>
+      <div>
+        <table class="table-profil">
+          <tbody>
+            <tr>
+              <td style="text-align: right;">Tempat, tgl lahir</td>
+              <td style="text-align: center;">
+                {{#each bookings}}
+                  {{client.pob}}, {{client.dob}} - 
+                {{/each}}
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: right;">Nama ayah</td>
+              <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align: right;">Nama ibu</td>
+              <td style="text-align: center;"></td>
+            </tr>
+            <tr>
+              <td style="text-align: right;">Telp</td>
+              <td style="text-align: center;">
+                {{#each bookings}}
+                  {{client.phone_numnber}},
+                {{/each}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 16px; margin-bottom: 40px;">
       <div style="flex-grow: 1;">
         {{#each bookings}}
-          <div style="background-color: #c4e3b4; padding: 8px; margin-bottom: 16px;">
+          <div style="background-color: #c4e3b4; padding: 16px; margin-bottom: 16px;">
             <h3
-              style="font-weight: bolder; size: 18px; text-align: center; margin-bottom: 8px;"
+              style="font-weight: bolder; font-size: 18px; text-align: center; margin-bottom: 8px;"
             >{{client.first_name}}
               {{client.last_name}}</h3>
             <p
@@ -51,9 +116,9 @@
           <table class="list-schedules" >
           {{#each schedules}}
             <tr>
-              <td>Senin</td>
-              <td>15.00 - 18.00</td>
-              <td>SI</td>
+              <td>{{schedule.day}}</td>
+              <td>{{schedule.start_time}} - {{schedule.end_time}}</td>
+              <td>{{schedule.title}}</td>
               <td>
                 {{#each schedule.doctors}}
                   {{first_name}} {{last_name}}, 
@@ -64,19 +129,147 @@
           </table>
         {{/each}}
       </div>
+
+      <div class="calendar">
+        <div style="background-color: #c4e3b4;"><b>S</b></div>
+        <div style="background-color: #c4e3b4;"><b>S</b></div>
+        <div style="background-color: #c4e3b4;"><b>R</b></div>
+        <div style="background-color: #c4e3b4;"><b>K</b></div>
+        <div style="background-color: #c4e3b4;"><b>J</b></div>
+        <div style="background-color: #c4e3b4;"><b>S</b></div>
+        <div style="background-color: #c4e3b4;"><b>M</b></div>
+        {{#each dates}}
+          {{#if mark}}
+            <div style="background-color: #c4e3b4;">{{d}}</div>
+          {{else}}
+            <div>{{d}}</div>
+          {{/if}}
+        {{/each}}
+      </div>
     </div>
 
-    <table class="list-items">
+    <table class="list-items" >
       <thead>
         <tr>
           <th>Hari, Tanggal</th>
           <th>Pembayaran</th>
-          <th>Jumlah sesi</th>
+          <th>Jumlah</th>
           <th>Biaya</th>
           <th>Total biaya</th>
           <th>Keterangan</th>
         </tr>
       </thead>
+      <tbody>
+        {{#each items}}
+          <tr>
+            <td>
+              <ul style="margin-left: 12px;">
+                {{#each dates}}
+                  <li style="white-space: nowrap;">{{ this }}</li>
+                {{/each}}
+              </ul>
+            </td>
+            <td style="text-align: center;">{{name}}</td>
+            <td style="text-align: center;">{{quantity}} {{quantity_unit}}</td>
+            <td style="text-align: right;">{{price}}</td>
+            <td style="text-align: right;">{{total}}</td>
+            <td>{{note}}</td>
+          </tr>
+        {{/each}}
+        {{#each fees}}
+          <tr>
+            <td></td>
+            <td style="text-align: center;">{{name}}</td>
+            <td style="text-align: center;">{{quantity}}</td>
+            <td style="text-align: right;">{{price}}</td>
+            <td style="text-align: right;">{{total}}</td>
+            <td>{{note}}</td>
+          </tr>
+        {{/each}}
+        <tr>
+          <td></td>
+          <td style="font-weight: bold;">TOTAL</td>
+          <td style="font-weight: bold; text-align: center;">{{quantity_total}}</td>
+          <td></td>
+          <td style="font-weight: bold; text-align: right;">{{total}}</td>
+          <td></td>
+        </tr>
+        <tr class="no-border">
+          <td colspan="6" style="padding-top: 8px;"></td>
+        </tr>
+        <tr class="no-border">
+          <td colspan="6">
+            <u>PENGURANGAN BIAYA</u>
+          </td>
+        </tr>
+        {{#each reductions}}
+          <tr class="no-border">
+            <td colspan="2">{{name}}</td>
+            <td>{{quantity}}</td>
+            <td>{{price}}</td>
+            <td>{{total}}</td>
+          </tr>
+        {{/each}}
+        <tr class="no-border">
+          <td colspan="4"></td>
+          <td style="border-top: 1px solid #000;">{{reductions_total}}</td>
+        </tr>
+        <tr class="no-border">
+          <td></td>
+          <td colspan="3">
+            <b style="font-size: 14px;">TOTAL YANG PERLU DIBAYAR</b>
+          </td>
+          <td>
+            <b style="font-size: 14px;">{{ total }}</b>
+          </td>
+        </tr>
+        <tr class="no-border">
+          <td colspan="6"></td>
+        </tr>
+        <tr class="no-border">
+          <td></td>
+          <td colspan="4" style="padding: 4px; border: 2px solid #000; text-transform: capitalize; text-align: center; font-size: 14px;">
+            <b>
+              <i>
+              {{total_text}} rupiah
+              </i>
+            </b>
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
     </table>
+
+    <div style="display: flex; font-size: 14px; justify-content: space-between; margin-top: 40px;">
+      <div>
+        <p style="margin-bottom: 4px;">Mohon ditransfer paling lambat</p>
+        <b >{{expiry_date}}</b>
+
+        {{#if payment}}
+          <p style="margin: 4px 0;">Status: {{payment.status}}</p>
+          <p style="margin-bottom: 4px;">{{payment.bank_account.provider}} {{payment.bank_account.title}}</p>
+          <p style="margin-bottom: 4px;">a/n {{payment.bank_account.in_name}}</p>
+          <p style="margin-bottom: 4px;">No rekening {{payment.bank_account.account_number}}</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <div style="display: flex; font-size: 10px; justify-content: space-evenly; margin-top: 40px; background-color: #c4e3b4; padding: 4px;">
+      <div>
+        {{#each bookings}}
+          <p>{{service.location.address}}</p>
+        {{/each}}
+      </div>
+      <div>
+        {{#each bookings}}
+          <p>{{service.location.phone}}</p>
+        {{/each}}
+      </div>
+      <div>
+        {{#each bookings}}
+          <p>{{service.location.instagram}}</p>
+        {{/each}}
+      </div>
+    </div>
   </body>
 </html>

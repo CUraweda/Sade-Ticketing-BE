@@ -7,7 +7,7 @@ import {
   ServiceFeeType,
 } from "../service/service.validator.js";
 import { parseJson } from "../../utils/transform.js";
-import fs from "fs";
+import fs, { stat } from "fs";
 import ScheduleService from "../schedule/schedule.service.js";
 import SettingService from "../setting/setting.service.js";
 import { SettingKeys } from "../setting/setting.validator.js";
@@ -15,6 +15,7 @@ import { DaycareBookingStatus } from "../daycarebooking/daycarebooking.validator
 import { InvoiceStatus } from "./invoice.validator.js";
 import FeeService from "../fee/fee.service.js";
 import { TimeCycle } from "../../base/validator.base.js";
+import { formatMoney, numberToWords } from "../../utils/string.js";
 
 class InvoiceService extends BaseService {
   #scheduleService;
@@ -517,7 +518,7 @@ class InvoiceService extends BaseService {
     return data;
   };
 
-  export = async (id) => {
+  exportData = async (id) => {
     const data = await this.db.invoice.findUnique({
       where: { id },
       select: {
@@ -549,6 +550,8 @@ class InvoiceService extends BaseService {
             name: true,
             quantity: true,
             price: true,
+            quantity_unit: true,
+            note: true,
           },
         },
         bookings: {
@@ -561,6 +564,15 @@ class InvoiceService extends BaseService {
                 pob: true,
                 dob: true,
                 sex: true,
+              },
+            },
+            service: {
+              select: {
+                location: {
+                  select: {
+                    address: true,
+                  },
+                },
               },
             },
             schedules: {
@@ -586,6 +598,34 @@ class InvoiceService extends BaseService {
       },
     });
 
+    try {
+      const logoBinar = fs.readFileSync("./src/assets/images/logo-binar.png");
+      if (logoBinar) {
+        data.logo_binar = `data:image/jpeg;base64,${logoBinar.toString("base64")}`;
+      }
+    } catch (error) {}
+
+    const start = moment().startOf("month").startOf("week");
+    const end = moment().endOf("month").endOf("week");
+    const dates = [];
+    const markedDates = data.items
+      .map((i) => i.dates.split(","))
+      .flat()
+      .map((d) => moment(d).format("DD/MM/YYYY"));
+
+    while (start.isSameOrBefore(end)) {
+      const copyStart = start.clone();
+      dates.push({
+        d: copyStart.format("D"),
+        mark: markedDates.includes(copyStart.format("DD/MM/YYYY")),
+      });
+      start.add(1, "day");
+    }
+
+    data.dates = dates;
+
+    data.total_text = numberToWords(data.total);
+
     data.expiry_date = moment(data.expiry_date)
       .locale("id")
       .format("dddd, DD MMMM YYYY");
@@ -594,6 +634,13 @@ class InvoiceService extends BaseService {
       i.dates = i.dates
         .split(",")
         .map((d) => moment(d).locale("id").format("dddd, DD/M/YYYY"));
+      i.total = formatMoney(i.price * i.quantity);
+      i.price = formatMoney(i.price);
+    });
+
+    data.fees.forEach((f) => {
+      f.total = formatMoney(f.price * f.quantity);
+      f.price = formatMoney(f.price);
     });
 
     data.bookings.forEach((b) => {
@@ -615,6 +662,28 @@ class InvoiceService extends BaseService {
           .format("HH:mm");
       });
     });
+
+    data.reductions = [
+      {
+        name: "Diskon jam belajar",
+        quantity: 0,
+        price: formatMoney(0),
+        total: formatMoney(0),
+      },
+      {
+        name: "Sisa sesi bulan lalu",
+        quantity: 0,
+        price: formatMoney(0),
+        total: formatMoney(0),
+      },
+      {
+        name: "Free sesi dari poin",
+        quantity: 0,
+        price: formatMoney(0),
+        total: formatMoney(0),
+      },
+    ];
+    data.reductions_total = formatMoney(0);
 
     return data;
   };
