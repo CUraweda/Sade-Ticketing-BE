@@ -571,6 +571,8 @@ class InvoiceService extends BaseService {
                 location: {
                   select: {
                     address: true,
+                    phone: true,
+                    instagram: true,
                   },
                 },
               },
@@ -684,6 +686,8 @@ class InvoiceService extends BaseService {
       },
     ];
     data.reductions_total = formatMoney(0);
+
+    data.total = formatMoney(data.total);
 
     return data;
   };
