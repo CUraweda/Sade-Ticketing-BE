@@ -111,9 +111,11 @@ model NotificationUser {
 
 // LOCATION -> set service location, doctors location
 model Location {
-  id      Int     @id @default(autoincrement())
-  title   String  @unique
-  address String?
+  id        Int     @id @default(autoincrement())
+  title     String  @unique
+  address   String?
+  phone     String?
+  instagram String?
 
   doctors  DoctorProfile[]
   services Service[]
