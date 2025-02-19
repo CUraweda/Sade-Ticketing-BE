@@ -121,9 +121,11 @@ class BookingService extends BaseService {
     const data = await this.db.booking.create({
       data: {
         ...restPayload,
-        service_recommendations: {
-          connect: { id: recommendation_id },
-        },
+        ...(recommendation_id && {
+          service_recommendations: {
+            connect: { id: recommendation_id },
+          },
+        }),
         price: rest.price,
         service_data: JSON.stringify(rest) ?? "",
         status: BookingStatus.DRAFT,
