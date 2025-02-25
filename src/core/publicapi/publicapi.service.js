@@ -4,6 +4,7 @@ import { prism } from "../../config/db.js";
 import { BookingStatus } from "../booking/booking.validator.js";
 import { InvoiceStatus } from "../invoice/invoice.validator.js";
 import { PaymentStatus } from "../payments/payments.validator.js";
+import { DaycareBookingStatus } from "../daycarebooking/daycarebooking.validator.js";
 
 class PublicApiService extends BaseService {
   constructor() {
@@ -126,6 +127,62 @@ class PublicApiService extends BaseService {
       _count: { id: true },
       _avg: { transport_fee: true },
     });
+    return result;
+  };
+
+  getDaycarePrices = async (query) => {
+    const q = this.transformBrowseQuery(query);
+    const data = await this.db.daycarePrice.findMany({
+      ...q,
+      include: {
+        bookings: {
+          where: {
+            status: {
+              in: [
+                DaycareBookingStatus.COMPLETED,
+                DaycareBookingStatus.ONGOING,
+              ],
+            },
+          },
+          select: {
+            invoices: {
+              where: { status: InvoiceStatus.PAID },
+              select: {
+                payment: {
+                  where: {
+                    status: {
+                      in: [PaymentStatus.SETTLED, PaymentStatus.COMPLETED],
+                    },
+                  },
+                  select: { amount_paid: true },
+                },
+              },
+            },
+          },
+        },
+        _count: { select: { bookings: true } },
+      },
+    });
+
+    const result = data.map((dat) => {
+      let income = 0;
+
+      dat.bookings.forEach((b) => {
+        b.invoices.forEach((i) => {
+          income += i.payment?.amount_paid ?? 0;
+        });
+      });
+
+      return {
+        ...dat,
+        income,
+      };
+    });
+
+    if (query.paginate) {
+      const countData = await this.db.service.count({ where: q.where });
+      return this.paginate(result, countData, q);
+    }
     return result;
   };
 }

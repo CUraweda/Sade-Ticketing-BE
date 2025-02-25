@@ -36,5 +36,12 @@ r.get(
   controller.getDoctorsRecap
 );
 
+r.get(
+  "/daycare-prices",
+  publicApiMiddleware(),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.getDaycarePrices
+);
+
 const publicapiRouter = r;
 export default publicapiRouter;

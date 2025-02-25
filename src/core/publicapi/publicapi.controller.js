@@ -39,6 +39,12 @@ class PublicApiController extends BaseController {
 
     return this.ok(res, data);
   });
+
+  getDaycarePrices = this.wrapper(async (req, res) => {
+    let q = req.query;
+    const data = await this.#service.getDaycarePrices(q);
+    return this.ok(res, data);
+  });
 }
 
 export default PublicApiController;
