@@ -16,10 +16,25 @@ class PublicApiController extends BaseController {
     return this.ok(res, data);
   });
 
-  countServicesGrouped = this.wrapper(async (req, res) => {
+  getServicesRecap = this.wrapper(async (req, res) => {
     const data = {
-      by_location: await this.#service.countServicesByLocation(),
+      by_location: await this.#service.getLocations(),
       by_category: await this.#service.countServicesByCategory(),
+    };
+
+    return this.ok(res, data);
+  });
+
+  getDoctors = this.wrapper(async (req, res) => {
+    let q = req.query;
+    const data = await this.#service.getDoctors(q);
+    return this.ok(res, data);
+  });
+
+  getDoctorsRecap = this.wrapper(async (req, res) => {
+    const data = {
+      by_location: await this.#service.getLocations(),
+      by_category: await this.#service.countDoctorsByCategory(),
     };
 
     return this.ok(res, data);

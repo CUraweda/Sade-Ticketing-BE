@@ -78,9 +78,9 @@ class PublicApiService extends BaseService {
     return updatedData;
   };
 
-  countServicesByLocation = async () => {
+  getLocations = async () => {
     const result = await this.db.location.findMany({
-      include: { _count: { select: { services: true } } },
+      include: { _count: { select: { services: true, doctors: true } } },
     });
     return result;
   };
@@ -88,6 +88,43 @@ class PublicApiService extends BaseService {
   countServicesByCategory = async () => {
     const result = await this.db.serviceCategory.findMany({
       include: { _count: { select: { services: true } } },
+    });
+    return result;
+  };
+
+  getDoctors = async (query) => {
+    const q = this.transformBrowseQuery(query);
+    const result = await this.db.doctorProfile.findMany({
+      ...q,
+      select: {
+        avatar: true,
+        category: true,
+        first_name: true,
+        grade: true,
+        is_active: true,
+        last_name: true,
+        location: { select: { title: true } },
+        sex: true,
+        transport_fee: true,
+        title: true,
+        services: {
+          select: { salary: true, service: { select: { title: true } } },
+        },
+      },
+    });
+
+    if (query.paginate) {
+      const countData = await this.db.service.count({ where: q.where });
+      return this.paginate(result, countData, q);
+    }
+    return result;
+  };
+
+  countDoctorsByCategory = async () => {
+    const result = await this.db.doctorProfile.groupBy({
+      by: ["category"],
+      _count: { id: true },
+      _avg: { transport_fee: true },
     });
     return result;
   };

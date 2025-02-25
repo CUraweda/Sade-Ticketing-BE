@@ -16,10 +16,24 @@ r.get(
 );
 
 r.get(
-  "/count-services-grouped",
+  "/services-recap",
   publicApiMiddleware(),
   validatorMiddleware({ query: baseValidator.browseQuery }),
-  controller.countServicesGrouped
+  controller.getServicesRecap
+);
+
+r.get(
+  "/doctors",
+  publicApiMiddleware(),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.getDoctors
+);
+
+r.get(
+  "/doctors-recap",
+  publicApiMiddleware(),
+  validatorMiddleware({ query: baseValidator.browseQuery }),
+  controller.getDoctorsRecap
 );
 
 const publicapiRouter = r;
