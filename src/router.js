@@ -43,6 +43,7 @@ import daycarelinkbookRouter from "./core/daycarelinkbook/daycarelinkbook.router
 import daycareshortreportRouter from "./core/daycareshortreport/daycareshortreport.router.js";
 import feetagRouter from "./core/feetag/feetag.router.js";
 import daycareactivityRouter from "./core/daycareactivity/daycareactivity.router.js";
+import apikeyRouter from "./core/apikey/apikey.router.js";
 
 const r = Router();
 
@@ -90,6 +91,7 @@ r.use("/daycare-linkbook", daycarelinkbookRouter);
 r.use("/daycare-short-report", daycareshortreportRouter);
 r.use("/daycare-activity", daycareactivityRouter);
 r.use("/fee-tag", feetagRouter);
+r.use("/apikey", apikeyRouter);
 
 const appRouter = r;
 export default appRouter;

@@ -966,3 +966,13 @@ model DaycareActivity {
   linkbook DaycareLinkBook @relation(fields: [linkbook_id], references: [id], onDelete: Cascade)
   fee      Fee?            @relation(fields: [fee_id], references: [id], onDelete: SetNull)
 }
+
+// PUBLIC API 
+model ApiKey {
+  id     Int    @id @default(autoincrement())
+  key    String @unique
+  status String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
