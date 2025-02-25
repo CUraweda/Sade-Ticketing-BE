@@ -44,6 +44,7 @@ import daycareshortreportRouter from "./core/daycareshortreport/daycareshortrepo
 import feetagRouter from "./core/feetag/feetag.router.js";
 import daycareactivityRouter from "./core/daycareactivity/daycareactivity.router.js";
 import apikeyRouter from "./core/apikey/apikey.router.js";
+import publicapiRouter from "./core/publicapi/publicapi.router.js";
 
 const r = Router();
 
@@ -92,6 +93,7 @@ r.use("/daycare-short-report", daycareshortreportRouter);
 r.use("/daycare-activity", daycareactivityRouter);
 r.use("/fee-tag", feetagRouter);
 r.use("/apikey", apikeyRouter);
+r.use("/public-api", publicapiRouter);
 
 const appRouter = r;
 export default appRouter;

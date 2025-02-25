@@ -29,7 +29,7 @@ class ApiKeyService extends BaseService {
     payload["key"] = await bcrypt.hash(apiKey, 10);
 
     const data = await this.db.apiKey.create({ data: payload });
-    return data;
+    return { ...data, apiKey: apiKey };
   };
 
   update = async (id, payload) => {
