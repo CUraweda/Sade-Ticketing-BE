@@ -115,7 +115,7 @@ class PublicApiService extends BaseService {
     });
 
     if (query.paginate) {
-      const countData = await this.db.service.count({ where: q.where });
+      const countData = await this.db.doctorProfile.count({ where: q.where });
       return this.paginate(result, countData, q);
     }
     return result;
@@ -180,7 +180,7 @@ class PublicApiService extends BaseService {
     });
 
     if (query.paginate) {
-      const countData = await this.db.service.count({ where: q.where });
+      const countData = await this.db.daycarePrice.count({ where: q.where });
       return this.paginate(result, countData, q);
     }
     return result;
