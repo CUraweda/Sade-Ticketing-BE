@@ -246,7 +246,7 @@ class DashboardService extends BaseService {
     const groupedByService = {};
 
     bookings.forEach((b) => {
-      const categoryName = b.service.category?.name;
+      const categoryName = b.service?.category?.name;
 
       if (!categoryName) return;
 
