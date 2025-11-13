@@ -5,14 +5,15 @@ import httpStatus from "http-status";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization,x-api-key",
-    credentials: true,
-  })
-);
+// CORS
+if (process.env.CORS_MODE === 'open') {
+  app.use(cors());
+  app.options('*', cors());
+} else {
+  app.use(cors({ origin: false }));
+  app.options('*', cors({ origin: false }));
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
